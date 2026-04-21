@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37027.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celumarket.API", "Celumarket.API\Celumarket.API.csproj", "{000A2A91-A81E-4FAD-A523-6FE9890E4778}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celumarket.Domain", "Celumarket.Domain\Celumarket.Domain.csproj", "{83468A6D-DAAE-4176-8EC0-3BBD5DD6245B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celumarket.Application", "Celumarket.Application\Celumarket.Application.csproj", "{65DF1D40-C177-41FC-B441-E8F23D880B96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celumarket.Infrastructure", "Celumarket.Infrastructure\Celumarket.Infrastructure.csproj", "{CA529360-18A6-478D-A2B2-6D09B008AB7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{000A2A91-A81E-4FAD-A523-6FE9890E4778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{000A2A91-A81E-4FAD-A523-6FE9890E4778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{000A2A91-A81E-4FAD-A523-6FE9890E4778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{000A2A91-A81E-4FAD-A523-6FE9890E4778}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83468A6D-DAAE-4176-8EC0-3BBD5DD6245B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83468A6D-DAAE-4176-8EC0-3BBD5DD6245B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83468A6D-DAAE-4176-8EC0-3BBD5DD6245B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83468A6D-DAAE-4176-8EC0-3BBD5DD6245B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65DF1D40-C177-41FC-B441-E8F23D880B96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65DF1D40-C177-41FC-B441-E8F23D880B96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65DF1D40-C177-41FC-B441-E8F23D880B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65DF1D40-C177-41FC-B441-E8F23D880B96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA529360-18A6-478D-A2B2-6D09B008AB7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA529360-18A6-478D-A2B2-6D09B008AB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA529360-18A6-478D-A2B2-6D09B008AB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA529360-18A6-478D-A2B2-6D09B008AB7F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B0507A2-9D6E-4835-936D-3A26B090D6FD}
+	EndGlobalSection
+EndGlobal
