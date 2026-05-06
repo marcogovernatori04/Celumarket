@@ -66,7 +66,7 @@ export const Landing = ({ onIrATienda }: LandingProps) => {
 					Celumarket
 				</h1>
 				<p className="text-2xl text-gray-300 mb-8">Tu lugar móvil</p>
-				<button onClick={onIrATienda} className="bg-[#015cb9] hover:bg-blue-700 text-white font-medium py-3 px-14 rounded-md transition-colors text-xl">
+				<button onClick={onIrATienda} className="bg-[#015cb9] hover:bg-blue-700 hover:scale-105 active:scale-100 text-white font-medium py-3 px-14 rounded-md transition-transform transition-colors duration-200 text-xl">
 					Ir a la tienda
 				</button>
 			</section>

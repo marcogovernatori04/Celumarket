@@ -23,7 +23,12 @@ export interface ProductoBackendDTO {
 export const TarjetaCelular = ({ producto }: { producto: ProductoCelular }) => {
 	return (
 		<div className="group bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col w-[280px] cursor-pointer">
-			<div className="bg-[#f0f0f0] rounded-lg mb-4 flex items-center justify-center h-[260px] overflow-hidden">
+			<div className="relative bg-[#f0f0f0] rounded-lg mb-3 flex items-center justify-center h-[260px] overflow-hidden">
+				{producto.etiquetaPromo && (
+					<span className="absolute left-2 top-2 z-10 rounded-full bg-[#dbe9ff] px-2 py-1 text-[11px] font-semibold text-[#0b3f75]">
+						{producto.etiquetaPromo}
+					</span>
+				)}
 				<img
 					src={producto.imagen}
 					alt={producto.nombre}
@@ -64,13 +69,7 @@ export const TarjetaCelular = ({ producto }: { producto: ProductoCelular }) => {
 				{producto.colores} colores
 			</p>
 
-			{producto.etiquetaPromo && (
-				<p className="text-xs font-bold text-[#0b5cba] mt-1">
-					{producto.etiquetaPromo}
-				</p>
-			)}
-
-			<p className="text-xs text-gray-500 mt-1">
+			<p className="text-xs text-[#4b6b91] mt-1">
 				10% descuento efectivo/transferencia
 			</p>
 			</div>
