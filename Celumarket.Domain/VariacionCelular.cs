@@ -14,6 +14,8 @@ namespace Celumarket.Domain
 
         public string Color { get; private set; }
         public decimal Precio { get; private set; }
+        public decimal? PrecioAnterior { get; private set; }
+        public string Almacenamiento { get; private set; }
         public int Stock { get; private set; }
         public int StockBloqueado { get; private set; }
         public int StockDisponible => Stock - StockBloqueado;
@@ -23,18 +25,29 @@ namespace Celumarket.Domain
 
         protected VariacionCelular() { }
 
-        public VariacionCelular(string color, decimal precio, int stockInicial)
+        public VariacionCelular(string color, decimal precio, string almacenamiento, int stockInicial)
         {
             Color = color;
             Precio = precio;
+            Almacenamiento = almacenamiento;
             Stock = stockInicial;
+        }
+
+        public void ActualizarPrecio(decimal nuevoPrecio, decimal? nuevoPrecioAnterior = null)
+        {
+            if (nuevoPrecio <= 0) throw new ArgumentException("El precio debe ser mayor a cero.");
+            if (nuevoPrecioAnterior.HasValue && nuevoPrecioAnterior.Value <= nuevoPrecio)
+                throw new ArgumentException("El precio anterior debe ser mayor al precio actual.");
+
+            Precio = nuevoPrecio;
+            PrecioAnterior = nuevoPrecioAnterior;
         }
 
         public void BloquearStock(int cantidad)
         {
             if (cantidad <= 0)
                 throw new ArgumentException("La cantidad a bloquear debe ser mayor que cero.");
-            if (this.Stock < cantidad)
+            if (this.StockDisponible < cantidad)
                 throw new InvalidOperationException($"No hay stock suficiente para bloquear el color {this.Color}");
             StockBloqueado += cantidad;
         }
@@ -66,22 +79,5 @@ namespace Celumarket.Domain
             StockBloqueado = Math.Max(StockBloqueado - cantidad, 0);
             this.Stock -= cantidad;
         }
-
-        public void AgregarImagen(string urlImagen, bool esPrincipal)
-        {
-            if (esPrincipal)
-                {
-                var imagenPrincipalExistente = Imagenes.FirstOrDefault(img => img.EsPrincipal);
-                if (imagenPrincipalExistente != null)
-                {
-                    imagenPrincipalExistente = new ImagenVariacion(imagenPrincipalExistente.UrlImagen, false);
-                }
-            }
-            var nuevaImagen = new ImagenVariacion(urlImagen, esPrincipal);
-            Imagenes.Add(nuevaImagen);
-        }
-
-
-
     }
 }

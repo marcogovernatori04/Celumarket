@@ -1,5 +1,6 @@
-﻿using Celumarket.Application.Interfaces;
+﻿using Celumarket.Application.Interfaces.Repositories;
 using Celumarket.Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,41 @@ namespace Celumarket.Infrastructure.Repositories
             return await _context.Celulares.FindAsync(id);
         }
 
-        public async void Eliminar(Celular celular)
+        public async Task<(IEnumerable<Celular> celulares, int total)> ObtenerTodosAsync(int pagina, int cantPorPagina)
+        {
+            var total = await _context.Celulares.CountAsync();
+
+            var celulares = await _context.Celulares
+                .Include(c => c.Variaciones)
+                    .ThenInclude(v => v.Imagenes)
+                .Skip((pagina - 1) * cantPorPagina)
+                .Take(cantPorPagina)
+                .ToListAsync();
+
+            return (celulares, total);
+        }
+
+        public async Task<Celular> ObtenerDetalleAsync(int id)
+        {
+            return await _context.Celulares
+                .Include(c => c.Variaciones)
+                    .ThenInclude(v => v.Imagenes)
+                .Include(c => c.Especificaciones)
+                .FirstOrDefaultAsync(c => c.Id == id);
+                
+        }
+
+        public async Task<List<Celular>> ObtenerDestacadosAsync(int cantidad)
+        {
+            return await _context.Celulares
+                .Include(c => c.Variaciones)
+                    .ThenInclude(v => v.Imagenes)
+                .Where(c => c.EsDestacado)
+                .Take(cantidad)
+                .ToListAsync();
+        }
+
+        public void Eliminar(Celular celular)
         {
             _context.Celulares.Remove(celular);
         }

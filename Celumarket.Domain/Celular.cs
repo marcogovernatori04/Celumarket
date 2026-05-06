@@ -6,7 +6,10 @@
         public string Marca { get; private set; }
         public string Modelo { get; private set; }
         public string Descripcion { get; private set; }
+        public bool EsDestacado { get; private set; }
+        public string? TextoPromocion { get; private set; }
         public List<VariacionCelular> Variaciones { get; private set; } = new List<VariacionCelular>();
+        public List<Especificacion> Especificaciones { get; private set; } = new List<Especificacion>();
 
         protected Celular() { }
 
@@ -18,12 +21,12 @@
             Descripcion = descripcion;
         }
 
-        public VariacionCelular AgregarVariacion(string color, decimal precio, int stockInicial)
+        public VariacionCelular AgregarVariacion(string color, decimal precio, string almacenamiento, int stockInicial)
         {
             if (Variaciones.Any(v => v.Color.Equals(color, StringComparison.OrdinalIgnoreCase)))
                 throw new InvalidOperationException("Ya existe una variación con ese color.");
 
-            var nuevaVariacion = new VariacionCelular(color, precio, stockInicial);
+            var nuevaVariacion = new VariacionCelular(color, precio, almacenamiento, stockInicial);
             Variaciones.Add(nuevaVariacion);
             return nuevaVariacion;
         }
@@ -38,6 +41,16 @@
             Marca = marca;
             Modelo = modelo;
             Descripcion = descripcion;
+        }
+
+        public void MarcarDestacado(bool esDestacado)
+        {
+            EsDestacado = esDestacado;
+        }
+
+        public void ActualizarTextoPromocion(string? textoPromocion)
+        {
+            TextoPromocion = string.IsNullOrWhiteSpace(textoPromocion) ? null : textoPromocion.Trim();
         }
     }
 }

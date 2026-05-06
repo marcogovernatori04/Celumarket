@@ -17,10 +17,16 @@ namespace Celumarket.Domain
 
         protected ImagenVariacion() { }
 
-        public ImagenVariacion(string urlImagen, bool esPrincipal)
+        public ImagenVariacion(int variacionId, string urlImagen, bool esPrincipal)
         {
+            VariacionCelularId = variacionId;
             UrlImagen = urlImagen;
             EsPrincipal = esPrincipal;
+        }
+
+        public void QuitarPrincipal()
+        {
+            EsPrincipal = false;
         }
 
 

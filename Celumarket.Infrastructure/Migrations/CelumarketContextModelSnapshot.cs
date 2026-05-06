@@ -22,6 +22,24 @@ namespace Celumarket.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Celumarket.Domain.Carrito", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClienteId");
+
+                    b.ToTable("Carritos");
+                });
+
             modelBuilder.Entity("Celumarket.Domain.Celular", b =>
                 {
                     b.Property<int>("Id")
@@ -34,12 +52,18 @@ namespace Celumarket.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("EsDestacado")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Marca")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Modelo")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextoPromocion")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -59,17 +83,9 @@ namespace Celumarket.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DireccionFacturacion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Dni")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -79,12 +95,37 @@ namespace Celumarket.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Dni")
                         .IsUnique();
 
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.ConfiguracionSistema", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("DescuentoTransferencia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UmbralEnvioGratis")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracionesSistema");
                 });
 
             modelBuilder.Entity("Celumarket.Domain.Envio", b =>
@@ -95,24 +136,25 @@ namespace Celumarket.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CodigoPostal")
-                        .HasColumnType("int");
+                    b.Property<string>("CodigoSeguimiento")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Costo")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("DireccionEntrega")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("FechaDespacho")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("FechaEstimada")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PedidoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tipo")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -123,6 +165,32 @@ namespace Celumarket.Infrastructure.Migrations
                     b.ToTable("Envios");
                 });
 
+            modelBuilder.Entity("Celumarket.Domain.Especificacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CelularId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Valor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CelularId");
+
+                    b.ToTable("Especificaciones");
+                });
+
             modelBuilder.Entity("Celumarket.Domain.Factura", b =>
                 {
                     b.Property<int>("Id")
@@ -131,19 +199,36 @@ namespace Celumarket.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CAE")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DniReceptor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("FechaEmision")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NumeroComprobante")
+                    b.Property<decimal>("MontoTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NombreReceptor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NumeroFactura")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PedidoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TipoComprobante")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("VencimientoCAE")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -178,6 +263,32 @@ namespace Celumarket.Infrastructure.Migrations
                     b.ToTable("ImagenesVariacion");
                 });
 
+            modelBuilder.Entity("Celumarket.Domain.ItemCarrito", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CarritoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VariacionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarritoId");
+
+                    b.HasIndex("VariacionId");
+
+                    b.ToTable("ItemsCarrito");
+                });
+
             modelBuilder.Entity("Celumarket.Domain.LineaPedido", b =>
                 {
                     b.Property<int>("Id")
@@ -195,14 +306,14 @@ namespace Celumarket.Infrastructure.Migrations
                     b.Property<decimal>("PrecioUnitario")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("VariacionCelularId")
+                    b.Property<int>("VariacionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PedidoId");
 
-                    b.HasIndex("VariacionCelularId");
+                    b.HasIndex("VariacionId");
 
                     b.ToTable("LineasPedido");
                 });
@@ -224,9 +335,6 @@ namespace Celumarket.Infrastructure.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Recargo")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -261,8 +369,7 @@ namespace Celumarket.Infrastructure.Migrations
 
                     b.HasIndex("MetodoPagoId");
 
-                    b.HasIndex("PedidoId")
-                        .IsUnique();
+                    b.HasIndex("PedidoId");
 
                     b.ToTable("Pagos");
                 });
@@ -278,6 +385,12 @@ namespace Celumarket.Infrastructure.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("CostoEnvio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DescuentoAplicado")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -288,11 +401,85 @@ namespace Celumarket.Infrastructure.Migrations
                     b.Property<DateTime>("FechaVencimiento")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("TipoEnvio")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
 
                     b.ToTable("Pedidos");
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.TarifaZonal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CodigoPostal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiasDemora")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PrecioDomicilio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PrecioSucursal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TarifasZonales");
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RolId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("RolId");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Celumarket.Domain.VariacionCelular", b =>
@@ -303,6 +490,10 @@ namespace Celumarket.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Almacenamiento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CelularId")
                         .HasColumnType("int");
 
@@ -311,6 +502,9 @@ namespace Celumarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Precio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PrecioAnterior")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Stock")
@@ -326,6 +520,71 @@ namespace Celumarket.Infrastructure.Migrations
                     b.ToTable("Variaciones");
                 });
 
+            modelBuilder.Entity("Celumarket.Domain.Carrito", b =>
+                {
+                    b.HasOne("Celumarket.Domain.Cliente", null)
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Cliente", b =>
+                {
+                    b.HasOne("Celumarket.Domain.Usuario", "Usuario")
+                        .WithOne("Cliente")
+                        .HasForeignKey("Celumarket.Domain.Cliente", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Celumarket.Domain.Direccion", "Direccion", b1 =>
+                        {
+                            b1.Property<int>("ClienteId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Calle")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
+
+                            b1.Property<int>("CodigoPostal")
+                                .HasMaxLength(10)
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Localidad")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)");
+
+                            b1.Property<string>("Numero")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)");
+
+                            b1.Property<string>("PisoDepto")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)");
+
+                            b1.Property<string>("Provincia")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)");
+
+                            b1.HasKey("ClienteId");
+
+                            b1.ToTable("Clientes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClienteId");
+                        });
+
+                    b.Navigation("Direccion")
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Celumarket.Domain.Envio", b =>
                 {
                     b.HasOne("Celumarket.Domain.Pedido", null)
@@ -333,6 +592,62 @@ namespace Celumarket.Infrastructure.Migrations
                         .HasForeignKey("Celumarket.Domain.Envio", "PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("Celumarket.Domain.Direccion", "DireccionEntrega", b1 =>
+                        {
+                            b1.Property<int>("EnvioId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Calle")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Calle");
+
+                            b1.Property<int>("CodigoPostal")
+                                .HasColumnType("int")
+                                .HasColumnName("CodigoPostal");
+
+                            b1.Property<string>("Localidad")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Localidad");
+
+                            b1.Property<string>("Numero")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Numero");
+
+                            b1.Property<string>("PisoDepto")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("PisoDepto");
+
+                            b1.Property<string>("Provincia")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Provincia");
+
+                            b1.HasKey("EnvioId");
+
+                            b1.ToTable("Envios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EnvioId");
+                        });
+
+                    b.Navigation("DireccionEntrega")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Especificacion", b =>
+                {
+                    b.HasOne("Celumarket.Domain.Celular", "Celular")
+                        .WithMany("Especificaciones")
+                        .HasForeignKey("CelularId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Celular");
                 });
 
             modelBuilder.Entity("Celumarket.Domain.Factura", b =>
@@ -353,6 +668,23 @@ namespace Celumarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Celumarket.Domain.ItemCarrito", b =>
+                {
+                    b.HasOne("Celumarket.Domain.Carrito", null)
+                        .WithMany("Items")
+                        .HasForeignKey("CarritoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Celumarket.Domain.VariacionCelular", "VariacionCelular")
+                        .WithMany()
+                        .HasForeignKey("VariacionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("VariacionCelular");
+                });
+
             modelBuilder.Entity("Celumarket.Domain.LineaPedido", b =>
                 {
                     b.HasOne("Celumarket.Domain.Pedido", null)
@@ -363,8 +695,8 @@ namespace Celumarket.Infrastructure.Migrations
 
                     b.HasOne("Celumarket.Domain.VariacionCelular", "VariacionCelular")
                         .WithMany()
-                        .HasForeignKey("VariacionCelularId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("VariacionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("VariacionCelular");
@@ -379,8 +711,8 @@ namespace Celumarket.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Celumarket.Domain.Pedido", null)
-                        .WithOne()
-                        .HasForeignKey("Celumarket.Domain.Pago", "PedidoId")
+                        .WithMany()
+                        .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -392,6 +724,62 @@ namespace Celumarket.Infrastructure.Migrations
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.OwnsOne("Celumarket.Domain.Direccion", "DireccionEntrega", b1 =>
+                        {
+                            b1.Property<int>("PedidoId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Calle")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("CalleEntrega");
+
+                            b1.Property<int>("CodigoPostal")
+                                .HasColumnType("int")
+                                .HasColumnName("CodigoPostalEntrega");
+
+                            b1.Property<string>("Localidad")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("LocalidadEntrega");
+
+                            b1.Property<string>("Numero")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("NumeroEntrega");
+
+                            b1.Property<string>("PisoDepto")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("PisoDeptoEntrega");
+
+                            b1.Property<string>("Provincia")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("ProvinciaEntrega");
+
+                            b1.HasKey("PedidoId");
+
+                            b1.ToTable("Pedidos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PedidoId");
+                        });
+
+                    b.Navigation("DireccionEntrega")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Usuario", b =>
+                {
+                    b.HasOne("Celumarket.Domain.Rol", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
                 });
 
             modelBuilder.Entity("Celumarket.Domain.VariacionCelular", b =>
@@ -405,14 +793,32 @@ namespace Celumarket.Infrastructure.Migrations
                     b.Navigation("Celular");
                 });
 
+            modelBuilder.Entity("Celumarket.Domain.Carrito", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("Celumarket.Domain.Celular", b =>
                 {
+                    b.Navigation("Especificaciones");
+
                     b.Navigation("Variaciones");
                 });
 
             modelBuilder.Entity("Celumarket.Domain.Pedido", b =>
                 {
                     b.Navigation("Lineas");
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Rol", b =>
+                {
+                    b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("Celumarket.Domain.Usuario", b =>
+                {
+                    b.Navigation("Cliente")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Celumarket.Domain.VariacionCelular", b =>

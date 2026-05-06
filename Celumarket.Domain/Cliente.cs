@@ -12,27 +12,29 @@ namespace Celumarket.Domain
         public string Dni { get; private set; }
         public string Nombre { get; private set; }
         public string Apellido { get; private set; }
-        public string Email { get; private set; }
         public string Telefono { get; private set; }
-        public string DireccionFacturacion { get; private set; }
+
+        public Direccion Direccion { get; private set; }
+
+        public int UsuarioId { get; private set; }
+        public Usuario Usuario { get; private set; }
 
         protected Cliente() { }
 
-        public Cliente(string nombre, string apellido, string dni, string email, string telefono, string direccionFacturacion)
+        public Cliente(string nombre, string apellido, string dni, string telefono, Direccion direccion, int usuarioId)
         {
             Nombre = nombre;
             Apellido = apellido;
             Dni = dni;
-            Email = email;
             Telefono = telefono;
-            DireccionFacturacion = direccionFacturacion;
+            Direccion = direccion;      
+            UsuarioId = usuarioId;
         }
 
-        public void ActualizarDatos(string telefono, string email, string direccionFacturacion)
+        public void ActualizarDatos(string telefono, Direccion nuevaDireccion)
         {
             Telefono = telefono;
-            Email = email;
-            DireccionFacturacion = direccionFacturacion;
+            Direccion = nuevaDireccion;
         }
 
 

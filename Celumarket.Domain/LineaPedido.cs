@@ -11,7 +11,7 @@ namespace Celumarket.Domain
         public int Id { get; private set; }
 
         public int PedidoId { get; private set; }
-        public int VariacionCelularId { get; private set; }
+        public int VariacionId { get; private set; }
 
         public int Cantidad { get; private set; }
         public decimal PrecioUnitario { get; private set; }
@@ -22,7 +22,10 @@ namespace Celumarket.Domain
 
         public LineaPedido(int variacionCelularId, int cantidad, decimal precioUnitario)
         {
-            VariacionCelularId = variacionCelularId;
+            if (variacionCelularId <= 0) throw new ArgumentException("Variación inválida.");
+            if (cantidad <= 0) throw new ArgumentException("La cantidad debe ser mayor a cero.");
+            if (precioUnitario <= 0) throw new ArgumentException("El precio unitario debe ser mayor a cero.");
+            VariacionId = variacionCelularId;
             Cantidad = cantidad;
             PrecioUnitario = precioUnitario;
         }

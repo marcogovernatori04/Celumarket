@@ -1,4 +1,4 @@
-﻿using Celumarket.Application.Interfaces;
+﻿using Celumarket.Application.Interfaces.Repositories;
 using Celumarket.Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,7 +26,8 @@ namespace Celumarket.Infrastructure.Repositories
         public async Task<Pago> ObtenerPorPedidoIdAsync(int pedidoId)
         {
             return await _context.Pagos
-                .Where(p => p.PedidoId == pedidoId && p.Estado == "Pendiente")
+                .Where(p => p.PedidoId == pedidoId && p.Estado == Pago.EstadoPendiente)
+                .OrderByDescending(p => p.Fecha)
                 .FirstOrDefaultAsync();
         }   
 

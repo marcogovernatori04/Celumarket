@@ -1,14 +1,18 @@
 ﻿using Celumarket.Application.Interfaces;
+using Celumarket.Application.Interfaces.Repositories;
+using Celumarket.Application.Interfaces.Services;
 
 namespace Celumarket.Application.Services
 {
     public class GestorStock : IGestorStock
     {
         private readonly IVariacionRepository _variacionRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GestorStock(IVariacionRepository variacionRepo)
+        public GestorStock(IVariacionRepository variacionRepo, IUnitOfWork unitOfWork)
         {
             _variacionRepo = variacionRepo;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task IngresarMercaderiaAsync(int variacionId, int cantidad)
@@ -19,7 +23,7 @@ namespace Celumarket.Application.Services
 
             variacion.AgregarStock(cantidad);
 
-            await _variacionRepo.GuardarAsync();
+            await _unitOfWork.GuardarAsync();
         }
 
         public async Task RegistrarPerdidaAsync(int variacionId, int cantidad)
@@ -30,7 +34,7 @@ namespace Celumarket.Application.Services
 
             variacion.DescontarStock(cantidad);
 
-            await _variacionRepo.GuardarAsync();
+            await _unitOfWork.GuardarAsync();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Celumarket.Application.Interfaces;
+﻿using Celumarket.Application.Interfaces.Repositories;
 using Celumarket.Domain;
 using System;
 using System.Collections.Generic;
