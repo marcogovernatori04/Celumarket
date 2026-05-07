@@ -1,35 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { Footer } from "../components/Footer";
 import { PorqueElegirnos } from "../components/PorqueElegirnos";
-import { api } from "../services/api";
+import { celularService } from "../services/celularService";
+import { type CelularDetalle } from "../models/CelularDetalle";
+import { carritoService } from "../services/carritoService";
 
 type DetalleProps = {
 	celularId: number;
+	onRequiereLogin?: () => void;
+	onAgregadoCarrito?: (mensaje: string) => Promise<void> | void;
 };
 
-type Especificacion = { nombre: string; valor: string };
-type Variacion = {
-	id: number;
-	color: string;
-	colorId: number;
-	colorHex?: string | null;
-	precio: number;
-	precioAnterior?: number | null;
-	almacenamiento: string;
-	stock: number;
-	imagenes: string[];
-};
-type CelularDetalle = {
-	id: number;
-	marca: string;
-	modelo: string;
-	descripcion: string;
-	textoPromocion?: string | null;
-	especificaciones: Especificacion[];
-	variaciones: Variacion[];
-};
-
-export const DetalleCelular = ({ celularId }: DetalleProps) => {
+export const DetalleCelular = ({
+	celularId,
+	onRequiereLogin,
+	onAgregadoCarrito,
+}: DetalleProps) => {
 	const [detalle, setDetalle] = useState<CelularDetalle | null>(null);
 	const [almacenamientoSeleccionado, setAlmacenamientoSeleccionado] =
 		useState("");
@@ -40,9 +26,7 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 
 	useEffect(() => {
 		const cargar = async () => {
-			const { data } = await api.get<CelularDetalle>(
-				`/Celulares/${celularId}`,
-			);
+			const data = await celularService.obtenerDetalle(celularId);
 			setDetalle(data);
 			const primerAlmacenamiento = data.variaciones[0]?.almacenamiento ?? "";
 			const primerColorId =
@@ -58,7 +42,9 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 
 	const almacenamientos = useMemo(
 		() =>
-			detalle ? [...new Set(detalle.variaciones.map((v) => v.almacenamiento))] : [],
+			detalle
+				? [...new Set(detalle.variaciones.map((v) => v.almacenamiento))]
+				: [],
 		[detalle],
 	);
 
@@ -105,6 +91,16 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 		setImagenActiva((prev) =>
 			prev === imagenesActivas.length - 1 ? 0 : prev + 1,
 		);
+	};
+
+	const agregarAlCarrito = async () => {
+		if (!variacionActiva) return;
+		try {
+			await carritoService.agregarItem(variacionActiva.id, 1);
+			await onAgregadoCarrito?.("Producto agregado al carrito");
+		} catch {
+			onRequiereLogin?.();
+		}
 	};
 
 	if (!detalle || !variacionActiva) {
@@ -177,7 +173,7 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 								${variacionActiva.precio.toLocaleString("es-AR")}
 							</p>
 							{variacionActiva.precio >= 499999 && (
-								<span className="mt-3 inline-flex w-fit rounded-full bg-green-100 px-2 py-1 text-[12px] font-semibold text-green-700">
+								<span className="mt-3 inline-flex w-fit rounded-full bg-green-100 px-3 py-1.5 text-[14px] font-semibold text-green-700">
 									Envío gratis
 								</span>
 							)}
@@ -186,6 +182,12 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 									{detalle.textoPromocion}
 								</p>
 							)}
+							<p className="mt-3 text-sm text-[#4b6b91]">
+								10% descuento efectivo/transferencia
+							</p>
+							<p className="mt-1 text-sm text-[#4b6b91]">
+								Hasta 12 cuotas con tarjeta de crédito/débito
+							</p>
 							<div className="mt-4 space-y-1 text-[18px] leading-tight text-[#757575]">
 								{detalle.especificaciones.map((esp, idx) => (
 									<p key={idx}>
@@ -199,8 +201,7 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 								</p>
 								<div className="mb-4 flex flex-wrap gap-2.5">
 									{almacenamientos.map((alm) => {
-										const activo =
-											almacenamientoSeleccionado === alm;
+										const activo = almacenamientoSeleccionado === alm;
 										return (
 											<button
 												key={alm}
@@ -260,7 +261,10 @@ export const DetalleCelular = ({ celularId }: DetalleProps) => {
 									{variacionActiva.color}
 								</p>
 							</div>
-							<button className="mt-5 h-11 w-full rounded-md bg-[#001830] text-sm font-medium text-white hover:bg-[#012a55]">
+							<button
+								onClick={agregarAlCarrito}
+								className="mt-5 h-11 w-full rounded-md bg-[#015cb9] text-sm font-medium text-white hover:bg-[#017AF4] transition-colors duration-200"
+							>
 								Agregar al carrito
 							</button>
 						</div>

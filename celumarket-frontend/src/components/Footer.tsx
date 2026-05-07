@@ -1,6 +1,6 @@
 export const Footer = () => {
 	return (
-		<footer className="border-t border-gray-300 bg-[#d9d9d9] px-8 py-8 md:px-12">
+		<footer className="border-t border-gray-300 bg-[#E6EAEF] px-8 py-8 md:px-12">
 			<div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 md:grid-cols-[180px_180px_180px_minmax(280px,420px)]">
 				<div className="flex items-start justify-center">
 					<img src="/logo.svg" alt="Celumarket" className="h-7 w-auto object-contain" />
@@ -9,17 +9,17 @@ export const Footer = () => {
 				<div>
 					<p className="mb-3 text-xl font-semibold text-[#001830]">Ayuda</p>
 					<ul className="space-y-2 text-sm text-gray-700">
-						<li>Políticas de devolución</li>
-						<li>Tiempos y costos de envío</li>
-						<li>Botón de arrepentimiento</li>
+						<li><button className="cursor-pointer hover:text-[#001830] transition-colors">Políticas de devolución</button></li>
+						<li><button className="cursor-pointer hover:text-[#001830] transition-colors">Tiempos y costos de envío</button></li>
+						<li><button className="cursor-pointer hover:text-[#001830] transition-colors">Botón de arrepentimiento</button></li>
 					</ul>
 				</div>
 
 				<div>
 					<p className="mb-3 text-xl font-semibold text-[#001830]">Institucional</p>
 					<ul className="space-y-2 text-sm text-gray-700">
-						<li>Nosotros</li>
-						<li>Contacto</li>
+						<li><button className="cursor-pointer hover:text-[#001830] transition-colors">Nosotros</button></li>
+						<li><button className="cursor-pointer hover:text-[#001830] transition-colors">Contacto</button></li>
 					</ul>
 				</div>
 

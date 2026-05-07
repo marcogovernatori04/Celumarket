@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import {
 	TarjetaCelular,
-	type ProductoBackendDTO,
 	type ProductoCelular,
 } from "../components/TarjetaCelular";
 import { Footer } from "../components/Footer";
 import { PorqueElegirnos } from "../components/PorqueElegirnos";
+import { celularService } from "../services/celularService";
 
 type LandingProps = {
 	onIrATienda?: () => void;
@@ -21,15 +21,7 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 	useEffect(() => {
 		const obtenerProductos = async () => {
 			try {
-				const respuesta = await fetch(
-					"https://jl5zhbmj-7119.brs.devtunnels.ms/api/Celulares/destacados?cantidad=4",
-				);
-
-				if (!respuesta.ok) {
-					throw new Error("No se pudieron cargar los productos");
-				}
-
-				const datos: ProductoBackendDTO[] = await respuesta.json();
+				const datos = await celularService.obtenerDestacados(4);
 				const productosMapeados: ProductoCelular[] = datos.map((item) => ({
 					id: item.id,
 					nombre: `${item.marca} ${item.modelo}`.trim(),
@@ -68,7 +60,7 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 					Celumarket
 				</h1>
 				<p className="text-2xl text-gray-300 mb-8">Tu lugar móvil</p>
-				<button onClick={onIrATienda} className="bg-[#015cb9] hover:bg-blue-700 hover:scale-105 active:scale-100 text-white font-medium py-3 px-14 rounded-md transition-transform transition-colors duration-200 text-xl">
+				<button onClick={onIrATienda} className="bg-[#015cb9] hover:bg-[#017AF4] hover:scale-105 active:scale-100 text-white font-medium py-3 px-14 rounded-md transition-transform transition-colors duration-200 text-xl">
 					Ir a la tienda
 				</button>
 			</section>

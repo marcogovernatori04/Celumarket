@@ -14,3 +14,9 @@
     opacity: 1;
   }
 }
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}

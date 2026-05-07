@@ -1,23 +1,7 @@
 import { useEffect, useState } from "react";
 import { TarjetaCelular, type ProductoCelular } from "../components/TarjetaCelular";
 import { Footer } from "../components/Footer";
-import { api } from "../services/api";
-
-type CatalogoItem = {
-	id: number;
-	marca: string;
-	modelo: string;
-	precioMinimo: number;
-	cantidadColores: number;
-	urlImagenPrincipal: string;
-};
-
-type CatalogoPaginado = {
-	items: CatalogoItem[];
-	totalItems: number;
-	paginaActual: number;
-	totalPaginas: number;
-};
+import { celularService } from "../services/celularService";
 
 type CatalogoProps = {
 	onVerDetalle?: (celularId: number) => void;
@@ -34,7 +18,7 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 	useEffect(() => {
 		const cargar = async () => {
 			setCargando(true);
-			const { data } = await api.get<CatalogoPaginado>(`/Celulares?pag=${pagina}&cant=10`);
+			const data = await celularService.obtenerCatalogoPaginado(pagina, 10);
 			setTotalPaginas(data.totalPaginas || 1);
 			setProductos(
 				data.items.map((item) => ({
@@ -61,8 +45,8 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 		});
 
 	return (
-		<div className="min-h-screen bg-[#f5f5f5]">
-			<section className="px-10 py-8">
+		<div className="min-h-screen bg-[#f5f5f5] flex flex-col">
+			<section className="flex-1 px-10 py-8">
 				<div className="mx-auto mb-8 max-w-6xl flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 					<div className="relative w-full lg:max-w-[420px]">
 						<input
