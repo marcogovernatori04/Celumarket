@@ -8,6 +8,7 @@ namespace Celumarket.Application.Services
 {
     public class GestorCliente : IGestorCliente
     {
+        private static readonly Dictionary<string, (int UsuarioId, DateTime ExpiraUtc)> _tokensRecuperacion = new();
         private readonly IClienteRepository _clienteRepo;
         private readonly IUsuarioRepository _usuarioRepo;
         private readonly IRolRepository _rolRepo;
@@ -81,7 +82,11 @@ namespace Celumarket.Application.Services
                 NombreCompleto = $"{cliente.Nombre} {cliente.Apellido}",
                 Email = cliente.Usuario.Email,
                 Telefono = cliente.Telefono,
-                Dni = cliente.Dni
+                Dni = cliente.Dni,
+                DireccionCompleta = cliente.Direccion != null
+                    ? $"{cliente.Direccion.Calle} {cliente.Direccion.Numero}{(string.IsNullOrWhiteSpace(cliente.Direccion.PisoDepto) ? "" : $" - {cliente.Direccion.PisoDepto}")}, {cliente.Direccion.Localidad}, {cliente.Direccion.Provincia} ({cliente.Direccion.CodigoPostal})"
+                    : null,
+                CodigoPostalDireccion = cliente.Direccion?.CodigoPostal
             };
         }
 
@@ -92,6 +97,48 @@ namespace Celumarket.Application.Services
                 throw new Exception("Credenciales inválidas");
 
             return _servicioSeguridad.GenerarToken(usuario);
+        }
+
+        public async Task CambiarClaveAsync(int usuarioId, ClienteDTOs.CambiarClaveDTO dto)
+        {
+            var usuario = await _usuarioRepo.ObtenerPorIdAsync(usuarioId);
+            if (usuario == null) throw new Exception("Usuario no encontrado.");
+            if (!_servicioSeguridad.VerificarPassword(dto.ClaveActual, usuario.PasswordHash))
+                throw new Exception("La clave actual es incorrecta.");
+            if (string.IsNullOrWhiteSpace(dto.ClaveNueva) || dto.ClaveNueva.Length < 8)
+                throw new Exception("La nueva clave debe tener al menos 8 caracteres.");
+
+            usuario.CambiarPassword(_servicioSeguridad.EncriptarPassword(dto.ClaveNueva));
+            await _unitOfWork.GuardarAsync();
+        }
+
+        public async Task<string> SolicitarRecuperacionClaveAsync(ClienteDTOs.SolicitarRecuperacionClaveDTO dto)
+        {
+            var usuario = await _usuarioRepo.ObtenerPorEmailAsync(dto.Email);
+            if (usuario == null) return "Si el email existe, se envió un enlace de recuperación.";
+
+            var token = Guid.NewGuid().ToString("N");
+            _tokensRecuperacion[token] = (usuario.Id, DateTime.UtcNow.AddMinutes(30));
+            return token;
+        }
+
+        public async Task ConfirmarRecuperacionClaveAsync(ClienteDTOs.ConfirmarRecuperacionClaveDTO dto)
+        {
+            if (!_tokensRecuperacion.TryGetValue(dto.TokenRecuperacion, out var data))
+                throw new Exception("Token de recuperación inválido.");
+            if (data.ExpiraUtc < DateTime.UtcNow)
+            {
+                _tokensRecuperacion.Remove(dto.TokenRecuperacion);
+                throw new Exception("Token de recuperación vencido.");
+            }
+            if (string.IsNullOrWhiteSpace(dto.ClaveNueva) || dto.ClaveNueva.Length < 8)
+                throw new Exception("La nueva clave debe tener al menos 8 caracteres.");
+
+            var usuario = await _usuarioRepo.ObtenerPorIdAsync(data.UsuarioId);
+            if (usuario == null) throw new Exception("Usuario no encontrado.");
+            usuario.CambiarPassword(_servicioSeguridad.EncriptarPassword(dto.ClaveNueva));
+            _tokensRecuperacion.Remove(dto.TokenRecuperacion);
+            await _unitOfWork.GuardarAsync();
         }
     }
 }

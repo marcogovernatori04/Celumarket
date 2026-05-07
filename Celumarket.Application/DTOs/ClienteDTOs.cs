@@ -42,6 +42,25 @@
             public string Email { get; set; }
             public string Telefono { get; set; }
             public string Dni { get; set; }
+            public string? DireccionCompleta { get; set; }
+            public int? CodigoPostalDireccion { get; set; }
+        }
+
+        public class CambiarClaveDTO
+        {
+            public string ClaveActual { get; set; }
+            public string ClaveNueva { get; set; }
+        }
+
+        public class SolicitarRecuperacionClaveDTO
+        {
+            public string Email { get; set; }
+        }
+
+        public class ConfirmarRecuperacionClaveDTO
+        {
+            public string TokenRecuperacion { get; set; }
+            public string ClaveNueva { get; set; }
         }
 
         public class ClienteListadoDTO

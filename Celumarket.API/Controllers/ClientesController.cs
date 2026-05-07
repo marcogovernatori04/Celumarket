@@ -70,6 +70,34 @@ namespace Celumarket.API.Controllers
             return Ok(new { Mensaje = "Perfil actualizado con éxito." });
         }
 
+        [Authorize(Roles = "Cliente")]
+        [HttpPost("cambiar-clave")]
+        public async Task<IActionResult> CambiarClave([FromBody] ClienteDTOs.CambiarClaveDTO dto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int usuarioId = int.Parse(userIdClaim.Value);
+
+            await _gestorCliente.CambiarClaveAsync(usuarioId, dto);
+            return Ok(new { Mensaje = "Clave actualizada con éxito." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("recuperar-clave/solicitar")]
+        public async Task<IActionResult> SolicitarRecuperacionClave([FromBody] ClienteDTOs.SolicitarRecuperacionClaveDTO dto)
+        {
+            var token = await _gestorCliente.SolicitarRecuperacionClaveAsync(dto);
+            return Ok(new { Mensaje = "Solicitud procesada.", TokenRecuperacion = token });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("recuperar-clave/confirmar")]
+        public async Task<IActionResult> ConfirmarRecuperacionClave([FromBody] ClienteDTOs.ConfirmarRecuperacionClaveDTO dto)
+        {
+            await _gestorCliente.ConfirmarRecuperacionClaveAsync(dto);
+            return Ok(new { Mensaje = "Clave restablecida con éxito." });
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet("lista-completa")]
         public async Task<IActionResult> ObtenerTodos()

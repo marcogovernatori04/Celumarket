@@ -70,7 +70,7 @@ namespace Celumarket.Infrastructure.Services
             if (!await context.TarifasZonales.AnyAsync())
             {
                 context.TarifasZonales.AddRange(
-                    new TarifaZonal(2477, 11784.65m, 8040.48m, 3),
+                    new TarifaZonal(2700, 11784.65m, 8040.48m, 3),
                     new TarifaZonal(2000, 10444.76m, 5918.38m, 2),
                     new TarifaZonal(2930, 13541.45m, 8040.48m, 4),
                     new TarifaZonal(2919, 10444.76m, 5918.38m, 2),
