@@ -9,12 +9,14 @@ import { PorqueElegirnos } from "../components/PorqueElegirnos";
 
 type LandingProps = {
 	onIrATienda?: () => void;
+	onVerDetalle?: (celularId: number) => void;
 };
 
-export const Landing = ({ onIrATienda }: LandingProps) => {
+export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 	const [productos, setProductos] = useState<ProductoCelular[]>([]);
 	const [cargando, setCargando] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const textoBannerPromocional = "¡Bienvenido!";
 
 	useEffect(() => {
 		const obtenerProductos = async () => {
@@ -72,7 +74,7 @@ export const Landing = ({ onIrATienda }: LandingProps) => {
 			</section>
 
 			<div className="bg-[#015cb9] text-white text-center py-2 font-medium tracking-wide">
-				¡Ahora con pagos en hasta 6 cuotas!
+				{textoBannerPromocional}
 			</div>
 
 			<section className="py-16 px-10 bg-[#F5F5F5] flex-grow">
@@ -94,7 +96,7 @@ export const Landing = ({ onIrATienda }: LandingProps) => {
 				{!cargando && !error && (
 					<div className="flex justify-center gap-6 flex-wrap">
 						{productos.map((prod) => (
-							<TarjetaCelular key={prod.id} producto={prod} />
+							<TarjetaCelular key={prod.id} producto={prod} onClick={() => onVerDetalle?.(prod.id)} />
 						))}
 					</div>
 				)}

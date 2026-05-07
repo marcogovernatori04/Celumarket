@@ -5,3 +5,12 @@
 @theme {
   --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

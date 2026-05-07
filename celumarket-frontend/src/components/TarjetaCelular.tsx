@@ -20,9 +20,17 @@ export interface ProductoBackendDTO {
 	urlImagenPrincipal: string;
 }
 
-export const TarjetaCelular = ({ producto }: { producto: ProductoCelular }) => {
+type TarjetaCelularProps = {
+	producto: ProductoCelular;
+	onClick?: () => void;
+};
+
+export const TarjetaCelular = ({ producto, onClick }: TarjetaCelularProps) => {
 	return (
-		<div className="group bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col w-[280px] cursor-pointer">
+		<div
+			onClick={onClick}
+			className="group bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col w-[280px] cursor-pointer"
+		>
 			<div className="relative bg-[#f0f0f0] rounded-lg mb-3 flex items-center justify-center h-[260px] overflow-hidden">
 				{producto.etiquetaPromo && (
 					<span className="absolute left-2 top-2 z-10 rounded-full bg-[#dbe9ff] px-2 py-1 text-[11px] font-semibold text-[#0b3f75]">
@@ -44,11 +52,12 @@ export const TarjetaCelular = ({ producto }: { producto: ProductoCelular }) => {
 				<span className="text-2xl font-bold text-slate-900">
 					${producto.precio.toLocaleString("es-AR")}
 				</span>
-				{producto.precioAnterior && producto.precioAnterior > producto.precio && (
-					<span className="text-sm text-gray-400 line-through ml-2">
-						${producto.precioAnterior.toLocaleString("es-AR")}
-					</span>
-				)}
+				{producto.precioAnterior &&
+					producto.precioAnterior > producto.precio && (
+						<span className="text-sm text-gray-400 line-through ml-2">
+							${producto.precioAnterior.toLocaleString("es-AR")}
+						</span>
+					)}
 			</div>
 
 			{producto.precio >= 499999 ? (
@@ -65,13 +74,13 @@ export const TarjetaCelular = ({ producto }: { producto: ProductoCelular }) => {
 			)}
 
 			<div className="mt-auto pt-2">
-			<p className="text-xs text-gray-500 mt-1">
-				{producto.colores} colores
-			</p>
+				<p className="text-xs text-gray-500 mt-1">
+					{producto.colores} colores
+				</p>
 
-			<p className="text-xs text-[#4b6b91] mt-1">
-				10% descuento efectivo/transferencia
-			</p>
+				<p className="text-xs text-[#4b6b91] mt-1">
+					10% descuento efectivo/transferencia
+				</p>
 			</div>
 		</div>
 	);

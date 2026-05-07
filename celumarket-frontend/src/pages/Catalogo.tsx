@@ -19,7 +19,11 @@ type CatalogoPaginado = {
 	totalPaginas: number;
 };
 
-export const Catalogo = () => {
+type CatalogoProps = {
+	onVerDetalle?: (celularId: number) => void;
+};
+
+export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 	const [productos, setProductos] = useState<ProductoCelular[]>([]);
 	const [pagina, setPagina] = useState(1);
 	const [totalPaginas, setTotalPaginas] = useState(1);
@@ -80,7 +84,7 @@ export const Catalogo = () => {
 				) : (
 					<div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 						{productosFiltrados.map((prod) => (
-							<TarjetaCelular key={prod.id} producto={prod} />
+							<TarjetaCelular key={prod.id} producto={prod} onClick={() => onVerDetalle?.(prod.id)} />
 						))}
 					</div>
 				)}
