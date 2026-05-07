@@ -24,6 +24,7 @@ namespace Celumarket.Infrastructure
         public DbSet<TarifaZonal> TarifasZonales { get; set; }
         public DbSet<ConfiguracionSistema> ConfiguracionesSistema { get; set; }
         public DbSet<Especificacion> Especificaciones { get; set; }
+        public DbSet<Color> Colores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -90,6 +91,16 @@ namespace Celumarket.Infrastructure
                 .WithMany(c => c.Variaciones)
                 .HasForeignKey(v => v.CelularId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<VariacionCelular>()
+                .HasOne(v => v.Color)
+                .WithMany(c => c.Variaciones)
+                .HasForeignKey(v => v.ColorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Color>()
+                .HasIndex(c => c.Nombre)
+                .IsUnique();
 
             modelBuilder.Entity<ImagenVariacion>()
                 .HasOne<VariacionCelular>()

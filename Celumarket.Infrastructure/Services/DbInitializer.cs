@@ -79,6 +79,22 @@ namespace Celumarket.Infrastructure.Services
 
                 await context.SaveChangesAsync();
             }
+
+            if (!await context.Colores.AnyAsync())
+            {
+                context.Colores.AddRange(
+                    new Color("Negro", "#1c1c1e"),
+                    new Color("Blanco", "#f5f5f5"),
+                    new Color("Grafito", "#1c1c1e"),
+                    new Color("Lavanda", "#9966CC"),
+                    new Color("Oliva", "#808000"),
+                    new Color("Rosa", "#FFA6C9"),
+                    new Color("Azul hielo", "#8AB9F1"),
+                    new Color("Azul marino", "#011F5B"),
+                    new Color("Plateado", "#C0C0C0")
+                );
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

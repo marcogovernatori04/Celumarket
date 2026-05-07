@@ -40,6 +40,8 @@ namespace Celumarket.Application.DTOs
         {
             public int Id { get; set; }
             public string Color { get; set; }
+            public int ColorId { get; set; }
+            public string? ColorHex { get; set; }
             public decimal Precio { get; set; }
             public decimal? PrecioAnterior { get; set; }
             public string Almacenamiento { get; set; }
@@ -57,7 +59,7 @@ namespace Celumarket.Application.DTOs
         public class AgregarVariacionDTO
         {
             public int CelularId { get; set; }
-            public string Color { get; set; }
+            public int ColorId { get; set; }
             public decimal Precio { get; set; }
             public decimal? PrecioAnterior { get; set; }
             public string Almacenamiento { get; set; }

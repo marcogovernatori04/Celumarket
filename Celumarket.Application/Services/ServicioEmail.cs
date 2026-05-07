@@ -42,9 +42,10 @@ namespace Celumarket.Application.Services
             foreach (var linea in pedido.Lineas)
             {
                 var variacion = linea.VariacionCelular;
+                var nombreColor = variacion.Color?.Nombre ?? variacion.ColorId.ToString();
 
                 string nombreProducto = variacion.Celular != null
-                    ? $"{variacion.Celular.Marca} {variacion.Celular.Modelo} ({variacion.Color})"
+                    ? $"{variacion.Celular.Marca} {variacion.Celular.Modelo} ({nombreColor})"
                     : $"Producto ID {linea.VariacionId}";
 
                 htmlTableLines += $@"

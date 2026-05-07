@@ -11,8 +11,8 @@ namespace Celumarket.Domain
         public int Id { get; private set; }
 
         public int CelularId { get; private set; }
+        public int ColorId { get; private set; }
 
-        public string Color { get; private set; }
         public decimal Precio { get; private set; }
         public decimal? PrecioAnterior { get; private set; }
         public string Almacenamiento { get; private set; }
@@ -21,13 +21,14 @@ namespace Celumarket.Domain
         public int StockDisponible => Stock - StockBloqueado;
 
         public Celular Celular { get; private set; }
+        public Color Color { get; private set; }
         public List<ImagenVariacion> Imagenes { get; private set; } = new List<ImagenVariacion>();
 
         protected VariacionCelular() { }
 
-        public VariacionCelular(string color, decimal precio, string almacenamiento, int stockInicial)
+        public VariacionCelular(int colorId, decimal precio, string almacenamiento, int stockInicial)
         {
-            Color = color;
+            ColorId = colorId;
             Precio = precio;
             Almacenamiento = almacenamiento;
             Stock = stockInicial;
@@ -48,7 +49,7 @@ namespace Celumarket.Domain
             if (cantidad <= 0)
                 throw new ArgumentException("La cantidad a bloquear debe ser mayor que cero.");
             if (this.StockDisponible < cantidad)
-                throw new InvalidOperationException($"No hay stock suficiente para bloquear el color {this.Color}");
+                throw new InvalidOperationException($"No hay stock suficiente para bloquear el color {this.Color?.Nombre ?? this.ColorId.ToString()}");
             StockBloqueado += cantidad;
         }
 
@@ -57,7 +58,7 @@ namespace Celumarket.Domain
             if (cantidad <= 0)
                 throw new ArgumentException("La cantidad a liberar debe ser mayor que cero.");
             if (this.StockBloqueado < cantidad)
-                throw new InvalidOperationException($"No hay stock bloqueado suficiente para liberar el color {this.Color}");
+                throw new InvalidOperationException($"No hay stock bloqueado suficiente para liberar el color {this.Color?.Nombre ?? this.ColorId.ToString()}");
             StockBloqueado = Math.Max(StockBloqueado - cantidad, 0);
         }
 
@@ -74,7 +75,7 @@ namespace Celumarket.Domain
             if (cantidad <= 0)
                 throw new ArgumentException("La cantidad a descontar debe ser mayor que cero.");
             if (this.Stock < cantidad)
-                throw new InvalidOperationException($"No hay stock para el color {this.Color}");
+                throw new InvalidOperationException($"No hay stock para el color {this.Color?.Nombre ?? this.ColorId.ToString()}");
 
             StockBloqueado = Math.Max(StockBloqueado - cantidad, 0);
             this.Stock -= cantidad;

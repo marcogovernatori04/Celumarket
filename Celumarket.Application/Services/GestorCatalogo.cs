@@ -66,7 +66,7 @@ namespace Celumarket.Application.Services
             if (celular == null)
                 throw new Exception("Celular no encontrado");
 
-            var nuevaVariacion = celular.AgregarVariacion(dto.Color, dto.Precio, dto.Almacenamiento, dto.StockInicial);
+            var nuevaVariacion = celular.AgregarVariacion(dto.ColorId, dto.Precio, dto.Almacenamiento, dto.StockInicial);
             if (dto.PrecioAnterior.HasValue)
             {
                 nuevaVariacion.ActualizarPrecio(dto.Precio, dto.PrecioAnterior);
@@ -126,7 +126,7 @@ namespace Celumarket.Application.Services
                 Marca = c.Marca,
                 Modelo = c.Modelo,
                 PrecioMinimo = c.Variaciones.Any() ? c.Variaciones.Min(v => v.Precio) : 0,
-                CantidadColores = c.Variaciones.Select(v => v.Color).Distinct().Count(),
+                CantidadColores = c.Variaciones.Select(v => v.ColorId).Distinct().Count(),
                 UrlImagenPrincipal = c.Variaciones.SelectMany(v => v.Imagenes).FirstOrDefault(img => img.EsPrincipal)?.UrlImagen
                                         ?? c.Variaciones.SelectMany(v => v.Imagenes).FirstOrDefault()?.UrlImagen
                                         ?? "https://placehold.co/600x400"
@@ -161,7 +161,9 @@ namespace Celumarket.Application.Services
                 Variaciones = celular.Variaciones.Select(v => new VariacionDetalleDTO
                 {
                     Id = v.Id,
-                    Color = v.Color,
+                    Color = v.Color?.Nombre ?? "",
+                    ColorId = v.ColorId,
+                    ColorHex = v.Color?.Hex,
                     Precio = v.Precio,
                     PrecioAnterior = v.PrecioAnterior,
                     Almacenamiento = v.Almacenamiento,
@@ -199,7 +201,7 @@ namespace Celumarket.Application.Services
                     Modelo = c.Modelo,
                     Precio = variacionBase?.Precio ?? 0,
                     PrecioAnterior = variacionBase?.PrecioAnterior,
-                    CantidadColores = c.Variaciones.Select(v => v.Color).Distinct().Count(),
+                    CantidadColores = c.Variaciones.Select(v => v.ColorId).Distinct().Count(),
                     TextoPromocion = c.TextoPromocion,
                     UrlImagenPrincipal = urlImagen
                 };

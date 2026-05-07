@@ -21,12 +21,12 @@
             Descripcion = descripcion;
         }
 
-        public VariacionCelular AgregarVariacion(string color, decimal precio, string almacenamiento, int stockInicial)
+        public VariacionCelular AgregarVariacion(int colorId, decimal precio, string almacenamiento, int stockInicial)
         {
-            if (Variaciones.Any(v => v.Color.Equals(color, StringComparison.OrdinalIgnoreCase)))
+            if (Variaciones.Any(v => v.ColorId == colorId))
                 throw new InvalidOperationException("Ya existe una variación con ese color.");
 
-            var nuevaVariacion = new VariacionCelular(color, precio, almacenamiento, stockInicial);
+            var nuevaVariacion = new VariacionCelular(colorId, precio, almacenamiento, stockInicial);
             Variaciones.Add(nuevaVariacion);
             return nuevaVariacion;
         }

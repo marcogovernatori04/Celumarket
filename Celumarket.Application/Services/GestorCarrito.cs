@@ -31,7 +31,7 @@ namespace Celumarket.Application.Services
                     VariacionId = i.VariacionId,
                     Marca = i.VariacionCelular.Celular.Marca,
                     Modelo = i.VariacionCelular.Celular.Modelo,
-                    Color = i.VariacionCelular.Color,
+                    Color = i.VariacionCelular.Color.Nombre,
                     Cantidad = i.Cantidad,
                     PrecioUnitario = i.VariacionCelular.Precio,
                     UrlImagen = i.VariacionCelular.Imagenes.FirstOrDefault(img => img.EsPrincipal)?.UrlImagen

@@ -34,6 +34,8 @@ namespace Celumarket.Infrastructure.Repositories
 
             var celulares = await _context.Celulares
                 .Include(c => c.Variaciones)
+                    .ThenInclude(v => v.Color)
+                .Include(c => c.Variaciones)
                     .ThenInclude(v => v.Imagenes)
                 .Skip((pagina - 1) * cantPorPagina)
                 .Take(cantPorPagina)
@@ -46,6 +48,8 @@ namespace Celumarket.Infrastructure.Repositories
         {
             return await _context.Celulares
                 .Include(c => c.Variaciones)
+                    .ThenInclude(v => v.Color)
+                .Include(c => c.Variaciones)
                     .ThenInclude(v => v.Imagenes)
                 .Include(c => c.Especificaciones)
                 .FirstOrDefaultAsync(c => c.Id == id);
@@ -55,6 +59,8 @@ namespace Celumarket.Infrastructure.Repositories
         public async Task<List<Celular>> ObtenerDestacadosAsync(int cantidad)
         {
             return await _context.Celulares
+                .Include(c => c.Variaciones)
+                    .ThenInclude(v => v.Color)
                 .Include(c => c.Variaciones)
                     .ThenInclude(v => v.Imagenes)
                 .Where(c => c.EsDestacado)
