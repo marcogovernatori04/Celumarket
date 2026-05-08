@@ -37,7 +37,7 @@ namespace Celumarket.Application.Services.Pedidos
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items)
+        public async Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, bool stockYaBloqueado = false)
         {
             var metodoPago = await _metodoPagoRepo.ObtenerPorIdAsync(metodoPagoId);
             if (metodoPago == null) throw new Exception("Método de pago no encontrado.");
@@ -49,7 +49,10 @@ namespace Celumarket.Application.Services.Pedidos
             foreach (var item in items)
             {
                 var variacion = await _variacionRepo.ObtenerPorIdAsync(item.VariacionId);
-                variacion.BloquearStock(item.Cantidad);
+                if (!stockYaBloqueado)
+                {
+                    variacion.BloquearStock(item.Cantidad);
+                }
                 nuevoPedido.AgregarLinea(variacion.Id, item.Cantidad, variacion.Precio);
                 subtotal += item.Cantidad * variacion.Precio;
             }

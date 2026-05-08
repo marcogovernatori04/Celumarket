@@ -44,6 +44,9 @@ namespace Celumarket.API.Services
             var pedidoRepo = scope.ServiceProvider.GetRequiredService<IPedidoRepository>();
             var pagoRepo = scope.ServiceProvider.GetRequiredService<IPagoRepository>();
             var gestorPedido = scope.ServiceProvider.GetRequiredService<IGestorPedido>();
+            var gestorReservaCheckout = scope.ServiceProvider.GetRequiredService<IGestorReservaCheckout>();
+
+            await gestorReservaCheckout.ExpirarReservasVencidasAsync(DateTime.UtcNow, cancellationToken);
 
             var vencidos = await pedidoRepo.ObtenerPendientesVencidosAsync(DateTime.UtcNow);
             foreach (var pedido in vencidos)

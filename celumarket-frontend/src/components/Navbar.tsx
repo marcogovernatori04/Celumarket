@@ -10,10 +10,11 @@ type NavbarProps = {
 	estaLogueado?: boolean;
 	nombreCliente?: string | null;
 	onCambiarClave?: () => void;
+	onVerPerfil?: () => void;
 	carritoCantidad?: number;
 };
 
-export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, carritoCantidad = 0 }: NavbarProps) => {
+export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, carritoCantidad = 0 }: NavbarProps) => {
 	const [menuAbierto, setMenuAbierto] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -59,6 +60,9 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 							</button>
 							{menuAbierto && (
 								<div className="absolute right-0 mt-2 w-44 rounded-md border border-gray-200 bg-white py-1 shadow-lg z-20">
+									<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+										Mi perfil
+									</button>
 									<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
 										Cambiar clave
 									</button>

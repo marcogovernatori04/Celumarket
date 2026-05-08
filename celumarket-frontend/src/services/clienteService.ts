@@ -1,7 +1,10 @@
 import { api } from "./api";
 
-type MiPerfil = {
+export type MiPerfil = {
 	nombreCompleto: string;
+	email?: string;
+	telefono?: string;
+	dni?: string;
 	direccionCompleta?: string | null;
 	codigoPostalDireccion?: number | null;
 };

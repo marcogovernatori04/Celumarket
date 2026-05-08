@@ -10,7 +10,7 @@ namespace Celumarket.Application.Interfaces.Services
 {
     public interface IGestorPedido
     {
-        Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items);
+        Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, bool stockYaBloqueado = false);
         Task ConfirmarPagoAsync(int pedidoId);
         Task CancelarPedidoAsync(int pedidoId);
     }

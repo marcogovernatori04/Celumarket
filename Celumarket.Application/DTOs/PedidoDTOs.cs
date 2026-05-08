@@ -35,5 +35,12 @@ namespace Celumarket.Application.DTOs
             public TipoEnvio TipoEnvio { get; set; }
         }
 
+        public class ReservaCheckoutDTO
+        {
+            public int ReservaId { get; set; }
+            public DateTime FechaVencimientoUtc { get; set; }
+            public int SegundosRestantes { get; set; }
+        }
+
     }
 }

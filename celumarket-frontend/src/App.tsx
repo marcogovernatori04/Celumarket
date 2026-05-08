@@ -6,13 +6,14 @@ import { DetalleCelular } from "./pages/DetalleCelular";
 import { Login } from "./pages/Login";
 import { Carrito } from "./pages/Carrito";
 import { CambiarClave } from "./pages/CambiarClave";
+import { MiPerfil } from "./pages/MiPerfil";
 import { authService } from "./services/authService";
 import { NavbarLogin } from "./components/NavbarLogin";
 import { clienteService } from "./services/clienteService";
 import { carritoService } from "./services/carritoService";
 
 function App() {
-	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "cambiar-clave">("landing");
+	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "cambiar-clave" | "mi-perfil">("landing");
 	const [celularSeleccionadoId, setCelularSeleccionadoId] = useState<number | null>(null);
 	const [estaLogueado, setEstaLogueado] = useState(authService.estaLogueado());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
@@ -85,6 +86,7 @@ function App() {
 					onIrATienda={() => setVista("catalogo")}
 					onIrAInicio={() => setVista("landing")}
 					onIrALogin={() => setVista("login")}
+					onVerPerfil={() => setVista("mi-perfil")}
 					onCambiarClave={() => setVista("cambiar-clave")}
 					onIrACarrito={() => setVista(estaLogueado ? "carrito" : "login")}
 					onLogout={() => {
@@ -125,6 +127,7 @@ function App() {
 					/>
 				)}
 				{vista === "cambiar-clave" && <CambiarClave onVolver={() => setVista("landing")} />}
+				{vista === "mi-perfil" && <MiPerfil />}
 			</main>
 		</div>
 	);

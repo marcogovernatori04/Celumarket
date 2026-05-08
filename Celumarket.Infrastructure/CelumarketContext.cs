@@ -16,6 +16,8 @@ namespace Celumarket.Infrastructure
         public DbSet<VariacionCelular> Variaciones { get; set; }
         public DbSet<ImagenVariacion> ImagenesVariacion { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<ReservaCheckout> ReservasCheckout { get; set; }
+        public DbSet<ReservaCheckoutItem> ReservasCheckoutItems { get; set; }
         public DbSet<LineaPedido> LineasPedido { get; set; }
         public DbSet<Pago> Pagos { get; set; }
         public DbSet<MetodoPago> MetodosPago { get; set; }
@@ -113,6 +115,24 @@ namespace Celumarket.Infrastructure
                 .HasOne<Cliente>()
                 .WithMany()
                 .HasForeignKey(p => p.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReservaCheckout>()
+                .HasOne<Cliente>()
+                .WithMany()
+                .HasForeignKey(r => r.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReservaCheckoutItem>()
+                .HasOne<ReservaCheckout>()
+                .WithMany(r => r.Items)
+                .HasForeignKey(i => i.ReservaCheckoutId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ReservaCheckoutItem>()
+                .HasOne(i => i.VariacionCelular)
+                .WithMany()
+                .HasForeignKey(i => i.VariacionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Pedido>(p =>
