@@ -2,19 +2,23 @@ import { useEffect, useMemo, useState } from "react";
 import { Footer } from "../components/Footer";
 import { clienteService } from "../services/clienteService";
 import { pedidoService, type MetodoPago } from "../services/pedidoService";
+import { carritoService, type ItemCarrito } from "../services/carritoService";
 import { CheckoutEnvioStep, type DatosEnvio } from "../components/checkout/CheckoutEnvioStep";
 import { CheckoutFacturacionStep, type DatosFacturacion } from "../components/checkout/CheckoutFacturacionStep";
 import { CheckoutPagoStep } from "../components/checkout/CheckoutPagoStep";
 
 type CheckoutProps = {
-	reservaVencimientoUtc: string;
+	reservaSegundosIniciales: number;
 	onVolverCarrito: () => void;
 };
 
-export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutProps) => {
+export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito }: CheckoutProps) => {
+	const UMBRAL_ENVIO_GRATIS = 499999;
 	const [loading, setLoading] = useState(true);
 	const [step, setStep] = useState<1 | 2 | 3>(1);
 	const [metodos, setMetodos] = useState<MetodoPago[]>([]);
+	const [carritoItems, setCarritoItems] = useState<ItemCarrito[]>([]);
+	const [subtotalCarrito, setSubtotalCarrito] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [segundosRestantes, setSegundosRestantes] = useState(0);
 	const [datosEnvio, setDatosEnvio] = useState<DatosEnvio | null>(null);
@@ -37,9 +41,10 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 	useEffect(() => {
 		const cargar = async () => {
 			try {
-				const [perfil, metodosData] = await Promise.all([
+				const [perfil, metodosData, carrito] = await Promise.all([
 					clienteService.obtenerMiPerfil(),
 					pedidoService.obtenerMetodosPago(),
+					carritoService.obtener(),
 				]);
 
 				setFacturacionInicial({
@@ -58,9 +63,23 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 						provincia: perfil.provinciaDireccion,
 						codigoPostal: perfil.codigoPostalDireccion,
 					});
+				} else if (perfil.direccionCompleta && perfil.codigoPostalDireccion) {
+					const match = perfil.direccionCompleta.match(/^(.+?)\s+(\d+)(?:\s*-\s*([^,]+))?,\s*([^,]+),\s*([^(]+)\s*\((\d+)\)$/);
+					if (match) {
+						setDireccionInicial({
+							calle: match[1].trim(),
+							numero: match[2].trim(),
+							pisoDepto: match[3]?.trim() ?? "",
+							localidad: match[4].trim(),
+							provincia: match[5].trim(),
+							codigoPostal: Number(match[6]),
+						});
+					}
 				}
 
 				setMetodos(metodosData);
+				setCarritoItems(carrito.items);
+				setSubtotalCarrito(carrito.total);
 			} catch {
 				setError("No se pudo cargar el checkout.");
 			} finally {
@@ -71,14 +90,15 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 	}, []);
 
 	useEffect(() => {
-		const tick = () => {
-			const diff = Math.floor((new Date(reservaVencimientoUtc).getTime() - Date.now()) / 1000);
-			setSegundosRestantes(Math.max(0, diff));
-		};
-		tick();
-		const timer = setInterval(tick, 1000);
+		setSegundosRestantes(Math.max(0, reservaSegundosIniciales));
+	}, [reservaSegundosIniciales]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setSegundosRestantes((prev) => Math.max(0, prev - 1));
+		}, 1000);
 		return () => clearInterval(timer);
-	}, [reservaVencimientoUtc]);
+	}, []);
 
 	const resumenEnvio = useMemo(() => {
 		if (!datosEnvio) return "";
@@ -87,7 +107,9 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 			return `Domicilio: ${d?.calle} ${d?.numero}${d?.pisoDepto ? ` - ${d.pisoDepto}` : ""}, ${d?.localidad}, ${d?.provincia} (CP ${d?.codigoPostal}).`;
 		}
 		if (datosEnvio.tipoEnvio === "sucursal-correo") {
-			return `Sucursal de correo para CP ${datosEnvio.tarifa?.codigoPostal ?? "-"}.`;
+			const t = datosEnvio.tarifa;
+			if (!t) return "Sucursal de correo.";
+			return `Sucursal de correo: ${t.sucursalCorreoCalle} ${t.sucursalCorreoNumero}${t.sucursalCorreoPisoDepto ? ` - ${t.sucursalCorreoPisoDepto}` : ""}, ${t.sucursalCorreoLocalidad}, ${t.sucursalCorreoProvincia} (CP ${t.sucursalCorreoCodigoPostal}).`;
 		}
 		return "Retiro en sucursal: Mitre 333 - San Nicolás de los Arroyos, Buenos Aires.";
 	}, [datosEnvio]);
@@ -97,18 +119,38 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 		return `${datosFacturacion.nombreCompleto} | DNI ${datosFacturacion.dni} | ${datosFacturacion.email} | ${datosFacturacion.telefono}`;
 	}, [datosFacturacion]);
 
+	const costoEnvioSeleccionado = useMemo(() => {
+		if (!datosEnvio?.tarifa) return 0;
+		if (subtotalCarrito >= UMBRAL_ENVIO_GRATIS) return 0;
+		if (datosEnvio.tipoEnvio === "domicilio") return datosEnvio.tarifa.precioDomicilio;
+		if (datosEnvio.tipoEnvio === "sucursal-correo") return datosEnvio.tarifa.precioSucursal;
+		return 0;
+	}, [datosEnvio, subtotalCarrito]);
+
+	const tiempoReservaFormateado = useMemo(() => {
+		const mm = Math.floor(segundosRestantes / 60).toString().padStart(2, "0");
+		const ss = (segundosRestantes % 60).toString().padStart(2, "0");
+		return `${mm}:${ss}`;
+	}, [segundosRestantes]);
+
 	return (
 		<div className="min-h-screen bg-[#f5f5f5] flex flex-col">
 			<section className="mx-auto w-full max-w-[1120px] flex-1 px-6 py-8">
 				<h1 className="text-[34px] font-extrabold leading-none text-[#001830]">Checkout</h1>
-				<div className="mt-5 rounded-xl border border-[#dfe5eb] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-					<div className="flex items-center gap-3 text-sm">
-						<span className={`rounded-full px-3 py-1 font-semibold ${step >= 1 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>1 Envío</span>
+				<div className="mt-4 rounded-xl border border-[#dfe5eb] bg-white px-3.5 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+					<div className="flex items-center gap-2.5 text-[13px]">
+						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 1 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>1 Envío</span>
 						<span className="text-[#9ca3af]">•</span>
-						<span className={`rounded-full px-3 py-1 font-semibold ${step >= 2 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>2 Facturación</span>
+						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 2 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>2 Facturación</span>
 						<span className="text-[#9ca3af]">•</span>
-						<span className={`rounded-full px-3 py-1 font-semibold ${step >= 3 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>3 Pago</span>
+						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 3 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>3 Pago</span>
 					</div>
+					<p className="mt-1.5 text-[13px] text-[#1e1e1e]">
+						Reserva activa:{" "}
+						<span className={segundosRestantes <= 0 ? "font-semibold text-red-600" : "font-semibold text-[#001830]"}>
+							{tiempoReservaFormateado}
+						</span>
+					</p>
 				</div>
 				{error && <p className="mt-2 text-red-600">{error}</p>}
 				{loading ? (
@@ -118,6 +160,9 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 						{step === 1 && (
 							<CheckoutEnvioStep
 								direccionInicial={direccionInicial}
+								onVolverCarrito={onVolverCarrito}
+								carritoItems={carritoItems}
+								subtotal={subtotalCarrito}
 								onContinuar={(datos) => {
 									setDatosEnvio(datos);
 									setStep(2);
@@ -128,6 +173,10 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 							<CheckoutFacturacionStep
 								initialData={datosFacturacion ?? facturacionInicial}
 								resumenEnvio={resumenEnvio}
+								onVolverCarrito={onVolverCarrito}
+								carritoItems={carritoItems}
+								subtotal={subtotalCarrito}
+								costoEnvio={costoEnvioSeleccionado}
 								onVolver={() => setStep(1)}
 								onContinuar={(data) => {
 									setDatosFacturacion(data);
@@ -142,6 +191,11 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 								datosEnvio={datosEnvio}
 								resumenEnvio={resumenEnvio}
 								resumenFacturacion={resumenFacturacion}
+								onVolverCarrito={onVolverCarrito}
+								carritoItems={carritoItems}
+								subtotal={subtotalCarrito}
+								costoEnvio={costoEnvioSeleccionado}
+								datosFacturacion={datosFacturacion ?? facturacionInicial}
 								onVolver={() => setStep(2)}
 								onExito={(pedidoId) => {
 									alert(`Pedido #${pedidoId} generado correctamente.`);
@@ -149,7 +203,6 @@ export const Checkout = ({ reservaVencimientoUtc, onVolverCarrito }: CheckoutPro
 								}}
 							/>
 						)}
-						<button onClick={onVolverCarrito} className="mt-6 h-[40px] rounded-lg border border-[#001830] px-5 text-[#001830] hover:bg-[#eef4fb] transition-colors">Volver al carrito</button>
 					</div>
 				)}
 			</section>

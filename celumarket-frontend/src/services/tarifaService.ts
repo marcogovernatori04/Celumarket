@@ -5,6 +5,12 @@ export type TarifaPorCodigoPostal = {
 	precioDomicilio: number;
 	precioSucursal: number;
 	diasDemora: number;
+	sucursalCorreoCalle: string;
+	sucursalCorreoNumero: string;
+	sucursalCorreoPisoDepto: string;
+	sucursalCorreoLocalidad: string;
+	sucursalCorreoProvincia: string;
+	sucursalCorreoCodigoPostal: number;
 };
 
 export const tarifaService = {

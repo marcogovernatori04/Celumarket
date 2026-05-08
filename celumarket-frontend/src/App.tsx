@@ -8,6 +8,7 @@ import { Carrito } from "./pages/Carrito";
 import { Checkout } from "./pages/Checkout";
 import { CambiarClave } from "./pages/CambiarClave";
 import { MiPerfil } from "./pages/MiPerfil";
+import { MisPedidos } from "./pages/MisPedidos";
 import { authService } from "./services/authService";
 import { NavbarLogin } from "./components/NavbarLogin";
 import { clienteService } from "./services/clienteService";
@@ -15,13 +16,14 @@ import { carritoService } from "./services/carritoService";
 import type { ReservaCheckout } from "./services/pedidoService";
 
 function App() {
-	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "checkout" | "cambiar-clave" | "mi-perfil">("landing");
+	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "checkout" | "cambiar-clave" | "mi-perfil" | "mis-pedidos">("landing");
 	const [celularSeleccionadoId, setCelularSeleccionadoId] = useState<number | null>(null);
 	const [estaLogueado, setEstaLogueado] = useState(authService.estaLogueado());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
 	const [carritoCantidad, setCarritoCantidad] = useState(0);
 	const [toastCarrito, setToastCarrito] = useState<string | null>(null);
-	const [checkoutReservaVencimientoUtc, setCheckoutReservaVencimientoUtc] = useState<string | null>(null);
+	const [checkoutConReserva, setCheckoutConReserva] = useState(false);
+	const [checkoutReservaSegundosRestantes, setCheckoutReservaSegundosRestantes] = useState<number>(0);
 
 	const irADetalle = (celularId: number) => {
 		setCelularSeleccionadoId(celularId);
@@ -82,6 +84,7 @@ function App() {
 					onIrAInicio={() => setVista("landing")}
 					onIrALogin={() => setVista("login")}
 					onVerPerfil={() => setVista("mi-perfil")}
+					onVerMisPedidos={() => setVista("mis-pedidos")}
 					onCambiarClave={() => setVista("cambiar-clave")}
 					onIrACarrito={() => setVista(estaLogueado ? "carrito" : "login")}
 					onLogout={() => {
@@ -118,19 +121,21 @@ function App() {
 					<Carrito
 						onCambioCarrito={recargarCarritoCantidad}
 						onIrACheckout={(reserva: ReservaCheckout) => {
-							setCheckoutReservaVencimientoUtc(reserva.fechaVencimientoUtc);
+							setCheckoutReservaSegundosRestantes(reserva.segundosRestantes);
+							setCheckoutConReserva(true);
 							setVista("checkout");
 						}}
 					/>
 				)}
-				{vista === "checkout" && checkoutReservaVencimientoUtc && (
+				{vista === "checkout" && checkoutConReserva && (
 					<Checkout
-						reservaVencimientoUtc={checkoutReservaVencimientoUtc}
+						reservaSegundosIniciales={checkoutReservaSegundosRestantes}
 						onVolverCarrito={() => setVista("carrito")}
 					/>
 				)}
 				{vista === "cambiar-clave" && <CambiarClave onVolver={() => setVista("landing")} />}
 				{vista === "mi-perfil" && <MiPerfil />}
+				{vista === "mis-pedidos" && <MisPedidos />}
 			</main>
 		</div>
 	);

@@ -55,6 +55,16 @@ namespace Celumarket.Domain
             Estado = EstadoReservaCheckout.Consumida;
         }
 
+        public void ReiniciarVencimiento(int minutosReserva)
+        {
+            if (Estado != EstadoReservaCheckout.Activa)
+                throw new InvalidOperationException("Solo una reserva activa puede reiniciar vencimiento.");
+            if (minutosReserva <= 0)
+                throw new ArgumentException("El plazo de reserva debe ser mayor a cero.");
+
+            FechaVencimientoUtc = DateTime.UtcNow.AddMinutes(minutosReserva);
+        }
+
         public void MarcarVencida()
         {
             if (Estado != EstadoReservaCheckout.Activa) return;

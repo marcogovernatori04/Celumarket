@@ -28,7 +28,13 @@ namespace Celumarket.API.Controllers
                 tarifa.CodigoPostal,
                 tarifa.PrecioDomicilio,
                 tarifa.PrecioSucursal,
-                tarifa.DiasDemora
+                tarifa.DiasDemora,
+                tarifa.SucursalCorreoCalle,
+                tarifa.SucursalCorreoNumero,
+                tarifa.SucursalCorreoPisoDepto,
+                tarifa.SucursalCorreoLocalidad,
+                tarifa.SucursalCorreoProvincia,
+                tarifa.SucursalCorreoCodigoPostal
             });
         }
     }

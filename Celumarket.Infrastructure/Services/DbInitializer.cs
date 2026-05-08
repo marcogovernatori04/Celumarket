@@ -70,13 +70,25 @@ namespace Celumarket.Infrastructure.Services
             if (!await context.TarifasZonales.AnyAsync())
             {
                 context.TarifasZonales.AddRange(
-                    new TarifaZonal(2700, 11784.65m, 8040.48m, 3),
-                    new TarifaZonal(2000, 10444.76m, 5918.38m, 2),
-                    new TarifaZonal(2930, 13541.45m, 8040.48m, 4),
-                    new TarifaZonal(2919, 10444.76m, 5918.38m, 2),
-                    new TarifaZonal(2740, 11784.65m, 8040.48m, 4)
+                    new TarifaZonal(2700, 11784.65m, 8040.48m, 3, "Av. Hipólito Irigoyen", "845", "", "Pergamino", "Buenos Aires", 2700),
+                    new TarifaZonal(2000, 10444.76m, 5918.38m, 2, "Av. San Martín", "2127", "", "Rosario", "Buenos Aires", 2000),
+                    new TarifaZonal(2930, 13541.45m, 8040.48m, 4, "Av. Domingo Faustino Sarmiento", "2249", "", "San Pedro", "Buenos Aires", 2930),
+                    new TarifaZonal(2919, 10444.76m, 5918.38m, 2, "Colón", "1489", "(Punto Hop)", "Villa Constitución", "Buenos Aires", 2919),
+                    new TarifaZonal(2740, 11784.65m, 8040.48m, 4, "Av. J. A. Molina", "155", "(Punto Hop)", "Arrecifes", "Buenos Aires", 2740)
                     );
 
+                await context.SaveChangesAsync();
+            }
+
+            var configSistema = await context.ConfiguracionesSistema.FirstOrDefaultAsync();
+            if (configSistema == null)
+            {
+                context.ConfiguracionesSistema.Add(new ConfiguracionSistema(10m, 499999m));
+                await context.SaveChangesAsync();
+            }
+            else if (configSistema.UmbralEnvioGratis != 499999m)
+            {
+                configSistema.Actualizar(configSistema.DescuentoTransferencia, 499999m);
                 await context.SaveChangesAsync();
             }
 

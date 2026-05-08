@@ -34,6 +34,15 @@ export type CheckoutResponse = {
 	mensaje: string;
 };
 
+export type MisPedidosItem = {
+	id: number;
+	fechaPedido?: string;
+	fechaCreacion?: string;
+	montoTotal: number;
+	estado?: string;
+	estadoPedido?: string;
+};
+
 export const pedidoService = {
 	async iniciarCompra(): Promise<ReservaCheckout> {
 		const { data } = await api.post<ReservaCheckout>("/Pedidos/iniciar-compra");
@@ -47,6 +56,11 @@ export const pedidoService = {
 
 	async checkout(payload: CheckoutPayload): Promise<CheckoutResponse> {
 		const { data } = await api.post<CheckoutResponse>("/Pedidos/checkout", payload);
+		return data;
+	},
+
+	async obtenerMisPedidos(): Promise<MisPedidosItem[]> {
+		const { data } = await api.get<MisPedidosItem[]>("/Pedidos/mis-pedidos");
 		return data;
 	},
 };

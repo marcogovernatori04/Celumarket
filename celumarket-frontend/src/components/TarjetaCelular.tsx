@@ -61,7 +61,7 @@ export const TarjetaCelular = ({ producto, onClick }: TarjetaCelularProps) => {
 			</div>
 
 			{producto.precio >= 499999 ? (
-				<span className="mt-1 inline-flex w-fit rounded-full bg-green-100 px-2 py-1 text-[12px] font-semibold text-green-700">
+				<span className="mt-1 inline-flex w-fit rounded-full bg-[#E7F7EE] px-2 py-1 text-[12px] font-semibold text-[#1E8E5A]">
 					Envío gratis
 				</span>
 			) : (

@@ -115,8 +115,8 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout }: CarritoProps) => {
 							>
 								{iniciandoCompra ? "Iniciando..." : "Iniciar compra"}
 							</button>
-							<div className="mt-4 rounded-md bg-[#001830] p-4 text-white shadow-[0_2px_6px_rgba(0,0,0,0.2)]">
-								<p className="text-[16px] leading-tight">En el checkout vas a elegir envío, datos de facturación y método de pago.</p>
+							<div className="mt-4 rounded-md border border-[#cfe0f3] bg-[#eef5fd] p-4 text-[#1f3f62] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+								<p className="text-[15px] leading-tight">Información: en el checkout vas a elegir envío, datos de facturación y método de pago.</p>
 							</div>
 						</div>
 					</div>

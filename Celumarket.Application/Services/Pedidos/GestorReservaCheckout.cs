@@ -31,6 +31,24 @@ namespace Celumarket.Application.Services.Pedidos
             {
                 if (!activa.EstaVencida())
                 {
+                    foreach (var itemAnterior in activa.Items.ToList())
+                    {
+                        var variacionAnterior = await _variacionRepo.ObtenerPorIdAsync(itemAnterior.VariacionId);
+                        variacionAnterior.LiberarBloqueo(itemAnterior.Cantidad);
+                    }
+
+                    activa.Items.Clear();
+
+                    foreach (var item in items)
+                    {
+                        var variacion = await _variacionRepo.ObtenerPorIdAsync(item.VariacionId);
+                        variacion.BloquearStock(item.Cantidad);
+                        activa.AgregarItem(item.VariacionId, item.Cantidad);
+                    }
+
+                    activa.ReiniciarVencimiento(MinutosReservaCheckout);
+                    await _unitOfWork.GuardarAsync();
+
                     var restantes = (int)Math.Max(0, Math.Ceiling((activa.FechaVencimientoUtc - DateTime.UtcNow).TotalSeconds));
                     return new PedidoDTOs.ReservaCheckoutDTO
                     {

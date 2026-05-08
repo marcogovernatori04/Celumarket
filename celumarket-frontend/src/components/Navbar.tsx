@@ -11,10 +11,11 @@ type NavbarProps = {
 	nombreCliente?: string | null;
 	onCambiarClave?: () => void;
 	onVerPerfil?: () => void;
+	onVerMisPedidos?: () => void;
 	carritoCantidad?: number;
 };
 
-export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, carritoCantidad = 0 }: NavbarProps) => {
+export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, onVerMisPedidos, carritoCantidad = 0 }: NavbarProps) => {
 	const [menuAbierto, setMenuAbierto] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,22 +56,43 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 				<div className="flex items-center gap-4">
 					{estaLogueado && (
 						<div ref={menuRef} className="relative">
-							<button onClick={() => setMenuAbierto((v) => !v)} className="text-sm text-[#1e1e1e] whitespace-nowrap rounded px-2 py-1 hover:bg-[#dce2e9]">
-								Hola, {nombreCliente ?? "Cliente"}
+							<button
+								onClick={() => setMenuAbierto((v) => !v)}
+								aria-expanded={menuAbierto}
+								className="inline-flex items-center gap-1.5 text-sm text-[#1e1e1e] whitespace-nowrap rounded px-2 py-1 hover:bg-[#dce2e9] transition-colors"
+							>
+								<span>Hola, {nombreCliente ?? "Cliente"}</span>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									className={`transition-transform duration-200 ${menuAbierto ? "rotate-180" : "rotate-0"}`}
+								>
+									<path d="m6 9 6 6 6-6"></path>
+								</svg>
 							</button>
-							{menuAbierto && (
-								<div className="absolute right-0 mt-2 w-44 rounded-md border border-gray-200 bg-white py-1 shadow-lg z-20">
-									<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
-										Mi perfil
-									</button>
-									<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
-										Cambiar clave
-									</button>
-									<button onClick={() => { setMenuAbierto(false); onLogout?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
-										Cerrar sesión
-									</button>
-								</div>
-							)}
+							<div
+								className={`absolute right-0 mt-2 w-44 origin-top rounded-md border border-gray-200 bg-white py-1 shadow-lg z-20 transition-all duration-200 ${menuAbierto ? "pointer-events-auto opacity-100 scale-y-100 translate-y-0" : "pointer-events-none opacity-0 scale-y-95 -translate-y-1"}`}
+							>
+								<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+									Mi perfil
+								</button>
+								<button onClick={() => { setMenuAbierto(false); onVerMisPedidos?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+									Mis pedidos
+								</button>
+								<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+									Cambiar clave
+								</button>
+								<button onClick={() => { setMenuAbierto(false); onLogout?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#b42318] hover:bg-[#fff1f0]">
+									Cerrar sesión
+								</button>
+							</div>
 						</div>
 					)}
 					<button onClick={onIrACarrito} className="relative cursor-pointer bg-[#015cb9] text-white p-2.5 rounded-full hover:bg-[#017AF4] transition-colors flex items-center justify-center">
