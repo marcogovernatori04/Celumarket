@@ -44,6 +44,11 @@
             public string Dni { get; set; }
             public string? DireccionCompleta { get; set; }
             public int? CodigoPostalDireccion { get; set; }
+            public string? CalleDireccion { get; set; }
+            public string? NumeroDireccion { get; set; }
+            public string? PisoDeptoDireccion { get; set; }
+            public string? LocalidadDireccion { get; set; }
+            public string? ProvinciaDireccion { get; set; }
         }
 
         public class CambiarClaveDTO

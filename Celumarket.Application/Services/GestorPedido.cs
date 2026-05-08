@@ -18,8 +18,8 @@ namespace Celumarket.Application.Services
             _cancelacionService = cancelacionService;
         }
 
-        public Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, bool stockYaBloqueado = false)
-            => _creacionService.GenerarPedidoAsync(clienteId, metodoPagoId, tipoEnvio, items, stockYaBloqueado);
+        public Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, Direccion? direccionEntregaOverride = null, bool stockYaBloqueado = false)
+            => _creacionService.GenerarPedidoAsync(clienteId, metodoPagoId, tipoEnvio, items, direccionEntregaOverride, stockYaBloqueado);
 
         public Task ConfirmarPagoAsync(int pedidoId)
             => _pagoService.ConfirmarPagoAsync(pedidoId);

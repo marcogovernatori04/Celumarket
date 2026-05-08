@@ -5,6 +5,6 @@ namespace Celumarket.Application.Interfaces.Services
 {
     public interface IGestorCreacionPedido
     {
-        Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, bool stockYaBloqueado = false);
+        Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, Direccion? direccionEntregaOverride = null, bool stockYaBloqueado = false);
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Linq;
 
 namespace Celumarket.API.Controllers
 {
@@ -48,6 +49,14 @@ namespace Celumarket.API.Controllers
         }
 
         [Authorize(Roles = "Cliente")]
+        [HttpGet("metodos-pago")]
+        public async Task<IActionResult> ObtenerMetodosPago()
+        {
+            var metodos = await _metodoPagoRepo.ObtenerTodosAsync();
+            return Ok(metodos.Select(m => new { m.Id, m.Nombre, m.MinutosPlazo }));
+        }
+
+        [Authorize(Roles = "Cliente")]
         [HttpPost("iniciar-compra")]
         public async Task<IActionResult> IniciarCompra()
         {
@@ -85,7 +94,19 @@ namespace Celumarket.API.Controllers
                 })
                 .ToList();
 
-            int pedidoId = await _gestorPedido.GenerarPedidoAsync(clienteId, request.MetodoPagoId, request.TipoEnvio, itemsDesdeReserva, stockYaBloqueado: true);
+            Direccion? direccionEntrega = null;
+            if (request.DireccionEntrega != null)
+            {
+                direccionEntrega = new Direccion(
+                    request.DireccionEntrega.Calle,
+                    request.DireccionEntrega.Numero,
+                    request.DireccionEntrega.PisoDepto ?? string.Empty,
+                    request.DireccionEntrega.Localidad,
+                    request.DireccionEntrega.Provincia,
+                    request.DireccionEntrega.CodigoPostal);
+            }
+
+            int pedidoId = await _gestorPedido.GenerarPedidoAsync(clienteId, request.MetodoPagoId, request.TipoEnvio, itemsDesdeReserva, direccionEntrega, stockYaBloqueado: true);
             reservaActiva.MarcarConsumida();
             await _gestorCarrito.VaciarCarritoAsync(clienteId);
 

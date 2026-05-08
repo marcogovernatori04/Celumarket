@@ -37,7 +37,7 @@ namespace Celumarket.Application.Services.Pedidos
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, bool stockYaBloqueado = false)
+        public async Task<int> GenerarPedidoAsync(int clienteId, int metodoPagoId, TipoEnvio tipoEnvio, List<CarritoDTOs.ItemCarritoDTO> items, Direccion? direccionEntregaOverride = null, bool stockYaBloqueado = false)
         {
             var metodoPago = await _metodoPagoRepo.ObtenerPorIdAsync(metodoPagoId);
             if (metodoPago == null) throw new Exception("Método de pago no encontrado.");
@@ -63,8 +63,9 @@ namespace Celumarket.Application.Services.Pedidos
             if (diferenciaDescuento > 0) nuevoPedido.AplicarDescuento(diferenciaDescuento);
 
             nuevoPedido.AsignarTipoEnvio(tipoEnvio);
-            nuevoPedido.AsignarDireccion(cliente.Direccion);
-            decimal costoEnvio = await _gestorEnvio.CalcularCostoEnvioAsync(cliente.Direccion.CodigoPostal, totalConDescuento, tipoEnvio);
+            var direccionEntrega = direccionEntregaOverride ?? cliente.Direccion;
+            nuevoPedido.AsignarDireccion(direccionEntrega);
+            decimal costoEnvio = await _gestorEnvio.CalcularCostoEnvioAsync(direccionEntrega.CodigoPostal, totalConDescuento, tipoEnvio);
             if (costoEnvio > 0) nuevoPedido.AgregarCostoEnvio(costoEnvio);
 
             await _pedidoRepo.AgregarAsync(nuevoPedido);

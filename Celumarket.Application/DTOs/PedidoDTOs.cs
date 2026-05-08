@@ -33,6 +33,17 @@ namespace Celumarket.Application.DTOs
         {
             public int MetodoPagoId { get; set; }
             public TipoEnvio TipoEnvio { get; set; }
+            public DireccionCheckoutDTO? DireccionEntrega { get; set; }
+        }
+
+        public class DireccionCheckoutDTO
+        {
+            public string Calle { get; set; } = string.Empty;
+            public string Numero { get; set; } = string.Empty;
+            public string? PisoDepto { get; set; }
+            public string Localidad { get; set; } = string.Empty;
+            public string Provincia { get; set; } = string.Empty;
+            public int CodigoPostal { get; set; }
         }
 
         public class ReservaCheckoutDTO

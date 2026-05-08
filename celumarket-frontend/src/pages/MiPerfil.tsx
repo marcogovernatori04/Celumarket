@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { clienteService, type MiPerfil } from "../services/clienteService";
+import { clienteService, type MiPerfil as MiPerfilData } from "../services/clienteService";
 import { Footer } from "../components/Footer";
 
 export const MiPerfil = () => {
-	const [perfil, setPerfil] = useState<MiPerfil | null>(null);
+	const [perfil, setPerfil] = useState<MiPerfilData | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {

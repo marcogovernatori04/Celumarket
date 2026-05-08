@@ -5,22 +5,23 @@ import { Catalogo } from "./pages/Catalogo";
 import { DetalleCelular } from "./pages/DetalleCelular";
 import { Login } from "./pages/Login";
 import { Carrito } from "./pages/Carrito";
+import { Checkout } from "./pages/Checkout";
 import { CambiarClave } from "./pages/CambiarClave";
 import { MiPerfil } from "./pages/MiPerfil";
 import { authService } from "./services/authService";
 import { NavbarLogin } from "./components/NavbarLogin";
 import { clienteService } from "./services/clienteService";
 import { carritoService } from "./services/carritoService";
+import type { ReservaCheckout } from "./services/pedidoService";
 
 function App() {
-	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "cambiar-clave" | "mi-perfil">("landing");
+	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "checkout" | "cambiar-clave" | "mi-perfil">("landing");
 	const [celularSeleccionadoId, setCelularSeleccionadoId] = useState<number | null>(null);
 	const [estaLogueado, setEstaLogueado] = useState(authService.estaLogueado());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
-	const [direccionCliente, setDireccionCliente] = useState<string | null>(null);
-	const [codigoPostalDireccionCliente, setCodigoPostalDireccionCliente] = useState<number | null>(null);
 	const [carritoCantidad, setCarritoCantidad] = useState(0);
 	const [toastCarrito, setToastCarrito] = useState<string | null>(null);
+	const [checkoutReservaVencimientoUtc, setCheckoutReservaVencimientoUtc] = useState<string | null>(null);
 
 	const irADetalle = (celularId: number) => {
 		setCelularSeleccionadoId(celularId);
@@ -45,20 +46,14 @@ function App() {
 		const cargarPerfil = async () => {
 			if (!estaLogueado) {
 				setNombreCliente(null);
-				setDireccionCliente(null);
-				setCodigoPostalDireccionCliente(null);
 				return;
 			}
 			try {
 				const perfil = await clienteService.obtenerMiPerfil();
 				const primerNombre = perfil.nombreCompleto?.trim().split(" ")[0] ?? null;
 				setNombreCliente(primerNombre);
-				setDireccionCliente(perfil.direccionCompleta ?? null);
-				setCodigoPostalDireccionCliente(perfil.codigoPostalDireccion ?? null);
 			} catch {
 				setNombreCliente(null);
-				setDireccionCliente(null);
-				setCodigoPostalDireccionCliente(null);
 			}
 		};
 		void cargarPerfil();
@@ -79,7 +74,7 @@ function App() {
 				<NavbarLogin onIrAInicio={() => setVista("landing")} />
 			) : (
 				<Navbar
-					enTienda={vista === "catalogo" || vista === "detalle" || vista === "carrito"}
+					enTienda={vista === "catalogo" || vista === "detalle" || vista === "carrito" || vista === "checkout"}
 					estaLogueado={estaLogueado}
 					nombreCliente={nombreCliente}
 					carritoCantidad={carritoCantidad}
@@ -122,8 +117,16 @@ function App() {
 				{vista === "carrito" && (
 					<Carrito
 						onCambioCarrito={recargarCarritoCantidad}
-						direccionCliente={direccionCliente}
-						codigoPostalDireccionCliente={codigoPostalDireccionCliente}
+						onIrACheckout={(reserva: ReservaCheckout) => {
+							setCheckoutReservaVencimientoUtc(reserva.fechaVencimientoUtc);
+							setVista("checkout");
+						}}
+					/>
+				)}
+				{vista === "checkout" && checkoutReservaVencimientoUtc && (
+					<Checkout
+						reservaVencimientoUtc={checkoutReservaVencimientoUtc}
+						onVolverCarrito={() => setVista("carrito")}
 					/>
 				)}
 				{vista === "cambiar-clave" && <CambiarClave onVolver={() => setVista("landing")} />}

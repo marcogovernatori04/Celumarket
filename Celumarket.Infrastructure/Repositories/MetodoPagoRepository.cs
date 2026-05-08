@@ -21,5 +21,10 @@ namespace Celumarket.Infrastructure.Repositories
         {
             return await _context.MetodosPago.FindAsync(id);
         }
+
+        public async Task<List<MetodoPago>> ObtenerTodosAsync()
+        {
+            return await Task.FromResult(_context.MetodosPago.OrderBy(m => m.Id).ToList());
+        }
     }
 }

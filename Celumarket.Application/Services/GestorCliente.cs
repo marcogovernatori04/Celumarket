@@ -86,7 +86,12 @@ namespace Celumarket.Application.Services
                 DireccionCompleta = cliente.Direccion != null
                     ? $"{cliente.Direccion.Calle} {cliente.Direccion.Numero}{(string.IsNullOrWhiteSpace(cliente.Direccion.PisoDepto) ? "" : $" - {cliente.Direccion.PisoDepto}")}, {cliente.Direccion.Localidad}, {cliente.Direccion.Provincia} ({cliente.Direccion.CodigoPostal})"
                     : null,
-                CodigoPostalDireccion = cliente.Direccion?.CodigoPostal
+                CodigoPostalDireccion = cliente.Direccion?.CodigoPostal,
+                CalleDireccion = cliente.Direccion?.Calle,
+                NumeroDireccion = cliente.Direccion?.Numero,
+                PisoDeptoDireccion = cliente.Direccion?.PisoDepto,
+                LocalidadDireccion = cliente.Direccion?.Localidad,
+                ProvinciaDireccion = cliente.Direccion?.Provincia
             };
         }
 

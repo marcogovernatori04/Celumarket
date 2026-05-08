@@ -10,5 +10,6 @@ namespace Celumarket.Application.Interfaces.Repositories
     public interface IMetodoPagoRepository
     {
         Task<MetodoPago> ObtenerPorIdAsync(int id);
+        Task<List<MetodoPago>> ObtenerTodosAsync();
     }
 }
