@@ -4,17 +4,19 @@ using Celumarket.Domain;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.Extensions.Options;
-using Celumarket.Application.Interfaces.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace Celumarket.Application.Services
 {
     public class ServicioEmail : IServicioEmail
     {
         private readonly SmtpSettings _settings;
+        private readonly IConfiguration _configuration;
 
-        public ServicioEmail(IOptions<SmtpSettings> settings, IVariacionRepository variacionRepo)
+        public ServicioEmail(IOptions<SmtpSettings> settings, IConfiguration configuration)
         {
             _settings = settings.Value;
+            _configuration = configuration;
         }
 
         public async Task EnviarEmailPedidoAsync(Pedido pedido, Cliente cliente, string metodoPago, string nroFactura = null)
@@ -30,6 +32,9 @@ namespace Celumarket.Application.Services
             decimal subtotal = pedido.Lineas.Sum(l => l.PrecioUnitario * l.Cantidad);
             decimal descuento = (subtotal + pedido.CostoEnvio) - pedido.MontoTotal;
             DateTime fechaVencimientoARG = pedido.FechaVencimiento.AddHours(-3);
+            string linkMisPedidos = _configuration["Frontend:MisPedidosUrl"]
+                ?? _configuration["MercadoPago:FrontendBaseUrl"]
+                ?? "http://localhost:5173";
 
             string htmlDescuento = descuento > 0
                 ? $"<p style='margin: 5px 0; color: #27ae60;'><strong>Descuento aplicado:</strong> -${descuento:N2}</p>"
@@ -102,6 +107,13 @@ namespace Celumarket.Application.Services
                     </div>
 
                     <p style='font-size: 12px; color: #7f8c8d; margin-top: 30px;'>Gracias por confiar en Celumarket.</p>
+
+                    <div style='margin-top: 16px; padding: 12px; border: 1px solid #dfe5eb; border-radius: 8px; background: #f8fafc;'>
+                        <p style='margin: 0; font-size: 13px; color: #1e1e1e;'>
+                            Podes ver tu factura electrónica en:
+                            <a href='{linkMisPedidos}' style='color: #005CB8; font-weight: 700; text-decoration: none;'> {linkMisPedidos}</a>
+                        </p>
+                    </div>
         
                     <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
         

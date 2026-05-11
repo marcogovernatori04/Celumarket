@@ -34,4 +34,8 @@ export const carritoService = {
 	async eliminarItem(variacionId: number): Promise<void> {
 		await api.delete(`/Carrito/item/${variacionId}`);
 	},
+
+	async vaciar(): Promise<void> {
+		await api.delete("/Carrito/vaciar");
+	},
 };

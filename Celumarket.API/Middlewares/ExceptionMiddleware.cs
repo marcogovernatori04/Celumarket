@@ -18,12 +18,10 @@ namespace Celumarket.API.Middlewares
         {
             try
             {
-                // Dejamos que la petición siga su curso normal
                 await _next(context);
             }
             catch (Exception ex)
             {
-                // ¡Si algo se rompe, lo atrapamos acá!
                 _logger.LogError(ex, ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
@@ -37,8 +35,7 @@ namespace Celumarket.API.Middlewares
                 ? (int)HttpStatusCode.BadRequest
                 : (int)HttpStatusCode.InternalServerError;
 
-            // Solo devolvemos mensajes explícitos de negocio para errores controlados (400).
-            // Para errores internos evitamos filtrar detalles técnicos al cliente.
+            // no mostrar errores internos.
             var response = new
             {
                 context.Response.StatusCode,

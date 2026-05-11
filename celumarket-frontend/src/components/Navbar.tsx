@@ -13,9 +13,11 @@ type NavbarProps = {
 	onVerPerfil?: () => void;
 	onVerMisPedidos?: () => void;
 	carritoCantidad?: number;
+	esAdmin?: boolean;
+	onIrAAdmin?: () => void;
 };
 
-export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, onVerMisPedidos, carritoCantidad = 0 }: NavbarProps) => {
+export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, onVerMisPedidos, carritoCantidad = 0, esAdmin = false, onIrAAdmin }: NavbarProps) => {
 	const [menuAbierto, setMenuAbierto] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,8 +42,8 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 
 			<div className="flex items-center gap-8">
 				<ul className="flex items-center gap-6 text-gray-600 font-medium">
-					<li className="hover:text-black cursor-pointer transition-colors" onClick={enTienda ? onIrAInicio : onIrATienda}>
-						{enTienda ? "Inicio" : "Tienda"}
+					<li className="hover:text-black cursor-pointer transition-colors" onClick={esAdmin ? onIrAAdmin : enTienda ? onIrAInicio : onIrATienda}>
+						{esAdmin ? "Panel admin" : enTienda ? "Inicio" : "Tienda"}
 					</li>
 					<li className="hover:text-black cursor-pointer transition-colors">
 						Contacto
@@ -80,22 +82,31 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 							<div
 								className={`absolute right-0 mt-2 w-44 origin-top rounded-md border border-gray-200 bg-white py-1 shadow-lg z-20 transition-all duration-200 ${menuAbierto ? "pointer-events-auto opacity-100 scale-y-100 translate-y-0" : "pointer-events-none opacity-0 scale-y-95 -translate-y-1"}`}
 							>
-								<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
-									Mi perfil
-								</button>
-								<button onClick={() => { setMenuAbierto(false); onVerMisPedidos?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
-									Mis pedidos
-								</button>
-								<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
-									Cambiar clave
-								</button>
+								{esAdmin ? (
+									<button onClick={() => { setMenuAbierto(false); onIrAAdmin?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+										Panel admin
+									</button>
+								) : (
+									<>
+										<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+											Mi perfil
+										</button>
+										<button onClick={() => { setMenuAbierto(false); onVerMisPedidos?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+											Mis pedidos
+										</button>
+										<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+											Cambiar clave
+										</button>
+									</>
+								)}
 								<button onClick={() => { setMenuAbierto(false); onLogout?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#b42318] hover:bg-[#fff1f0]">
 									Cerrar sesión
 								</button>
 							</div>
 						</div>
 					)}
-					<button onClick={onIrACarrito} className="relative cursor-pointer bg-[#015cb9] text-white p-2.5 rounded-full hover:bg-[#017AF4] transition-colors flex items-center justify-center">
+					{!esAdmin && (
+						<button onClick={onIrACarrito} className="relative cursor-pointer bg-[#015cb9] text-white p-2.5 rounded-full hover:bg-[#017AF4] transition-colors flex items-center justify-center">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
@@ -116,7 +127,8 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 								{carritoCantidad}
 							</span>
 						)}
-					</button>
+						</button>
+					)}
 
 					{!estaLogueado && (
 						<button onClick={onIrALogin} className="cursor-pointer bg-[#015cb9] hover:bg-[#017AF4] text-white font-medium py-2 px-6 rounded-md transition-colors">

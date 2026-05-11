@@ -1,7 +1,6 @@
-﻿namespace Celumarket.Domain
+namespace Celumarket.Domain
 {
     public enum EstadoEnvio { Pendiente, Despachado, Entregado, Cancelado }
-    public enum TipoEnvio { Domicilio, Correo, Local }
 
     public class Envio
     {
@@ -10,7 +9,7 @@
         public string? CodigoSeguimiento { get; private set; }
         public Direccion DireccionEntrega { get; private set; }
         public decimal Costo { get; private set; }
-        public TipoEnvio Tipo { get; private set; } 
+        public TipoEnvio Tipo { get; private set; }
         public DateTime FechaEstimada { get; private set; }
         public DateTime? FechaDespacho { get; private set; }
         public int PedidoId { get; private set; }
@@ -23,7 +22,7 @@
             DireccionEntrega = direccionEntrega;
             Costo = costo;
             FechaEstimada = fechaEstimada;
-            Tipo = tipo; 
+            Tipo = tipo;
             Estado = EstadoEnvio.Pendiente;
         }
 

@@ -36,12 +36,10 @@ namespace Celumarket.Application.Services
 
             string hash = _servicioSeguridad.EncriptarPassword(dto.Password);
 
-            // buscamos el nombre del rol "Cliente" para asignarlo al nuevo usuario
             var rolCliente = await _rolRepo.ObtenerPorNombreAsync("Cliente");
             if (rolCliente == null)
                 throw new Exception("Rol 'Cliente' no encontrado");
 
-            // creamos el usuario asociado al cliente
             var nuevoUsuario = new Usuario(dto.Email, hash, rolCliente.Id);
 
             await _usuarioRepo.AgregarAsync(nuevoUsuario);
@@ -50,7 +48,6 @@ namespace Celumarket.Application.Services
             var direccion = new Direccion(
                 dto.Calle, dto.Numero, dto.PisoDepto, dto.Localidad, dto.Provincia, dto.CodigoPostal);
 
-            // creamos el cliente con el Id del usuario recién creado
             var cliente = new Cliente(dto.Nombre, dto.Apellido, dto.Dni, dto.Telefono, direccion, nuevoUsuario.Id);
 
             await _clienteRepo.AgregarAsync(cliente);

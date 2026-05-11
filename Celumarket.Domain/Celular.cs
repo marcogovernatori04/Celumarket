@@ -12,8 +12,6 @@
         public List<Especificacion> Especificaciones { get; private set; } = new List<Especificacion>();
 
         protected Celular() { }
-
-        // constructor
         public Celular(string marca, string modelo, string descripcion)
         {
             Marca = marca;

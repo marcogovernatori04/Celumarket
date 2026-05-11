@@ -60,7 +60,7 @@ namespace Celumarket.Infrastructure.Services
             var client = new PreferenceClient();
             Preference preference = await client.CreateAsync(request);
 
-            return preference.InitPoint; // devuelve el link de pago
+            return preference.InitPoint; 
         }
     }
 }

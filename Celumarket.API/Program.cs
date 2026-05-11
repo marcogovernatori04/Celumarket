@@ -106,6 +106,7 @@ builder.Services.AddScoped<IGestorPromociones, GestorPromociones>();
 builder.Services.AddScoped<IGestorStock, GestorStock>();
 builder.Services.AddScoped<IServicioSeguridad, ServicioSeguridad>();
 builder.Services.AddScoped<IServicioMercadoPago, ServicioMercadoPago>();
+builder.Services.AddScoped<IServicioFacturaPdf, ServicioFacturaPdfSimple>();
 builder.Services.AddScoped<IServicioImagen, ServicioImagen>();
 builder.Services.AddScoped<IServicioFacturacion, ServicioFacturacionMock>();
 builder.Services.AddScoped<IServicioEmail, ServicioEmail>();
