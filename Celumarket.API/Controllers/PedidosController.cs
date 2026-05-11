@@ -26,14 +26,18 @@ namespace Celumarket.API.Controllers
         private readonly IMetodoPagoRepository _metodoPagoRepo;
         private readonly IClienteRepository _clienteRepo;
         private readonly IGestorReservaCheckout _gestorReservaCheckout;
+        private readonly IGestorConsultaPedido _gestorConsultaPedido;
+        private readonly IGestorDocumentoFactura _gestorDocumentoFactura;
 
         public PedidosController(
             IGestorPedido gestorPedido, IGestorPago gestorPago, IGestorCarrito gestorCarrito, IServicioMercadoPago servicioMP,
-            IPedidoRepository pedidoRepo, IReservaCheckoutRepository reservaRepo, IMetodoPagoRepository metodoPagoRepo, IClienteRepository clienteRepo, IGestorReservaCheckout gestorReservaCheckout)
+            IPedidoRepository pedidoRepo, IReservaCheckoutRepository reservaRepo, IMetodoPagoRepository metodoPagoRepo, IClienteRepository clienteRepo, IGestorReservaCheckout gestorReservaCheckout, IGestorConsultaPedido gestorConsultaPedido, IGestorDocumentoFactura gestorDocumentoFactura)
         {
             _gestorPedido = gestorPedido; _gestorPago = gestorPago; _gestorCarrito = gestorCarrito; _servicioMP = servicioMP;
             _pedidoRepo = pedidoRepo; _reservaRepo = reservaRepo; _metodoPagoRepo = metodoPagoRepo; _clienteRepo = clienteRepo;
             _gestorReservaCheckout = gestorReservaCheckout;
+            _gestorConsultaPedido = gestorConsultaPedido;
+            _gestorDocumentoFactura = gestorDocumentoFactura;
         }
 
         private async Task<int> ObtenerClienteId()
@@ -152,6 +156,26 @@ namespace Celumarket.API.Controllers
             int clienteId = await ObtenerClienteId();
             var pedidos = await _pedidoRepo.ObtenerPedidosPorClienteAsync(clienteId);
             return Ok(pedidos);
+        }
+
+        [Authorize(Roles = "Cliente")]
+        [HttpGet("mis-pedidos/{pedidoId}/detalle")]
+        public async Task<IActionResult> VerDetalleMiPedido(int pedidoId)
+        {
+            int clienteId = await ObtenerClienteId();
+            var detalle = await _gestorConsultaPedido.ObtenerDetallePedidoClienteAsync(clienteId, pedidoId);
+            if (detalle == null)
+                return NotFound(new { error = "Pedido no encontrado." });
+            return Ok(detalle);
+        }
+
+        [Authorize(Roles = "Cliente")]
+        [HttpGet("mis-pedidos/{pedidoId}/factura")]
+        public async Task<IActionResult> DescargarFacturaMiPedido(int pedidoId)
+        {
+            int clienteId = await ObtenerClienteId();
+            var (nombreArchivo, contenido) = await _gestorDocumentoFactura.GenerarFacturaPdfClienteAsync(clienteId, pedidoId);
+            return File(contenido, "application/pdf", nombreArchivo);
         }
 
         [Authorize(Roles = "Admin")]

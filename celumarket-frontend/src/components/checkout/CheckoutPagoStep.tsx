@@ -4,6 +4,7 @@ import type { DatosEnvio } from "./CheckoutEnvioStep";
 import type { ItemCarrito } from "../../services/carritoService";
 import type { DatosFacturacion } from "./CheckoutFacturacionStep";
 import { CheckoutSidebarActions } from "./CheckoutSidebarActions";
+import { isAxiosError } from "axios";
 
 type Props = {
 	metodos: MetodoPago[];
@@ -31,8 +32,8 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 	const total = subtotal + costoEnvio;
 	const valorEnvioTexto = costoEnvio === 0 ? "Gratis" : `$${costoEnvio.toLocaleString("es-AR")}`;
 
-	const confirmar = async () => {
-		if (!metodoPagoId || reservaExpirada) return;
+	const confirmar = async (): Promise<boolean> => {
+		if (!metodoPagoId || reservaExpirada) return false;
 		setError(null);
 		try {
 			setEnviando(true);
@@ -43,11 +44,19 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 			});
 			if (result.linkMP) {
 				window.location.href = result.linkMP;
-				return;
+				return true;
 			}
 			onExito(result.pedidoId);
-		} catch {
-			setError("No se pudo confirmar la compra. Revisá que la reserva siga activa.");
+			return true;
+		} catch (err) {
+			if (isAxiosError(err)) {
+				const apiError = (err.response?.data as { error?: string; mensaje?: string; Message?: string; Details?: string } | undefined);
+				const detalle = apiError?.Details ? ` (${apiError.Details})` : "";
+				setError((apiError?.error ?? apiError?.mensaje ?? apiError?.Message ?? "No se pudo confirmar la compra.") + detalle);
+			} else {
+				setError("No se pudo confirmar la compra. Revisá que la reserva siga activa.");
+			}
+			return false;
 		} finally {
 			setEnviando(false);
 		}
@@ -151,8 +160,8 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 							<button
 								disabled={reservaExpirada || enviando || !metodoPagoId}
 								onClick={async () => {
-									await confirmar();
-									setMostrarModalConfirmacion(false);
+									const ok = await confirmar();
+									if (ok) setMostrarModalConfirmacion(false);
 								}}
 								className={`h-[42px] rounded-lg px-6 text-[15px] text-white transition-colors ${!reservaExpirada && !enviando && metodoPagoId ? "bg-[#015cb9] hover:bg-[#017AF4]" : "bg-[#757575] text-[#d9d9d9]"}`}
 							>

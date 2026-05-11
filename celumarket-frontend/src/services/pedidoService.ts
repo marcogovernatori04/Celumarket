@@ -43,6 +43,36 @@ export type MisPedidosItem = {
 	estadoPedido?: string;
 };
 
+export type DetallePedidoLinea = {
+	id: number;
+	marca: string;
+	modelo: string;
+	color: string;
+	urlImagen: string;
+	cantidad: number;
+	precioUnitario: number;
+	subtotal: number;
+};
+
+export type DetallePedido = {
+	id: number;
+	estado: string;
+	fecha: string;
+	montoTotal: number;
+	metodoPago: string;
+	tipoEnvio: string;
+	costoEnvio: number;
+	direccionEntrega?: {
+		calle: string;
+		numero: string;
+		pisoDepto?: string;
+		localidad: string;
+		provincia: string;
+		codigoPostal: number;
+	} | null;
+	lineas: DetallePedidoLinea[];
+};
+
 export const pedidoService = {
 	async iniciarCompra(): Promise<ReservaCheckout> {
 		const { data } = await api.post<ReservaCheckout>("/Pedidos/iniciar-compra");
@@ -62,5 +92,15 @@ export const pedidoService = {
 	async obtenerMisPedidos(): Promise<MisPedidosItem[]> {
 		const { data } = await api.get<MisPedidosItem[]>("/Pedidos/mis-pedidos");
 		return data;
+	},
+
+	async obtenerDetalleMiPedido(pedidoId: number): Promise<DetallePedido> {
+		const { data } = await api.get<DetallePedido>(`/Pedidos/mis-pedidos/${pedidoId}/detalle`);
+		return data;
+	},
+
+	async descargarFacturaMiPedido(pedidoId: number): Promise<Blob> {
+		const { data } = await api.get(`/Pedidos/mis-pedidos/${pedidoId}/factura`, { responseType: "blob" });
+		return data as Blob;
 	},
 };

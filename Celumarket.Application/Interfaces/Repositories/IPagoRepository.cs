@@ -11,6 +11,7 @@ namespace Celumarket.Application.Interfaces.Repositories
     {
         Task AgregarAsync(Pago pago);
         Task<Pago> ObtenerPorPedidoIdAsync(int pedidoId);
+        Task<Pago?> ObtenerUltimoPorPedidoIdAsync(int pedidoId);
         Task GuardarAsync();
     }
 }

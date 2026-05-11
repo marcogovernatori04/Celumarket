@@ -9,6 +9,9 @@ import { Checkout } from "./pages/Checkout";
 import { CambiarClave } from "./pages/CambiarClave";
 import { MiPerfil } from "./pages/MiPerfil";
 import { MisPedidos } from "./pages/MisPedidos";
+import { DetallePedido } from "./pages/DetallePedido";
+import { CompraConfirmada } from "./pages/CompraConfirmada";
+import { ResultadoPago } from "./pages/ResultadoPago";
 import { authService } from "./services/authService";
 import { NavbarLogin } from "./components/NavbarLogin";
 import { clienteService } from "./services/clienteService";
@@ -16,7 +19,7 @@ import { carritoService } from "./services/carritoService";
 import type { ReservaCheckout } from "./services/pedidoService";
 
 function App() {
-	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "checkout" | "cambiar-clave" | "mi-perfil" | "mis-pedidos">("landing");
+	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "checkout" | "cambiar-clave" | "mi-perfil" | "mis-pedidos" | "detalle-pedido" | "compra-confirmada" | "resultado-pago">("landing");
 	const [celularSeleccionadoId, setCelularSeleccionadoId] = useState<number | null>(null);
 	const [estaLogueado, setEstaLogueado] = useState(authService.estaLogueado());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
@@ -24,6 +27,9 @@ function App() {
 	const [toastCarrito, setToastCarrito] = useState<string | null>(null);
 	const [checkoutConReserva, setCheckoutConReserva] = useState(false);
 	const [checkoutReservaSegundosRestantes, setCheckoutReservaSegundosRestantes] = useState<number>(0);
+	const [pedidoConfirmadoId, setPedidoConfirmadoId] = useState<number | null>(null);
+	const [pedidoDetalleId, setPedidoDetalleId] = useState<number | null>(null);
+	const [estadoPagoRedirect, setEstadoPagoRedirect] = useState<"exitoso" | "fallido" | "pendiente">("pendiente");
 
 	const irADetalle = (celularId: number) => {
 		setCelularSeleccionadoId(celularId);
@@ -55,6 +61,8 @@ function App() {
 				const primerNombre = perfil.nombreCompleto?.trim().split(" ")[0] ?? null;
 				setNombreCliente(primerNombre);
 			} catch {
+				authService.logout();
+				setEstaLogueado(false);
 				setNombreCliente(null);
 			}
 		};
@@ -62,8 +70,29 @@ function App() {
 	}, [estaLogueado]);
 
 	useEffect(() => {
+		const handleUnauthorized = () => {
+			setEstaLogueado(false);
+			setNombreCliente(null);
+			setVista("login");
+		};
+		window.addEventListener("auth:unauthorized", handleUnauthorized);
+		return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+	}, []);
+
+	useEffect(() => {
 		void recargarCarritoCantidad();
 	}, [estaLogueado, vista]);
+
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const pago = params.get("pago");
+		if (pago === "exitoso" || pago === "fallido" || pago === "pendiente") {
+			setEstadoPagoRedirect(pago);
+			setVista("resultado-pago");
+			const nuevaUrl = `${window.location.pathname}${window.location.hash || ""}`;
+			window.history.replaceState({}, "", nuevaUrl);
+		}
+	}, []);
 
 	return (
 		<div className="bg-gray-50 min-h-screen font-sans">
@@ -131,11 +160,32 @@ function App() {
 					<Checkout
 						reservaSegundosIniciales={checkoutReservaSegundosRestantes}
 						onVolverCarrito={() => setVista("carrito")}
+						onCompraConfirmada={(pedidoId) => {
+							setPedidoConfirmadoId(pedidoId);
+							setCheckoutConReserva(false);
+							void recargarCarritoCantidad();
+							setVista("compra-confirmada");
+						}}
 					/>
 				)}
 				{vista === "cambiar-clave" && <CambiarClave onVolver={() => setVista("landing")} />}
 				{vista === "mi-perfil" && <MiPerfil />}
-				{vista === "mis-pedidos" && <MisPedidos />}
+				{vista === "mis-pedidos" && <MisPedidos onVerDetalle={(pedidoId) => { setPedidoDetalleId(pedidoId); setVista("detalle-pedido"); }} />}
+				{vista === "detalle-pedido" && pedidoDetalleId !== null && <DetallePedido pedidoId={pedidoDetalleId} onVolver={() => setVista("mis-pedidos")} />}
+				{vista === "compra-confirmada" && (
+					<CompraConfirmada
+						pedidoId={pedidoConfirmadoId}
+						onVerMisPedidos={() => setVista("mis-pedidos")}
+						onIrATienda={() => setVista("catalogo")}
+					/>
+				)}
+				{vista === "resultado-pago" && (
+					<ResultadoPago
+						estado={estadoPagoRedirect}
+						onVerMisPedidos={() => setVista("mis-pedidos")}
+						onIrATienda={() => setVista("catalogo")}
+					/>
+				)}
 			</main>
 		</div>
 	);

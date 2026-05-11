@@ -54,11 +54,14 @@ builder.Services.AddDbContext<CelumarketContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+string[] allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -88,6 +91,8 @@ builder.Services.AddScoped<IVariacionRepository, VariacionRepository>();
 builder.Services.AddScoped<IGestorCarrito, GestorCarrito>();
 builder.Services.AddScoped<IGestorCatalogo, GestorCatalogo>();
 builder.Services.AddScoped<IGestorCliente, GestorCliente>();
+builder.Services.AddScoped<IGestorConsultaPedido, GestorConsultaPedido>();
+builder.Services.AddScoped<IGestorDocumentoFactura, GestorDocumentoFactura>();
 builder.Services.AddScoped<IGestorEnvio, GestorEnvio>();
 builder.Services.AddScoped<IGestorFacturacion, GestorFacturacion>();
 builder.Services.AddScoped<IGestorPago, GestorPago>();

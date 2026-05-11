@@ -53,5 +53,40 @@ namespace Celumarket.Application.DTOs
             public int SegundosRestantes { get; set; }
         }
 
+        public class DireccionEntregaDTO
+        {
+            public string Calle { get; set; } = string.Empty;
+            public string Numero { get; set; } = string.Empty;
+            public string PisoDepto { get; set; } = string.Empty;
+            public string Localidad { get; set; } = string.Empty;
+            public string Provincia { get; set; } = string.Empty;
+            public int CodigoPostal { get; set; }
+        }
+
+        public class DetallePedidoClienteDTO
+        {
+            public int Id { get; set; }
+            public string Estado { get; set; } = string.Empty;
+            public DateTime Fecha { get; set; }
+            public decimal MontoTotal { get; set; }
+            public string MetodoPago { get; set; } = string.Empty;
+            public string TipoEnvio { get; set; } = string.Empty;
+            public decimal CostoEnvio { get; set; }
+            public DireccionEntregaDTO? DireccionEntrega { get; set; }
+            public List<LineaDetallePedidoClienteDTO> Lineas { get; set; } = new();
+        }
+
+        public class LineaDetallePedidoClienteDTO
+        {
+            public int Id { get; set; }
+            public string Marca { get; set; } = string.Empty;
+            public string Modelo { get; set; } = string.Empty;
+            public string Color { get; set; } = string.Empty;
+            public string UrlImagen { get; set; } = string.Empty;
+            public int Cantidad { get; set; }
+            public decimal PrecioUnitario { get; set; }
+            public decimal Subtotal { get; set; }
+        }
+
     }
 }

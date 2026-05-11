@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { pedidoService, type MisPedidosItem } from "../services/pedidoService";
 
-export const MisPedidos = () => {
+type MisPedidosProps = {
+	onVerDetalle: (pedidoId: number) => void;
+};
+
+export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 	const [pedidos, setPedidos] = useState<MisPedidosItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -44,8 +48,11 @@ export const MisPedidos = () => {
 						{pedidos.map((pedido) => (
 							<div key={pedido.id} className="rounded-lg border border-[#dfe5eb] bg-white p-5 shadow-sm">
 								<div className="flex flex-wrap items-center justify-between gap-3">
-									<p className="text-lg font-semibold text-[#001830]">Pedido #{pedido.id}</p>
-									<p className="text-[15px] font-bold text-[#001830]">${pedido.montoTotal.toLocaleString("es-AR")}</p>
+									<button onClick={() => onVerDetalle(pedido.id)} className="inline-flex items-center gap-2 text-lg font-semibold text-[#001830] hover:text-[#015cb9] transition-colors">
+										<span>Pedido #{pedido.id}</span>
+										<span className="text-sm">Ver detalle</span>
+									</button>
+									<p className="text-[15px] font-bold text-[#001830]">${(pedido.montoTotal ?? 0).toLocaleString("es-AR")}</p>
 								</div>
 								<div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[#4b5563]">
 									<p>Estado: <span className="font-medium text-[#1e1e1e]">{pedido.estado ?? pedido.estadoPedido ?? "—"}</span></p>

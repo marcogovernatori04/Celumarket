@@ -29,7 +29,15 @@ namespace Celumarket.Infrastructure.Repositories
                 .Where(p => p.PedidoId == pedidoId && p.Estado == Pago.EstadoPendiente)
                 .OrderByDescending(p => p.Fecha)
                 .FirstOrDefaultAsync();
-        }   
+        }
+
+        public async Task<Pago?> ObtenerUltimoPorPedidoIdAsync(int pedidoId)
+        {
+            return await _context.Pagos
+                .Where(p => p.PedidoId == pedidoId)
+                .OrderByDescending(p => p.Fecha)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task GuardarAsync()
         {

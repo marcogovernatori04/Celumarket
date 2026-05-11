@@ -32,6 +32,9 @@ namespace Celumarket.Infrastructure.Repositories
                 .Include(p => p.Lineas)
                     .ThenInclude(l => l.VariacionCelular)
                         .ThenInclude(v => v.Color)
+                .Include(p => p.Lineas)
+                    .ThenInclude(l => l.VariacionCelular)
+                        .ThenInclude(v => v.Imagenes)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 

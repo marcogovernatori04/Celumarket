@@ -10,9 +10,10 @@ import { CheckoutPagoStep } from "../components/checkout/CheckoutPagoStep";
 type CheckoutProps = {
 	reservaSegundosIniciales: number;
 	onVolverCarrito: () => void;
+	onCompraConfirmada: (pedidoId: number) => void;
 };
 
-export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito }: CheckoutProps) => {
+export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraConfirmada }: CheckoutProps) => {
 	const UMBRAL_ENVIO_GRATIS = 499999;
 	const [loading, setLoading] = useState(true);
 	const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -197,10 +198,7 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito }: Checkout
 								costoEnvio={costoEnvioSeleccionado}
 								datosFacturacion={datosFacturacion ?? facturacionInicial}
 								onVolver={() => setStep(2)}
-								onExito={(pedidoId) => {
-									alert(`Pedido #${pedidoId} generado correctamente.`);
-									onVolverCarrito();
-								}}
+								onExito={(pedidoId) => onCompraConfirmada(pedidoId)}
 							/>
 						)}
 					</div>
