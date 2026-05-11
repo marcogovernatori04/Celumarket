@@ -32,21 +32,18 @@ namespace Celumarket.API.Middlewares
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
+            bool esErrorNegocio = exception is InvalidOperationException || exception is ArgumentException;
+            context.Response.StatusCode = esErrorNegocio
+                ? (int)HttpStatusCode.BadRequest
+                : (int)HttpStatusCode.InternalServerError;
 
-            // Por defecto, cualquier error no controlado es un 500
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            // Si es un error de negocio (por ej: "Stock insuficiente"), le mandamos un 400
-            if (exception is InvalidOperationException || exception is ArgumentException)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            }
-
+            // Solo devolvemos mensajes explícitos de negocio para errores controlados (400).
+            // Para errores internos evitamos filtrar detalles técnicos al cliente.
             var response = new
             {
                 context.Response.StatusCode,
-                exception.Message,
-                Details = exception.InnerException?.Message
+                Message = esErrorNegocio ? exception.Message : "Ocurrió un error interno. Intenta nuevamente.",
+                TraceId = context.TraceIdentifier
             };
 
             var jsonResponse = JsonSerializer.Serialize(response);

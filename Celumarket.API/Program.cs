@@ -93,6 +93,7 @@ builder.Services.AddScoped<IGestorCatalogo, GestorCatalogo>();
 builder.Services.AddScoped<IGestorCliente, GestorCliente>();
 builder.Services.AddScoped<IGestorConsultaPedido, GestorConsultaPedido>();
 builder.Services.AddScoped<IGestorDocumentoFactura, GestorDocumentoFactura>();
+builder.Services.AddScoped<IGestorPedidoCliente, GestorPedidoCliente>();
 builder.Services.AddScoped<IGestorEnvio, GestorEnvio>();
 builder.Services.AddScoped<IGestorFacturacion, GestorFacturacion>();
 builder.Services.AddScoped<IGestorPago, GestorPago>();
