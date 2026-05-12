@@ -75,6 +75,16 @@ namespace Celumarket.Application.Services
             return nuevaVariacion.Id;
         }
 
+        public async Task EliminarVariacionAsync(int variacionId)
+        {
+            var variacion = await _variacionRepo.ObtenerPorIdAsync(variacionId);
+            if (variacion == null)
+                throw new Exception("Variación no encontrada");
+
+            _variacionRepo.Eliminar(variacion);
+            await _unitOfWork.GuardarAsync();
+        }
+
         public async Task ModificarVariacionAsync(ModificarVariacionDTO dto)
         {
             var variacion = await _variacionRepo.ObtenerPorIdAsync(dto.VariacionId);
@@ -173,13 +183,22 @@ namespace Celumarket.Application.Services
 
             var items = celulares.Select(c => new CatalogoDTOs.CelularListadoDTO
             {
+                // Imagen base del celular: siempre desde la variación más antigua (menor Id).
+                // Dentro de esa variación prioriza la imagen principal.
                 Id = c.Id,
                 Marca = c.Marca,
                 Modelo = c.Modelo,
                 PrecioMinimo = c.Variaciones.Any() ? c.Variaciones.Min(v => v.Precio) : 0,
                 CantidadColores = c.Variaciones.Select(v => v.ColorId).Distinct().Count(),
-                UrlImagenPrincipal = c.Variaciones.SelectMany(v => v.Imagenes).FirstOrDefault(img => img.EsPrincipal)?.UrlImagen
-                                        ?? c.Variaciones.SelectMany(v => v.Imagenes).FirstOrDefault()?.UrlImagen
+                UrlImagenPrincipal = c.Variaciones
+                                        .OrderBy(v => v.Id)
+                                        .Select(v =>
+                                        {
+                                            var principal = v.Imagenes.FirstOrDefault(img => img.EsPrincipal);
+                                            var primera = v.Imagenes.FirstOrDefault();
+                                            return principal?.UrlImagen ?? primera?.UrlImagen;
+                                        })
+                                        .FirstOrDefault(url => !string.IsNullOrWhiteSpace(url))
                                         ?? "https://placehold.co/600x400"
 
             }).ToList();
@@ -241,8 +260,15 @@ namespace Celumarket.Application.Services
             return destacados.Select(c =>
             {
                 var variacionBase = c.Variaciones.OrderBy(v => v.Precio).FirstOrDefault();
-                var urlImagen = c.Variaciones.SelectMany(v => v.Imagenes).FirstOrDefault(i => i.EsPrincipal)?.UrlImagen
-                    ?? c.Variaciones.SelectMany(v => v.Imagenes).FirstOrDefault()?.UrlImagen
+                var urlImagen = c.Variaciones
+                    .OrderBy(v => v.Id)
+                    .Select(v =>
+                    {
+                        var principal = v.Imagenes.FirstOrDefault(i => i.EsPrincipal);
+                        var primera = v.Imagenes.FirstOrDefault();
+                        return principal?.UrlImagen ?? primera?.UrlImagen;
+                    })
+                    .FirstOrDefault(url => !string.IsNullOrWhiteSpace(url))
                     ?? "https://placehold.co/600x400";
 
                 return new CelularDestacadoDTO

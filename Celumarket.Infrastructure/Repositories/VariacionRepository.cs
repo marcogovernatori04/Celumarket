@@ -22,6 +22,11 @@ namespace Celumarket.Infrastructure.Repositories
             return await _context.Variaciones.FindAsync(id);
         }
 
+        public void Eliminar(VariacionCelular variacion)
+        {
+            _context.Variaciones.Remove(variacion);
+        }
+
         public async Task GuardarAsync()
         {
             await _context.SaveChangesAsync();

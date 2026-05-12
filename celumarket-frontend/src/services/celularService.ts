@@ -40,6 +40,14 @@ export const celularService = {
 		await api.put(`/Celulares/variaciones/${payload.variacionId}`, payload);
 	},
 
+	eliminarVariacion: async (variacionId: number): Promise<void> => {
+		await api.delete(`/Celulares/variaciones/${variacionId}`);
+	},
+
+	eliminarCelular: async (celularId: number): Promise<void> => {
+		await api.delete(`/Celulares/${celularId}`);
+	},
+
 	modificarCelular: async (payload: {
 		id: number;
 		marca: string;
@@ -67,5 +75,26 @@ export const celularService = {
 
 	eliminarImagenVariacion: async (variacionId: number, url: string): Promise<void> => {
 		await api.delete(`/Celulares/variaciones/${variacionId}/imagenes`, { params: { url } });
+	},
+
+	crearCelular: async (payload: {
+		marca: string;
+		modelo: string;
+		descripcion: string;
+	}): Promise<number> => {
+		const { data } = await api.post<{ celularId: number; CelularId?: number; Mensaje?: string }>("/Celulares", payload);
+		return data.celularId ?? data.CelularId ?? 0;
+	},
+
+	agregarVariacion: async (payload: {
+		celularId: number;
+		colorId: number;
+		precio: number;
+		precioAnterior?: number | null;
+		almacenamiento: string;
+		stockInicial: number;
+	}): Promise<number> => {
+		const { data } = await api.post<{ variacionId: number; VariacionId?: number }>("/Celulares/variacion", payload);
+		return data.variacionId ?? data.VariacionId ?? 0;
 	},
 };

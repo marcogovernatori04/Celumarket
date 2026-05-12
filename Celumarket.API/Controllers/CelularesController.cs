@@ -62,6 +62,14 @@ namespace Celumarket.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpDelete("variaciones/{variacionId}")]
+        public async Task<IActionResult> EliminarVariacion(int variacionId)
+        {
+            await _gestorCatalogo.EliminarVariacionAsync(variacionId);
+            return Ok(new { Mensaje = "Variación eliminada con éxito." });
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("variaciones/{variacionId}/imagenes")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> SubirImagen(int variacionId, [FromForm] SubirImagenDTO request)

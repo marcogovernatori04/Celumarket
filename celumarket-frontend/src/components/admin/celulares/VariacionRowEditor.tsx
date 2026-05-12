@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { VariacionDetalle } from "../../../models/CelularDetalle";
+import type { ColorItem } from "../../../services/colorService";
+import { ColorSelector } from "./ColorSelector";
 
 type VariacionRowEditorProps = {
 	variacion: VariacionDetalle;
@@ -13,9 +15,12 @@ type VariacionRowEditorProps = {
 	onAjustarStock: (variacionId: number, cantidad: number, tipo: "ingreso" | "perdida") => Promise<void>;
 	onSubirImagen: (variacionId: number, archivo: File) => Promise<void>;
 	onEliminarImagen: (variacionId: number, url: string) => Promise<void>;
+	onEliminarVariacion: (variacionId: number) => Promise<void>;
+	colores: ColorItem[];
+	onCrearColor: (nombre: string, hex: string) => Promise<number>;
 };
 
-export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarStock, onSubirImagen, onEliminarImagen }: VariacionRowEditorProps) => {
+export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarStock, onSubirImagen, onEliminarImagen, onEliminarVariacion, colores, onCrearColor }: VariacionRowEditorProps) => {
 	const [editando, setEditando] = useState(false);
 	const [guardando, setGuardando] = useState(false);
 	const [ajustando, setAjustando] = useState(false);
@@ -66,12 +71,11 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 			<div className="grid grid-cols-[1fr_1fr_1fr_1fr] items-start gap-2">
 				<span>
 					{editando ? (
-						<input
-							type="number"
-							min={1}
+						<ColorSelector
 							value={colorId}
-							onChange={(e) => setColorId(Number(e.target.value))}
-							className="h-8 w-full rounded border border-[#cdd6e1] px-2 text-xs"
+							colores={colores}
+							onChange={setColorId}
+							onCrearColor={onCrearColor}
 						/>
 					) : (
 						`${variacion.color} (ID ${variacion.colorId})`
@@ -160,12 +164,20 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 								</button>
 							</>
 						) : (
-							<button
-								onClick={() => setEditando(true)}
-								className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
-							>
-								Editar variación
-							</button>
+							<div className="flex gap-1">
+								<button
+									onClick={() => setEditando(true)}
+									className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+								>
+									Editar variación
+								</button>
+								<button
+									onClick={() => void onEliminarVariacion(variacion.id)}
+									className="h-8 rounded border border-[#f3c6c6] bg-white px-2 text-xs font-semibold text-[#b42318] hover:bg-[#fff1f0]"
+								>
+									Eliminar
+								</button>
+							</div>
 						)}
 					</div>
 				</div>
@@ -174,7 +186,7 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 				<p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#64748b]">Imágenes de la variación</p>
 				<div className="flex flex-wrap gap-2">
 					{variacion.imagenes.map((img) => (
-						<div key={img} className="relative h-20 w-20 overflow-hidden rounded border border-[#dbe4ef] bg-white">
+						<div key={img} className="relative h-24 w-24 overflow-hidden rounded border border-[#dbe4ef] bg-white">
 							<img src={img} alt="Imagen variación" className="h-full w-full object-contain" />
 							<button
 								onClick={async () => {

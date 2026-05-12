@@ -9,6 +9,7 @@ namespace Celumarket.Application.Interfaces.Services
         Task ModificarCelularAsync(ModificarCelularDTO dto);
         Task EliminarCelularAsync(int id);
         Task<int> AgregarVariacionAsync(AgregarVariacionDTO dto);
+        Task EliminarVariacionAsync(int variacionId);
         Task ModificarVariacionAsync(ModificarVariacionDTO dto);
         Task<string> AgregarImagenAsync(int variacionId, Stream fileStream, string fileName, bool esPrincipal);
         Task EliminarImagenAsync(int variacionId, string urlImagen);

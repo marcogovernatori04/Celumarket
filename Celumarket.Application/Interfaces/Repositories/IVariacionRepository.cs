@@ -10,6 +10,7 @@ namespace Celumarket.Application.Interfaces.Repositories
     public interface IVariacionRepository
     {
         Task<VariacionCelular> ObtenerPorIdAsync(int id);
+        void Eliminar(VariacionCelular variacion);
         Task GuardarAsync();
     }
 }
