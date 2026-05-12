@@ -6,6 +6,8 @@ import {
 import { Footer } from "../components/Footer";
 import { PorqueElegirnos } from "../components/PorqueElegirnos";
 import { celularService } from "../services/celularService";
+import { configuracionService } from "../services/configuracionService";
+import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
 
 type LandingProps = {
 	onIrATienda?: () => void;
@@ -16,12 +18,20 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 	const [productos, setProductos] = useState<ProductoCelular[]>([]);
 	const [cargando, setCargando] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const textoBannerPromocional = "¡Bienvenido!";
+	const [config, setConfig] = useState<ConfiguracionSistema>({
+		descuentoTransferencia: 10,
+		umbralEnvioGratis: 499999,
+		textoBannerHero: "¡Bienvenido!",
+	});
 
 	useEffect(() => {
 		const obtenerProductos = async () => {
 			try {
-				const datos = await celularService.obtenerDestacados(4);
+				const [datos, configActual] = await Promise.all([
+					celularService.obtenerDestacados(4),
+					configuracionService.obtener(),
+				]);
+				setConfig(configActual);
 				const productosMapeados: ProductoCelular[] = datos.map((item) => ({
 					id: item.id,
 					nombre: `${item.marca} ${item.modelo}`.trim(),
@@ -66,7 +76,7 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 			</section>
 
 			<div className="bg-[#015cb9] text-white text-center py-2 font-medium tracking-wide">
-				{textoBannerPromocional}
+				{config.textoBannerHero?.trim() || "¡Bienvenido!"}
 			</div>
 
 			<section className="py-16 px-10 bg-[#F5F5F5] flex-grow">
@@ -88,7 +98,13 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 				{!cargando && !error && (
 					<div className="flex justify-center gap-6 flex-wrap">
 						{productos.map((prod) => (
-							<TarjetaCelular key={prod.id} producto={prod} onClick={() => onVerDetalle?.(prod.id)} />
+							<TarjetaCelular
+								key={prod.id}
+								producto={prod}
+								umbralEnvioGratis={config.umbralEnvioGratis}
+								descuentoTransferencia={config.descuentoTransferencia}
+								onClick={() => onVerDetalle?.(prod.id)}
+							/>
 						))}
 					</div>
 				)}

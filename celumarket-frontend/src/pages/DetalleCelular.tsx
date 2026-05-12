@@ -6,6 +6,8 @@ import { type CelularDetalle } from "../models/CelularDetalle";
 import { carritoService } from "../services/carritoService";
 import { DetalleGaleria } from "../components/detalle/DetalleGaleria";
 import { DetalleInfoPrincipal } from "../components/detalle/DetalleInfoPrincipal";
+import { configuracionService } from "../services/configuracionService";
+import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
 
 type DetalleProps = {
 	celularId: number;
@@ -25,11 +27,20 @@ export const DetalleCelular = ({
 		number | null
 	>(null);
 	const [imagenActiva, setImagenActiva] = useState(0);
+	const [config, setConfig] = useState<ConfiguracionSistema>({
+		descuentoTransferencia: 10,
+		umbralEnvioGratis: 499999,
+		textoBannerHero: "¡Bienvenido!",
+	});
 
 	useEffect(() => {
 		const cargar = async () => {
-			const data = await celularService.obtenerDetalle(celularId);
+			const [data, configActual] = await Promise.all([
+				celularService.obtenerDetalle(celularId),
+				configuracionService.obtener(),
+			]);
 			setDetalle(data);
+			setConfig(configActual);
 			const primerAlmacenamiento = data.variaciones[0]?.almacenamiento ?? "";
 			const primerColorId =
 				data.variaciones.find(
@@ -158,6 +169,8 @@ export const DetalleCelular = ({
 							}}
 							onAgregarAlCarrito={agregarAlCarrito}
 							mostrarInfoTecnica={false}
+							umbralEnvioGratis={config.umbralEnvioGratis}
+							descuentoTransferencia={config.descuentoTransferencia}
 						/>
 					</div>
 					<div className="mt-6 rounded-xl border border-[#e6ebf2] bg-[#f8fafc] p-5">

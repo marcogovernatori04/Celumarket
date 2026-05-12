@@ -23,9 +23,16 @@ export interface ProductoBackendDTO {
 type TarjetaCelularProps = {
 	producto: ProductoCelular;
 	onClick?: () => void;
+	umbralEnvioGratis?: number;
+	descuentoTransferencia?: number;
 };
 
-export const TarjetaCelular = ({ producto, onClick }: TarjetaCelularProps) => {
+export const TarjetaCelular = ({
+	producto,
+	onClick,
+	umbralEnvioGratis = 499999,
+	descuentoTransferencia = 10,
+}: TarjetaCelularProps) => {
 	return (
 		<div
 			onClick={onClick}
@@ -60,7 +67,7 @@ export const TarjetaCelular = ({ producto, onClick }: TarjetaCelularProps) => {
 					)}
 			</div>
 
-			{producto.precio >= 499999 ? (
+			{producto.precio >= umbralEnvioGratis ? (
 				<span className="mt-1 inline-flex w-fit rounded-full bg-[#E7F7EE] px-2 py-1 text-[12px] font-semibold text-[#1E8E5A]">
 					Envío gratis
 				</span>
@@ -79,7 +86,7 @@ export const TarjetaCelular = ({ producto, onClick }: TarjetaCelularProps) => {
 				</p>
 
 				<p className="text-xs text-[#4b6b91] mt-1">
-					10% descuento efectivo/transferencia
+					{descuentoTransferencia}% descuento efectivo/transferencia
 				</p>
 			</div>
 		</div>

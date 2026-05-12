@@ -12,6 +12,8 @@ type DetalleInfoPrincipalProps = {
 	onSelectColor: (colorId: number) => void;
 	onAgregarAlCarrito: () => void;
 	mostrarInfoTecnica?: boolean;
+	umbralEnvioGratis?: number;
+	descuentoTransferencia?: number;
 };
 
 export const DetalleInfoPrincipal = ({
@@ -25,6 +27,8 @@ export const DetalleInfoPrincipal = ({
 	onSelectColor,
 	onAgregarAlCarrito,
 	mostrarInfoTecnica = true,
+	umbralEnvioGratis = 499999,
+	descuentoTransferencia = 10,
 }: DetalleInfoPrincipalProps) => {
 	return (
 		<div>
@@ -34,7 +38,7 @@ export const DetalleInfoPrincipal = ({
 			<p className="mt-1.5 text-[42px] leading-none font-bold text-[#1e1e1e]">
 				${variacionActiva.precio.toLocaleString("es-AR")}
 			</p>
-			{variacionActiva.precio >= 499999 && (
+			{variacionActiva.precio >= umbralEnvioGratis && (
 				<span className="mt-2.5 inline-flex w-fit rounded-full bg-[#E7F7EE] px-3 py-1.5 text-[14px] font-semibold text-[#1E8E5A]">
 					Envío gratis
 				</span>
@@ -45,7 +49,7 @@ export const DetalleInfoPrincipal = ({
 				</p>
 			)}
 			<p className="mt-2.5 text-[14px] text-[#4b6b91]">
-				10% descuento efectivo/transferencia
+				{descuentoTransferencia}% descuento efectivo/transferencia
 			</p>
 			<p className="mt-0.5 text-[14px] text-[#4b6b91]">
 				Hasta 12 cuotas con tarjeta de crédito/débito

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { TarjetaCelular, type ProductoCelular } from "../components/TarjetaCelular";
 import { Footer } from "../components/Footer";
 import { celularService } from "../services/celularService";
+import { configuracionService } from "../services/configuracionService";
+import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
 
 type CatalogoProps = {
 	onVerDetalle?: (celularId: number) => void;
@@ -14,11 +16,20 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 	const [cargando, setCargando] = useState(true);
 	const [busqueda, setBusqueda] = useState("");
 	const [filtro, setFiltro] = useState<"nuevo" | "precio-asc" | "precio-desc">("nuevo");
+	const [config, setConfig] = useState<ConfiguracionSistema>({
+		descuentoTransferencia: 10,
+		umbralEnvioGratis: 499999,
+		textoBannerHero: "¡Bienvenido!",
+	});
 
 	useEffect(() => {
 		const cargar = async () => {
 			setCargando(true);
-			const data = await celularService.obtenerCatalogoPaginado(pagina, 10);
+			const [data, configActual] = await Promise.all([
+				celularService.obtenerCatalogoPaginado(pagina, 10),
+				configuracionService.obtener(),
+			]);
+			setConfig(configActual);
 			setTotalPaginas(data.totalPaginas || 1);
 			setProductos(
 				data.items.map((item) => ({
@@ -68,7 +79,13 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 				) : (
 					<div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 						{productosFiltrados.map((prod) => (
-							<TarjetaCelular key={prod.id} producto={prod} onClick={() => onVerDetalle?.(prod.id)} />
+							<TarjetaCelular
+								key={prod.id}
+								producto={prod}
+								umbralEnvioGratis={config.umbralEnvioGratis}
+								descuentoTransferencia={config.descuentoTransferencia}
+								onClick={() => onVerDetalle?.(prod.id)}
+							/>
 						))}
 					</div>
 				)}
