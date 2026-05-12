@@ -213,6 +213,7 @@ namespace Celumarket.Infrastructure
             modelBuilder.Entity<TarifaZonal>().Property(t => t.PrecioSucursal).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.DescuentoTransferencia).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.UmbralEnvioGratis).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.TextoBannerHero).HasMaxLength(120);
         }
     }
 }
