@@ -27,7 +27,6 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 	const [colorId, setColorId] = useState(variacion.colorId);
 	const [almacenamiento, setAlmacenamiento] = useState(variacion.almacenamiento);
 	const [precio, setPrecio] = useState(variacion.precio.toString());
-	const [precioAnterior, setPrecioAnterior] = useState(variacion.precioAnterior?.toString() ?? "");
 	const [stockDelta, setStockDelta] = useState("");
 	const [archivo, setArchivo] = useState<File | null>(null);
 	const [gestionandoImagen, setGestionandoImagen] = useState(false);
@@ -36,7 +35,6 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 	const guardar = async () => {
 		const precioNum = Number(precio);
 		const colorIdNum = Number(colorId);
-		const precioAnteriorNum = precioAnterior.trim().length > 0 ? Number(precioAnterior) : null;
 		if (!Number.isFinite(precioNum) || precioNum <= 0) return;
 		if (!Number.isInteger(colorIdNum) || colorIdNum <= 0) return;
 		try {
@@ -45,7 +43,7 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 				variacionId: variacion.id,
 				colorId: colorIdNum,
 				precio: precioNum,
-				precioAnterior: precioAnteriorNum,
+				precioAnterior: null,
 				almacenamiento,
 			});
 			setEditando(false);
@@ -94,25 +92,14 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 				</span>
 				<span>
 					{editando ? (
-						<div className="space-y-1">
-							<input
-								type="number"
-								min={1}
-								step="0.01"
-								value={precio}
-								onChange={(e) => setPrecio(e.target.value)}
-								className="h-8 w-full rounded border border-[#cdd6e1] px-2 text-xs"
-							/>
-							<input
-								type="number"
-								min={0}
-								step="0.01"
-								value={precioAnterior}
-								onChange={(e) => setPrecioAnterior(e.target.value)}
-								placeholder="Precio anterior (opcional)"
-								className="h-8 w-full rounded border border-[#cdd6e1] px-2 text-xs"
-							/>
-						</div>
+						<input
+							type="number"
+							min={1}
+							step="0.01"
+							value={precio}
+							onChange={(e) => setPrecio(e.target.value)}
+							className="h-8 w-full rounded border border-[#cdd6e1] px-2 text-xs"
+						/>
 					) : (
 						<div>
 							<div>${variacion.precio.toLocaleString("es-AR")}</div>

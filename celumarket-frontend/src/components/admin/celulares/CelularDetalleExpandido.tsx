@@ -53,7 +53,6 @@ export const CelularDetalleExpandido = ({
 		colorId: null as number | null,
 		almacenamiento: "",
 		precio: "",
-		precioAnterior: "",
 		stockInicial: "",
 		imagenes: [] as File[],
 	});
@@ -61,7 +60,6 @@ export const CelularDetalleExpandido = ({
 	const crearVariacion = async () => {
 		const colorId = Number(nuevaVariacion.colorId);
 		const precio = Number(nuevaVariacion.precio);
-		const precioAnterior = nuevaVariacion.precioAnterior.trim().length > 0 ? Number(nuevaVariacion.precioAnterior) : null;
 		const stockInicial = Number(nuevaVariacion.stockInicial);
 		if (!Number.isInteger(colorId) || colorId <= 0) return;
 		if (!nuevaVariacion.almacenamiento.trim()) return;
@@ -73,7 +71,7 @@ export const CelularDetalleExpandido = ({
 				celularId: detalle.id,
 				colorId,
 				precio,
-				precioAnterior,
+				precioAnterior: null,
 				almacenamiento: nuevaVariacion.almacenamiento.trim(),
 				stockInicial,
 				imagenes: nuevaVariacion.imagenes,
@@ -83,7 +81,6 @@ export const CelularDetalleExpandido = ({
 				colorId: null,
 				almacenamiento: "",
 				precio: "",
-				precioAnterior: "",
 				stockInicial: "",
 				imagenes: [],
 			});
@@ -127,7 +124,6 @@ export const CelularDetalleExpandido = ({
 							/>
 							<input placeholder="Almacenamiento" value={nuevaVariacion.almacenamiento} onChange={(e) => setNuevaVariacion((p) => ({ ...p, almacenamiento: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
 							<input placeholder="Precio" type="number" value={nuevaVariacion.precio} onChange={(e) => setNuevaVariacion((p) => ({ ...p, precio: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-							<input placeholder="Precio anterior (opcional)" type="number" value={nuevaVariacion.precioAnterior} onChange={(e) => setNuevaVariacion((p) => ({ ...p, precioAnterior: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
 						</div>
 						<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
 							<input placeholder="Stock inicial" type="number" value={nuevaVariacion.stockInicial} onChange={(e) => setNuevaVariacion((p) => ({ ...p, stockInicial: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />

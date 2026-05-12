@@ -11,7 +11,6 @@ import { colorService, type ColorItem } from "../../services/colorService";
 type NuevaVariacion = {
 	colorId: number | null;
 	precio: string;
-	precioAnterior: string;
 	almacenamiento: string;
 	stockInicial: string;
 	imagenes: File[];
@@ -49,7 +48,7 @@ export const AdminCelularesPanel = () => {
 		descripcion: "",
 	});
 	const [nuevasVariaciones, setNuevasVariaciones] = useState<NuevaVariacion[]>([
-		{ colorId: null, precio: "", precioAnterior: "", almacenamiento: "", stockInicial: "", imagenes: [] },
+		{ colorId: null, precio: "", almacenamiento: "", stockInicial: "", imagenes: [] },
 	]);
 	const [nuevasEspecificaciones, setNuevasEspecificaciones] = useState<Array<{ nombre: string; valor: string }>>([]);
 	const [expandidoId, setExpandidoId] = useState<number | null>(null);
@@ -299,7 +298,7 @@ export const AdminCelularesPanel = () => {
 					celularId,
 					colorId: Number(v.colorId),
 					precio: Number(v.precio),
-					precioAnterior: v.precioAnterior.trim().length > 0 ? Number(v.precioAnterior) : null,
+					precioAnterior: null,
 					almacenamiento: v.almacenamiento.trim(),
 					stockInicial: Number(v.stockInicial),
 				});
@@ -320,7 +319,7 @@ export const AdminCelularesPanel = () => {
 				modelo: "",
 				descripcion: "",
 			});
-			setNuevasVariaciones([{ colorId: null, precio: "", precioAnterior: "", almacenamiento: "", stockInicial: "", imagenes: [] }]);
+			setNuevasVariaciones([{ colorId: null, precio: "", almacenamiento: "", stockInicial: "", imagenes: [] }]);
 			setNuevasEspecificaciones([]);
 		} catch (err) {
 			setError(obtenerMensajeApi(err, "No se pudo crear el celular."));
@@ -360,7 +359,7 @@ export const AdminCelularesPanel = () => {
 						<div className="mb-2 flex items-center justify-between">
 							<p className="text-xs font-semibold uppercase tracking-[0.06em] text-[#64748b]">Variaciones</p>
 							<button
-								onClick={() => setNuevasVariaciones((prev) => [...prev, { colorId: null, precio: "", precioAnterior: "", almacenamiento: "", stockInicial: "", imagenes: [] }])}
+								onClick={() => setNuevasVariaciones((prev) => [...prev, { colorId: null, precio: "", almacenamiento: "", stockInicial: "", imagenes: [] }])}
 								className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155]"
 							>
 								+ Añadir variación
@@ -389,7 +388,6 @@ export const AdminCelularesPanel = () => {
 										/>
 										<input placeholder="Almacenamiento" value={v.almacenamiento} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, almacenamiento: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
 										<input placeholder="Precio" type="number" value={v.precio} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, precio: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-										<input placeholder="Precio anterior (opcional)" type="number" value={v.precioAnterior} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, precioAnterior: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
 									</div>
 									<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
 										<input placeholder="Stock inicial" type="number" value={v.stockInicial} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, stockInicial: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
@@ -475,6 +473,11 @@ export const AdminCelularesPanel = () => {
 										</div>
 										<div>
 											<p className="text-base font-semibold text-[#001830]">{c.marca} {c.modelo}</p>
+											{expandido && detalle?.descripcion && (
+												<p className="mt-1 line-clamp-2 text-xs text-[#64748b]">
+													{detalle.descripcion}
+												</p>
+											)}
 										</div>
 										<p className="text-sm text-[#1e293b]">${c.precioMinimo.toLocaleString("es-AR")}</p>
 										<p className="text-sm text-[#1e293b]">{c.cantidadColores}</p>

@@ -106,6 +106,12 @@ function App() {
 		}
 	}, []);
 
+	useEffect(() => {
+		if (vista === "detalle") {
+			window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+		}
+	}, [vista, celularSeleccionadoId]);
+
 	return (
 		<div className="bg-gray-50 min-h-screen font-sans flex flex-col">
 			{toastCarrito && (

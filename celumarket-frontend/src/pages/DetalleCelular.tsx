@@ -4,6 +4,8 @@ import { PorqueElegirnos } from "../components/PorqueElegirnos";
 import { celularService } from "../services/celularService";
 import { type CelularDetalle } from "../models/CelularDetalle";
 import { carritoService } from "../services/carritoService";
+import { DetalleGaleria } from "../components/detalle/DetalleGaleria";
+import { DetalleInfoPrincipal } from "../components/detalle/DetalleInfoPrincipal";
 
 type DetalleProps = {
 	celularId: number;
@@ -125,148 +127,53 @@ export const DetalleCelular = ({
 						</span>
 					</div>
 				</div>
-				<div className="rounded-xl bg-white p-8">
-					<div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-						<div className="relative flex items-center justify-center rounded-xl bg-[#f0f0f0] p-4 min-h-[350px]">
-							<img
-								key={imagenesActivas[imagenActiva] ?? "placeholder"}
-								src={
-									imagenesActivas[imagenActiva] ??
-									"https://placehold.co/500x500"
-								}
-								alt={`${detalle.marca} ${detalle.modelo}`}
-								className="max-h-[360px] w-auto scale-[1.28] object-contain mix-blend-multiply animate-[fadeIn_260ms_ease-out]"
-							/>
-							{imagenesActivas.length > 1 && (
-								<>
-									<button
-										onClick={irImagenAnterior}
-										className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-3 py-1 text-lg text-[#001830] shadow transition-all duration-200 hover:scale-110 hover:bg-white hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#015cb9]"
-									>
-										‹
-									</button>
-									<button
-										onClick={irImagenSiguiente}
-										className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-3 py-1 text-lg text-[#001830] shadow transition-all duration-200 hover:scale-110 hover:bg-white hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#015cb9]"
-									>
-										›
-									</button>
-								</>
-							)}
-							{imagenesActivas.length > 1 && (
-								<div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
-									{imagenesActivas.map((_, idx) => (
-										<button
-											key={idx}
-											onClick={() => setImagenActiva(idx)}
-											className={`h-2.5 w-2.5 rounded-full ${idx === imagenActiva ? "bg-[#015cb9]" : "bg-[#b9c3d1]"}`}
-										/>
-									))}
-								</div>
-							)}
-						</div>
-						<div>
-							<h1 className="text-[34px] leading-tight font-semibold text-[#1e1e1e]">
-								{detalle.marca} {detalle.modelo}
-							</h1>
-							<p className="mt-2 text-[46px] leading-none font-bold text-[#1e1e1e]">
-								${variacionActiva.precio.toLocaleString("es-AR")}
-							</p>
-							{variacionActiva.precio >= 499999 && (
-								<span className="mt-3 inline-flex w-fit rounded-full bg-[#E7F7EE] px-3 py-1.5 text-[14px] font-semibold text-[#1E8E5A]">
-									Envío gratis
-								</span>
-							)}
-							{detalle.textoPromocion && (
-								<p className="mt-3 inline-flex rounded-full bg-[#dbe9ff] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#0b3f75]">
-									{detalle.textoPromocion}
+				<div className="rounded-xl bg-white p-6">
+					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+						<DetalleGaleria
+							imagenesActivas={imagenesActivas}
+							imagenActiva={imagenActiva}
+							nombre={`${detalle.marca} ${detalle.modelo}`}
+							onSetImagenActiva={setImagenActiva}
+							onPrev={irImagenAnterior}
+							onNext={irImagenSiguiente}
+						/>
+						<DetalleInfoPrincipal
+							detalle={detalle}
+							variacionActiva={variacionActiva}
+							almacenamientos={almacenamientos}
+							almacenamientoSeleccionado={almacenamientoSeleccionado}
+							coloresUnicos={coloresUnicos}
+							colorSeleccionadoId={colorSeleccionadoId}
+							onSelectAlmacenamiento={(alm) => {
+								setAlmacenamientoSeleccionado(alm);
+								const primeraVariacion = detalle.variaciones.find(
+									(v) => v.almacenamiento === alm,
+								);
+								setColorSeleccionadoId(primeraVariacion?.colorId ?? null);
+								setImagenActiva(0);
+							}}
+							onSelectColor={(colorId) => {
+								setColorSeleccionadoId(colorId);
+								setImagenActiva(0);
+							}}
+							onAgregarAlCarrito={agregarAlCarrito}
+							mostrarInfoTecnica={false}
+						/>
+					</div>
+					<div className="mt-6 rounded-xl border border-[#e6ebf2] bg-[#f8fafc] p-5">
+						<h2 className="text-[18px] font-semibold text-[#1e1e1e]">
+							Descripción y especificaciones
+						</h2>
+						<p className="mt-2 text-[14px] leading-relaxed text-[#4b5563]">
+							{detalle.descripcion}
+						</p>
+						<div className="mt-3 grid grid-cols-1 gap-2 text-[14px] text-[#5f6670] sm:grid-cols-2">
+							{detalle.especificaciones.map((esp, idx) => (
+								<p key={idx}>
+									<span className="font-medium text-[#374151]">{esp.nombre}:</span>{" "}
+									{esp.valor}
 								</p>
-							)}
-							<p className="mt-3 text-sm text-[#4b6b91]">
-								10% descuento efectivo/transferencia
-							</p>
-							<p className="mt-1 text-sm text-[#4b6b91]">
-								Hasta 12 cuotas con tarjeta de crédito/débito
-							</p>
-							<div className="mt-4 space-y-1 text-[18px] leading-tight text-[#757575]">
-								{detalle.especificaciones.map((esp, idx) => (
-									<p key={idx}>
-										• {esp.nombre}: {esp.valor}
-									</p>
-								))}
-							</div>
-							<div className="mt-5">
-								<p className="mb-2 text-sm font-medium text-[#1e1e1e]">
-									Almacenamiento
-								</p>
-								<div className="mb-4 flex flex-wrap gap-2.5">
-									{almacenamientos.map((alm) => {
-										const activo = almacenamientoSeleccionado === alm;
-										return (
-											<button
-												key={alm}
-												type="button"
-												onClick={() => {
-													setAlmacenamientoSeleccionado(alm);
-													const primeraVariacion =
-														detalle?.variaciones.find(
-															(v) => v.almacenamiento === alm,
-														);
-													setColorSeleccionadoId(
-														primeraVariacion?.colorId ?? null,
-													);
-													setImagenActiva(0);
-												}}
-												className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${activo ? "bg-[#015cb9] text-white" : "bg-[#eef2f7] text-[#4b5563] hover:bg-[#dbe5f1]"}`}
-											>
-												{alm}
-											</button>
-										);
-									})}
-								</div>
-								<p className="mb-2 text-sm font-medium text-[#1e1e1e]">
-									Colores
-								</p>
-								<div className="flex flex-wrap items-center gap-2">
-									{coloresUnicos.map((variacion) => {
-										const activo =
-											colorSeleccionadoId === variacion.colorId;
-										const esBlanco =
-											(variacion.colorHex ?? "").toLowerCase() ===
-												"#f5f5f5" ||
-											(variacion.colorHex ?? "").toLowerCase() ===
-												"#ffffff";
-										return (
-											<button
-												key={variacion.colorId}
-												type="button"
-												onClick={() => {
-													setColorSeleccionadoId(
-														variacion.colorId,
-													);
-													setImagenActiva(0);
-												}}
-												title={variacion.color}
-												aria-label={`Color ${variacion.color}`}
-												className={`h-9 w-9 rounded-full border-2 transition-all duration-200 ${activo ? "border-[#015cb9] scale-110 shadow-md" : esBlanco ? "border-[#cfd4dc] hover:scale-105 hover:shadow" : "border-white hover:scale-105 hover:shadow"}`}
-												style={{
-													backgroundColor:
-														variacion.colorHex ?? "#6b7280",
-												}}
-											/>
-										);
-									})}
-								</div>
-								<p className="mt-2 text-xs text-[#6b7280]">
-									{variacionActiva.color}
-								</p>
-							</div>
-							<button
-								onClick={agregarAlCarrito}
-								className="mt-5 h-11 w-full rounded-md bg-[#015cb9] text-sm font-medium text-white hover:bg-[#017AF4] transition-colors duration-200"
-							>
-								Agregar al carrito
-							</button>
+							))}
 						</div>
 					</div>
 				</div>
