@@ -53,6 +53,15 @@ namespace Celumarket.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpPut("variaciones/{variacionId}")]
+        public async Task<IActionResult> ModificarVariacion(int variacionId, [FromBody] CatalogoDTOs.ModificarVariacionDTO dto)
+        {
+            dto.VariacionId = variacionId;
+            await _gestorCatalogo.ModificarVariacionAsync(dto);
+            return Ok(new { Mensaje = "Variación modificada con éxito." });
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("variaciones/{variacionId}/imagenes")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> SubirImagen(int variacionId, [FromForm] SubirImagenDTO request)
@@ -73,12 +82,28 @@ namespace Celumarket.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpDelete("variaciones/{variacionId}/imagenes")]
+        public async Task<IActionResult> EliminarImagen(int variacionId, [FromQuery] string url)
+        {
+            await _gestorCatalogo.EliminarImagenAsync(variacionId, url);
+            return Ok(new { Mensaje = "Imagen eliminada con éxito." });
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id}/especificaciones")]
         public async Task<IActionResult> AgregarEspecificaciones(int id, [FromBody] List<EspecificacionDTO> dto)
         {
             await _gestorCatalogo.AgregarEspecificacionesAsync(id, dto);
             return Ok(new { Mensaje = "Especificaciones añadidas con éxito." });
 
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}/especificaciones")]
+        public async Task<IActionResult> ReemplazarEspecificaciones(int id, [FromBody] List<EspecificacionDTO> dto)
+        {
+            await _gestorCatalogo.ReemplazarEspecificacionesAsync(id, dto);
+            return Ok(new { Mensaje = "Especificaciones actualizadas con éxito." });
         }
 
         [Authorize(Roles = "Admin")]

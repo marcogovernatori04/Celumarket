@@ -75,6 +75,19 @@ namespace Celumarket.Application.Services
             return nuevaVariacion.Id;
         }
 
+        public async Task ModificarVariacionAsync(ModificarVariacionDTO dto)
+        {
+            var variacion = await _variacionRepo.ObtenerPorIdAsync(dto.VariacionId);
+            if (variacion == null)
+                throw new Exception("Variación no encontrada");
+
+            variacion.ActualizarColor(dto.ColorId);
+            variacion.ActualizarAlmacenamiento(dto.Almacenamiento);
+            variacion.ActualizarPrecio(dto.Precio, dto.PrecioAnterior);
+
+            await _unitOfWork.GuardarAsync();
+        }
+
         public async Task<string> AgregarImagenAsync(int variacionId, Stream fileStream, string fileName, bool esPrincipal)
         {
             var variacion = await _variacionRepo.ObtenerPorIdAsync(variacionId);
@@ -100,6 +113,19 @@ namespace Celumarket.Application.Services
             return url;
         }
 
+        public async Task EliminarImagenAsync(int variacionId, string urlImagen)
+        {
+            if (string.IsNullOrWhiteSpace(urlImagen))
+                throw new ArgumentException("La URL de imagen es obligatoria.");
+
+            var imagen = await _imagenRepo.ObtenerPorVariacionYUrlAsync(variacionId, urlImagen);
+            if (imagen == null)
+                throw new Exception("Imagen no encontrada para la variación.");
+
+            _imagenRepo.Eliminar(imagen);
+            await _unitOfWork.GuardarAsync();
+        }
+
         public async Task AgregarEspecificacionesAsync(int celularId, List<EspecificacionDTO> dto)
         {
             var celular = await _celularRepo.ObtenerPorIdAsync(celularId);
@@ -113,6 +139,31 @@ namespace Celumarket.Application.Services
             ).ToList();
 
             await _especificacionRepo.AgregarRangoAsync(nuevasEspecificaciones);
+            await _unitOfWork.GuardarAsync();
+        }
+
+        public async Task ReemplazarEspecificacionesAsync(int celularId, List<EspecificacionDTO> dto)
+        {
+            var celular = await _celularRepo.ObtenerPorIdAsync(celularId);
+            if (celular == null)
+                throw new Exception($"No se encontró el celular con ID {celularId}.");
+
+            var existentes = await _especificacionRepo.ObtenerPorCelularIdAsync(celularId);
+            if (existentes.Any())
+            {
+                _especificacionRepo.EliminarRango(existentes);
+            }
+
+            var nuevas = dto
+                .Where(x => !string.IsNullOrWhiteSpace(x.Nombre) && !string.IsNullOrWhiteSpace(x.Valor))
+                .Select(x => new Especificacion(celularId, x.Nombre.Trim(), x.Valor.Trim()))
+                .ToList();
+
+            if (nuevas.Any())
+            {
+                await _especificacionRepo.AgregarRangoAsync(nuevas);
+            }
+
             await _unitOfWork.GuardarAsync();
         }
 

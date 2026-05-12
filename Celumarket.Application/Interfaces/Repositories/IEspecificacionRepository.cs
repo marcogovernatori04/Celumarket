@@ -11,5 +11,7 @@ namespace Celumarket.Application.Interfaces.Repositories
     {
         Task AgregarRangoAsync(IEnumerable<Especificacion> especificaciones);
         Task<Especificacion> ObtenerPorIdAsync(int id);
+        Task<List<Especificacion>> ObtenerPorCelularIdAsync(int celularId);
+        void EliminarRango(IEnumerable<Especificacion> especificaciones);
     }
 }

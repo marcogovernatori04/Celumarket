@@ -93,6 +93,15 @@ namespace Celumarket.Application.DTOs
 
         }
 
+        public class ModificarVariacionDTO
+        {
+            public int VariacionId { get; set; }
+            public int ColorId { get; set; }
+            public decimal Precio { get; set; }
+            public decimal? PrecioAnterior { get; set; }
+            public string Almacenamiento { get; set; }
+        }
+
         public class EspecificacionDTO
         {
             public string Nombre { get; set; }

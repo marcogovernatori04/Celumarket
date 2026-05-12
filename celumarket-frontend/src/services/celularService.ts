@@ -29,4 +29,43 @@ export const celularService = {
 		const respuesta = await api.get<CelularDetalle>(`/Celulares/${celularId}`);
 		return respuesta.data;
 	},
+
+	modificarVariacion: async (payload: {
+		variacionId: number;
+		colorId: number;
+		precio: number;
+		precioAnterior?: number | null;
+		almacenamiento: string;
+	}): Promise<void> => {
+		await api.put(`/Celulares/variaciones/${payload.variacionId}`, payload);
+	},
+
+	modificarCelular: async (payload: {
+		id: number;
+		marca: string;
+		modelo: string;
+		descripcion: string;
+	}): Promise<void> => {
+		await api.put("/Celulares", payload);
+	},
+
+	reemplazarEspecificaciones: async (
+		celularId: number,
+		especificaciones: Array<{ nombre: string; valor: string }>,
+	): Promise<void> => {
+		await api.put(`/Celulares/${celularId}/especificaciones`, especificaciones);
+	},
+
+	subirImagenVariacion: async (variacionId: number, archivo: File, esPrincipal = false): Promise<void> => {
+		const formData = new FormData();
+		formData.append("archivo", archivo);
+		formData.append("esPrincipal", String(esPrincipal));
+		await api.post(`/Celulares/variaciones/${variacionId}/imagenes`, formData, {
+			headers: { "Content-Type": "multipart/form-data" },
+		});
+	},
+
+	eliminarImagenVariacion: async (variacionId: number, url: string): Promise<void> => {
+		await api.delete(`/Celulares/variaciones/${variacionId}/imagenes`, { params: { url } });
+	},
 };

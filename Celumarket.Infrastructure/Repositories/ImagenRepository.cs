@@ -30,10 +30,21 @@ namespace Celumarket.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<ImagenVariacion?> ObtenerPorVariacionYUrlAsync(int variacionId, string urlImagen)
+        {
+            return await _context.ImagenesVariacion
+                .FirstOrDefaultAsync(i => i.VariacionCelularId == variacionId && i.UrlImagen == urlImagen);
+        }
+
         public async Task ActualizarAsync(ImagenVariacion imagen)
         {
             _context.ImagenesVariacion.Update(imagen);
             await Task.CompletedTask;
+        }
+
+        public void Eliminar(ImagenVariacion imagen)
+        {
+            _context.ImagenesVariacion.Remove(imagen);
         }
 
     }

@@ -11,6 +11,8 @@ namespace Celumarket.Application.Interfaces.Repositories
     {
         Task AgregarAsync(ImagenVariacion imagen);
         Task<IEnumerable<ImagenVariacion>> ObtenerPorVariacionIdAsync(int variacionId);
+        Task<ImagenVariacion?> ObtenerPorVariacionYUrlAsync(int variacionId, string urlImagen);
         Task ActualizarAsync(ImagenVariacion imagen);
+        void Eliminar(ImagenVariacion imagen);
     }
 }

@@ -44,6 +44,22 @@ namespace Celumarket.Domain
             PrecioAnterior = nuevoPrecioAnterior;
         }
 
+        public void ActualizarAlmacenamiento(string almacenamiento)
+        {
+            if (string.IsNullOrWhiteSpace(almacenamiento))
+                throw new ArgumentException("El almacenamiento es obligatorio.");
+
+            Almacenamiento = almacenamiento.Trim();
+        }
+
+        public void ActualizarColor(int colorId)
+        {
+            if (colorId <= 0)
+                throw new ArgumentException("El color es obligatorio.");
+
+            ColorId = colorId;
+        }
+
         public void BloquearStock(int cantidad)
         {
             if (cantidad <= 0)
