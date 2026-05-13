@@ -1,10 +1,9 @@
 type AdminSectionKey =
 	| "reportes"
 	| "celulares"
-	| "stock"
 	| "envios"
 	| "pedidos"
-	| "clientes"
+	| "usuarios"
 	| "configuracion";
 
 type AdminSidebarProps = {
@@ -15,10 +14,9 @@ type AdminSidebarProps = {
 const sections: Array<{ key: AdminSectionKey; label: string }> = [
 	{ key: "reportes", label: "Reportes" },
 	{ key: "celulares", label: "Celulares" },
-	{ key: "stock", label: "Stock" },
 	{ key: "envios", label: "Envíos" },
 	{ key: "pedidos", label: "Pedidos" },
-	{ key: "clientes", label: "Clientes" },
+	{ key: "usuarios", label: "Usuarios" },
 	{ key: "configuracion", label: "Configuración" },
 ];
 

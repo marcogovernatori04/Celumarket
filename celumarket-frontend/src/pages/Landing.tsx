@@ -27,11 +27,18 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 	useEffect(() => {
 		const obtenerProductos = async () => {
 			try {
-				const [datos, configActual] = await Promise.all([
-					celularService.obtenerDestacados(4),
-					configuracionService.obtener(),
-				]);
-				setConfig(configActual);
+				const datos = await celularService.obtenerDestacados(4);
+
+				try {
+					const configActual = await configuracionService.obtener();
+					setConfig(configActual);
+				} catch {
+					setConfig((prev) => ({
+						...prev,
+						textoBannerHero: prev.textoBannerHero?.trim() || "¡Bienvenido!",
+					}));
+				}
+
 				const productosMapeados: ProductoCelular[] = datos.map((item) => ({
 					id: item.id,
 					nombre: `${item.marca} ${item.modelo}`.trim(),

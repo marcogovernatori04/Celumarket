@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AdminSidebar, type AdminSectionKey } from "../components/admin/AdminSidebar";
 import { AdminCelularesPanel } from "../components/admin/AdminCelularesPanel";
 import { AdminConfiguracionPanel } from "../components/admin/AdminConfiguracionPanel";
+import { AdminUsuariosPanel } from "../components/admin/AdminUsuariosPanel";
 
 export const AdminPanel = () => {
 	const [seccionActiva, setSeccionActiva] = useState<AdminSectionKey>("reportes");
@@ -19,6 +20,8 @@ export const AdminPanel = () => {
 					<div className="mt-6">
 						{seccionActiva === "celulares" ? (
 							<AdminCelularesPanel />
+						) : seccionActiva === "usuarios" ? (
+							<AdminUsuariosPanel />
 						) : seccionActiva === "configuracion" ? (
 							<AdminConfiguracionPanel />
 						) : (

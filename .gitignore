@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 replacements.txt
+tmp_docx_ref/
+docs/

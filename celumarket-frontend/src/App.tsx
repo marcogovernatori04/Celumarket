@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
+import { NavbarLogin } from "./components/NavbarLogin";
 import { Landing } from "./pages/Landing";
 import { Catalogo } from "./pages/Catalogo";
 import { DetalleCelular } from "./pages/DetalleCelular";
@@ -14,32 +16,26 @@ import { CompraConfirmada } from "./pages/CompraConfirmada";
 import { ResultadoPago } from "./pages/ResultadoPago";
 import { AdminPanel } from "./pages/AdminPanel";
 import { authService } from "./services/authService";
-import { NavbarLogin } from "./components/NavbarLogin";
 import { clienteService } from "./services/clienteService";
 import { carritoService } from "./services/carritoService";
 import type { ReservaCheckout } from "./services/pedidoService";
 
+type CheckoutLocationState = {
+	reservaSegundosRestantes?: number;
+};
+
 function App() {
-	const [vista, setVista] = useState<"landing" | "catalogo" | "detalle" | "login" | "carrito" | "checkout" | "cambiar-clave" | "mi-perfil" | "mis-pedidos" | "detalle-pedido" | "compra-confirmada" | "resultado-pago" | "admin">("landing");
-	const [celularSeleccionadoId, setCelularSeleccionadoId] = useState<number | null>(null);
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [estaLogueado, setEstaLogueado] = useState(authService.estaLogueado());
 	const [esAdmin, setEsAdmin] = useState(authService.esAdmin());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
 	const [carritoCantidad, setCarritoCantidad] = useState(0);
 	const [toastCarrito, setToastCarrito] = useState<string | null>(null);
-	const [checkoutConReserva, setCheckoutConReserva] = useState(false);
-	const [checkoutReservaSegundosRestantes, setCheckoutReservaSegundosRestantes] = useState<number>(0);
 	const [pedidoConfirmadoId, setPedidoConfirmadoId] = useState<number | null>(null);
-	const [pedidoDetalleId, setPedidoDetalleId] = useState<number | null>(null);
-	const [estadoPagoRedirect, setEstadoPagoRedirect] = useState<"exitoso" | "fallido" | "pendiente">("pendiente");
-
-	const irADetalle = (celularId: number) => {
-		setCelularSeleccionadoId(celularId);
-		setVista("detalle");
-	};
 
 	const recargarCarritoCantidad = async () => {
-		if (!estaLogueado) {
+		if (!estaLogueado || esAdmin) {
 			setCarritoCantidad(0);
 			return;
 		}
@@ -59,8 +55,9 @@ function App() {
 				setEsAdmin(false);
 				return;
 			}
-			setEsAdmin(authService.esAdmin());
-			if (authService.esAdmin()) {
+			const admin = authService.esAdmin();
+			setEsAdmin(admin);
+			if (admin) {
 				setNombreCliente("Admin");
 				return;
 			}
@@ -69,48 +66,43 @@ function App() {
 				const primerNombre = perfil.nombreCompleto?.trim().split(" ")[0] ?? null;
 				setNombreCliente(primerNombre);
 			} catch {
-				if (!authService.esAdmin()) {
-					authService.logout();
-					setEstaLogueado(false);
-					setNombreCliente(null);
-					setEsAdmin(false);
-				}
+				authService.logout();
+				setEstaLogueado(false);
+				setNombreCliente(null);
+				setEsAdmin(false);
+				navigate("/login", { replace: true });
 			}
 		};
 		void cargarPerfil();
-	}, [estaLogueado]);
+	}, [estaLogueado, navigate]);
 
 	useEffect(() => {
 		const handleUnauthorized = () => {
 			setEstaLogueado(false);
 			setEsAdmin(false);
 			setNombreCliente(null);
-			setVista("login");
+			navigate("/login", { replace: true });
 		};
 		window.addEventListener("auth:unauthorized", handleUnauthorized);
 		return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
-	}, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		void recargarCarritoCantidad();
-	}, [estaLogueado, vista]);
+	}, [estaLogueado, esAdmin, location.pathname]);
 
 	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		const pago = params.get("pago");
-		if (pago === "exitoso" || pago === "fallido" || pago === "pendiente") {
-			setEstadoPagoRedirect(pago);
-			setVista("resultado-pago");
-			const nuevaUrl = `${window.location.pathname}${window.location.hash || ""}`;
-			window.history.replaceState({}, "", nuevaUrl);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (vista === "detalle") {
+		if (location.pathname.startsWith("/celulares/")) {
 			window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 		}
-	}, [vista, celularSeleccionadoId]);
+	}, [location.pathname]);
+
+	const esVistaLogin = location.pathname === "/login";
+	const enTienda =
+		location.pathname === "/catalogo" ||
+		location.pathname.startsWith("/celulares/") ||
+		location.pathname.startsWith("/carrito") ||
+		location.pathname.startsWith("/checkout");
 
 	return (
 		<div className="bg-gray-50 min-h-screen font-sans flex flex-col">
@@ -119,101 +111,153 @@ function App() {
 					{toastCarrito}
 				</div>
 			)}
-			{vista === "login" ? (
-				<NavbarLogin onIrAInicio={() => setVista("landing")} />
+
+			{esVistaLogin ? (
+				<NavbarLogin onIrAInicio={() => navigate("/")} />
 			) : (
 				<Navbar
-					enTienda={vista === "catalogo" || vista === "detalle" || vista === "carrito" || vista === "checkout"}
+					enTienda={enTienda}
 					estaLogueado={estaLogueado}
 					esAdmin={esAdmin}
 					nombreCliente={nombreCliente}
 					carritoCantidad={carritoCantidad}
-					onIrATienda={() => setVista("catalogo")}
-					onIrAInicio={() => setVista("landing")}
-					onIrAAdmin={() => setVista("admin")}
-					onIrALogin={() => setVista("login")}
-					onVerPerfil={() => setVista("mi-perfil")}
-					onVerMisPedidos={() => setVista("mis-pedidos")}
-					onCambiarClave={() => setVista("cambiar-clave")}
-					onIrACarrito={() => setVista(estaLogueado && !esAdmin ? "carrito" : "login")}
+					onIrATienda={() => navigate("/catalogo")}
+					onIrAInicio={() => navigate("/")}
+					onIrAAdmin={() => navigate("/admin")}
+					onIrALogin={() => navigate("/login")}
+					onVerPerfil={() => navigate("/mi-perfil")}
+					onVerMisPedidos={() => navigate("/mis-pedidos")}
+					onCambiarClave={() => navigate("/cambiar-clave")}
+					onIrACarrito={() => navigate(estaLogueado && !esAdmin ? "/carrito" : "/login")}
 					onLogout={() => {
 						authService.logout();
 						setEstaLogueado(false);
 						setEsAdmin(false);
-						setVista("landing");
+						navigate("/");
 					}}
 				/>
 			)}
 
 			<main className="flex flex-1 min-h-0 flex-col">
-				{vista === "landing" && <Landing onIrATienda={() => setVista("catalogo")} onVerDetalle={irADetalle} />}
-				{vista === "catalogo" && <Catalogo onVerDetalle={irADetalle} />}
-				{vista === "detalle" && celularSeleccionadoId !== null && (
-					<DetalleCelular
-						celularId={celularSeleccionadoId}
-						onRequiereLogin={() => setVista("login")}
-						onAgregadoCarrito={async (mensaje) => {
-							await recargarCarritoCantidad();
-							setToastCarrito(mensaje);
-							setTimeout(() => setToastCarrito(null), 1600);
-						}}
+				<Routes>
+					<Route path="/" element={<Landing onIrATienda={() => navigate("/catalogo")} onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
+					<Route path="/catalogo" element={<Catalogo onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
+					<Route
+						path="/celulares/:id"
+						element={
+							<DetalleCelularRoute
+								onRequiereLogin={() => navigate("/login")}
+								onAgregadoCarrito={async (mensaje) => {
+									await recargarCarritoCantidad();
+									setToastCarrito(mensaje);
+									setTimeout(() => setToastCarrito(null), 1600);
+								}}
+							/>
+						}
 					/>
-				)}
-				{vista === "login" && (
-					<Login
-						onLoginExitoso={() => {
-							setEstaLogueado(true);
-							const admin = authService.esAdmin();
-							setEsAdmin(admin);
-							setVista(admin ? "admin" : "carrito");
-						}}
+					<Route
+						path="/login"
+						element={
+							<Login
+								onLoginExitoso={() => {
+									setEstaLogueado(true);
+									const admin = authService.esAdmin();
+									setEsAdmin(admin);
+									navigate(admin ? "/admin" : "/carrito");
+								}}
+							/>
+						}
 					/>
-				)}
-				{vista === "carrito" && !esAdmin && (
-					<Carrito
-						onCambioCarrito={recargarCarritoCantidad}
-						onIrATienda={() => setVista("catalogo")}
-						onIrACheckout={(reserva: ReservaCheckout) => {
-							setCheckoutReservaSegundosRestantes(reserva.segundosRestantes);
-							setCheckoutConReserva(true);
-							setVista("checkout");
-						}}
+					<Route
+						path="/carrito"
+						element={
+							!estaLogueado || esAdmin ? (
+								<Navigate to="/login" replace />
+							) : (
+								<Carrito
+									onCambioCarrito={recargarCarritoCantidad}
+									onIrATienda={() => navigate("/catalogo")}
+									onIrACheckout={(reserva: ReservaCheckout) =>
+										navigate("/checkout", { state: { reservaSegundosRestantes: reserva.segundosRestantes } })
+									}
+								/>
+							)
+						}
 					/>
-				)}
-				{vista === "checkout" && checkoutConReserva && !esAdmin && (
-					<Checkout
-						reservaSegundosIniciales={checkoutReservaSegundosRestantes}
-						onVolverCarrito={() => setVista("carrito")}
-						onCompraConfirmada={(pedidoId) => {
+					<Route
+						path="/checkout"
+						element={!estaLogueado || esAdmin ? <Navigate to="/login" replace /> : <CheckoutRoute onCompraConfirmada={(pedidoId) => {
 							setPedidoConfirmadoId(pedidoId);
-							setCheckoutConReserva(false);
 							void recargarCarritoCantidad();
-							setVista("compra-confirmada");
-						}}
+							navigate("/compra-confirmada");
+						}} onVolverCarrito={() => navigate("/carrito")} />}
 					/>
-				)}
-				{vista === "admin" && esAdmin && <AdminPanel />}
-				{vista === "cambiar-clave" && <CambiarClave onVolver={() => setVista("landing")} />}
-				{vista === "mi-perfil" && <MiPerfil />}
-				{vista === "mis-pedidos" && <MisPedidos onVerDetalle={(pedidoId) => { setPedidoDetalleId(pedidoId); setVista("detalle-pedido"); }} />}
-				{vista === "detalle-pedido" && pedidoDetalleId !== null && <DetallePedido pedidoId={pedidoDetalleId} onVolver={() => setVista("mis-pedidos")} />}
-				{vista === "compra-confirmada" && (
-					<CompraConfirmada
-						pedidoId={pedidoConfirmadoId}
-						onVerMisPedidos={() => setVista("mis-pedidos")}
-						onIrATienda={() => setVista("catalogo")}
+					<Route path="/admin" element={esAdmin ? <AdminPanel /> : <Navigate to="/login" replace />} />
+					<Route path="/cambiar-clave" element={<CambiarClave onVolver={() => navigate("/")} />} />
+					<Route path="/mi-perfil" element={<MiPerfil />} />
+					<Route path="/mis-pedidos" element={<MisPedidos onVerDetalle={(pedidoId) => navigate(`/mis-pedidos/${pedidoId}`)} />} />
+					<Route path="/mis-pedidos/:pedidoId" element={<DetallePedidoRoute onVolver={() => navigate("/mis-pedidos")} />} />
+					<Route
+						path="/compra-confirmada"
+						element={<CompraConfirmada pedidoId={pedidoConfirmadoId} onVerMisPedidos={() => navigate("/mis-pedidos")} onIrATienda={() => navigate("/catalogo")} />}
 					/>
-				)}
-				{vista === "resultado-pago" && (
-					<ResultadoPago
-						estado={estadoPagoRedirect}
-						onVerMisPedidos={() => setVista("mis-pedidos")}
-						onIrATienda={() => setVista("catalogo")}
+					<Route
+						path="/resultado-pago"
+						element={<ResultadoPagoRoute onVerMisPedidos={() => navigate("/mis-pedidos")} onIrATienda={() => navigate("/catalogo")} />}
 					/>
-				)}
+					<Route path="*" element={<Navigate to="/" replace />} />
+				</Routes>
 			</main>
 		</div>
 	);
+}
+
+function DetalleCelularRoute({
+	onRequiereLogin,
+	onAgregadoCarrito,
+}: {
+	onRequiereLogin: () => void;
+	onAgregadoCarrito: (mensaje: string) => void | Promise<void>;
+}) {
+	const { id } = useParams();
+	const celularId = id ? Number(id) : NaN;
+	if (!Number.isFinite(celularId)) return <Navigate to="/catalogo" replace />;
+	return <DetalleCelular celularId={celularId} onRequiereLogin={onRequiereLogin} onAgregadoCarrito={onAgregadoCarrito} />;
+}
+
+function CheckoutRoute({
+	onCompraConfirmada,
+	onVolverCarrito,
+}: {
+	onCompraConfirmada: (pedidoId: number) => void;
+	onVolverCarrito: () => void;
+}) {
+	const location = useLocation();
+	const state = (location.state ?? {}) as CheckoutLocationState;
+	if (!state.reservaSegundosRestantes || state.reservaSegundosRestantes <= 0) {
+		return <Navigate to="/carrito" replace />;
+	}
+	return (
+		<Checkout
+			reservaSegundosIniciales={state.reservaSegundosRestantes}
+			onVolverCarrito={onVolverCarrito}
+			onCompraConfirmada={onCompraConfirmada}
+		/>
+	);
+}
+
+function DetallePedidoRoute({ onVolver }: { onVolver: () => void }) {
+	const { pedidoId } = useParams();
+	const id = pedidoId ? Number(pedidoId) : NaN;
+	if (!Number.isFinite(id)) return <Navigate to="/mis-pedidos" replace />;
+	return <DetallePedido pedidoId={id} onVolver={onVolver} />;
+}
+
+function ResultadoPagoRoute({ onVerMisPedidos, onIrATienda }: { onVerMisPedidos: () => void; onIrATienda: () => void }) {
+	const [searchParams] = useSearchParams();
+	const pago = searchParams.get("pago");
+	const estado = pago === "exitoso" || pago === "fallido" || pago === "pendiente" ? pago : "pendiente";
+	return <ResultadoPago estado={estado} onVerMisPedidos={onVerMisPedidos} onIrATienda={onIrATienda} />;
 }
 
 export default App;

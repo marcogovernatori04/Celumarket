@@ -24,6 +24,22 @@ export type ActualizarPerfilPayload = {
 	codigoPostal: number;
 };
 
+export type UsuarioListado = {
+	id: number;
+	nombreCompleto: string;
+	email: string;
+	rol: string;
+	telefono: string;
+	calle: string;
+	numero: string;
+	pisoDepto: string;
+	localidad: string;
+	provincia: string;
+	codigoPostal: number;
+	cantidadPedidos: number;
+	totalComprado: number;
+};
+
 export const clienteService = {
 	async obtenerMiPerfil(): Promise<MiPerfil> {
 		const { data } = await api.get<MiPerfil>("/Clientes/mi-perfil");
@@ -32,5 +48,10 @@ export const clienteService = {
 
 	async actualizarMiPerfil(payload: ActualizarPerfilPayload): Promise<void> {
 		await api.put("/Clientes/mi-perfil", payload);
+	},
+
+	async obtenerUsuarios(): Promise<UsuarioListado[]> {
+		const { data } = await api.get<UsuarioListado[]>("/Clientes/lista-completa");
+		return data;
 	},
 };

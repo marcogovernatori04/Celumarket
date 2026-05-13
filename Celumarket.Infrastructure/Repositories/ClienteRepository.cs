@@ -49,6 +49,7 @@ namespace Celumarket.Infrastructure.Repositories
                 {
                     Id = c.Id,
                     NombreCompleto = $"{c.Nombre} {c.Apellido}",
+                    Rol = c.Usuario.Rol.Nombre,
                     Telefono = c.Telefono ?? "-",
                     Email = c.Usuario.Email,
                     Calle = c.Direccion != null ? c.Direccion.Calle : "Sin calle",
@@ -57,6 +58,7 @@ namespace Celumarket.Infrastructure.Repositories
                     Localidad = c.Direccion != null ? c.Direccion.Localidad : "Sin localidad",
                     Provincia = c.Direccion != null ? c.Direccion.Provincia : "Sin provincia",
                     CodigoPostal = c.Direccion != null ? c.Direccion.CodigoPostal : 0,
+                    CantidadPedidos = _context.Pedidos.Count(p => p.ClienteId == c.Id),
 
                     TotalComprado = _context.Pedidos
                                         .Where(p => p.ClienteId == c.Id && p.Estado == Pedido.EstadoPagado)

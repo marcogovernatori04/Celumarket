@@ -73,6 +73,7 @@
             public int Id {  get; set; }
             public string NombreCompleto { get; set; }
             public string Email { get; set; }
+            public string Rol { get; set; }
             public string Telefono { get; set; }
             public string Calle { get; set; }
             public string Numero { get; set; }
@@ -80,6 +81,7 @@
             public string Localidad { get; set; }
             public string Provincia { get; set; }
             public int CodigoPostal { get; set; }
+            public int CantidadPedidos { get; set; }
 
             public decimal TotalComprado { get; set; }
 

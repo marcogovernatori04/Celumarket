@@ -111,6 +111,7 @@ builder.Services.AddScoped<IVariacionRepository, VariacionRepository>();
 builder.Services.AddScoped<IGestorCarrito, GestorCarrito>();
 builder.Services.AddScoped<IGestorCatalogo, GestorCatalogo>();
 builder.Services.AddScoped<IGestorCliente, GestorCliente>();
+builder.Services.AddScoped<IGestorConfiguracion, GestorConfiguracion>();
 builder.Services.AddScoped<IGestorConsultaPedido, GestorConsultaPedido>();
 builder.Services.AddScoped<IGestorDocumentoFactura, GestorDocumentoFactura>();
 builder.Services.AddScoped<IGestorPedidoCliente, GestorPedidoCliente>();
