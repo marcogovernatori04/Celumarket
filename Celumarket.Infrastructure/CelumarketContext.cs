@@ -214,6 +214,10 @@ namespace Celumarket.Infrastructure
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.DescuentoTransferencia).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.UmbralEnvioGratis).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.TextoBannerHero).HasMaxLength(120);
+            modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.AliasTransferencia).HasMaxLength(80);
+            modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.CbuTransferencia).HasMaxLength(30);
+            modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.TitularTransferencia).HasMaxLength(120);
+            modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.BancoTransferencia).HasMaxLength(120);
         }
     }
 }

@@ -7,6 +7,10 @@ namespace Celumarket.Application.DTOs
             public decimal DescuentoTransferencia { get; set; }
             public decimal UmbralEnvioGratis { get; set; }
             public string TextoBannerHero { get; set; } = "¡Bienvenido!";
+            public string AliasTransferencia { get; set; } = "celumarket";
+            public string CbuTransferencia { get; set; } = "0000003100000000000000";
+            public string TitularTransferencia { get; set; } = "Celumarket S.A.";
+            public string BancoTransferencia { get; set; } = "Banco Nación";
         }
 
         public class ActualizarConfiguracionSistemaDTO
@@ -14,6 +18,10 @@ namespace Celumarket.Application.DTOs
             public decimal DescuentoTransferencia { get; set; }
             public decimal UmbralEnvioGratis { get; set; }
             public string TextoBannerHero { get; set; } = "¡Bienvenido!";
+            public string AliasTransferencia { get; set; } = "celumarket";
+            public string CbuTransferencia { get; set; } = "0000003100000000000000";
+            public string TitularTransferencia { get; set; } = "Celumarket S.A.";
+            public string BancoTransferencia { get; set; } = "Banco Nación";
         }
     }
 }

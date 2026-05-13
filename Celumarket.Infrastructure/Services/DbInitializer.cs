@@ -91,6 +91,16 @@ namespace Celumarket.Infrastructure.Services
                 configSistema.Actualizar(configSistema.DescuentoTransferencia, 499999m);
                 await context.SaveChangesAsync();
             }
+            else
+            {
+                configSistema.ActualizarDatosTransferencia(
+                    string.IsNullOrWhiteSpace(configSistema.AliasTransferencia) ? "celumarket" : configSistema.AliasTransferencia,
+                    string.IsNullOrWhiteSpace(configSistema.CbuTransferencia) ? "0000003100000000000000" : configSistema.CbuTransferencia,
+                    string.IsNullOrWhiteSpace(configSistema.TitularTransferencia) ? "Celumarket S.A." : configSistema.TitularTransferencia,
+                    string.IsNullOrWhiteSpace(configSistema.BancoTransferencia) ? "Banco Nación" : configSistema.BancoTransferencia
+                );
+                await context.SaveChangesAsync();
+            }
 
             if (!await context.Colores.AnyAsync())
             {

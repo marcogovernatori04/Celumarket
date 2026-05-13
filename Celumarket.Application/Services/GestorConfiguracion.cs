@@ -27,7 +27,11 @@ namespace Celumarket.Application.Services
                 {
                     DescuentoTransferencia = 10m,
                     UmbralEnvioGratis = 499999m,
-                    TextoBannerHero = "¡Bienvenido!"
+                    TextoBannerHero = "¡Bienvenido!",
+                    AliasTransferencia = "celumarket",
+                    CbuTransferencia = "0000003100000000000000",
+                    TitularTransferencia = "Celumarket S.A.",
+                    BancoTransferencia = "Banco Nación"
                 };
             }
 
@@ -35,7 +39,11 @@ namespace Celumarket.Application.Services
             {
                 DescuentoTransferencia = config.DescuentoTransferencia,
                 UmbralEnvioGratis = config.UmbralEnvioGratis,
-                TextoBannerHero = string.IsNullOrWhiteSpace(config.TextoBannerHero) ? "¡Bienvenido!" : config.TextoBannerHero
+                TextoBannerHero = string.IsNullOrWhiteSpace(config.TextoBannerHero) ? "¡Bienvenido!" : config.TextoBannerHero,
+                AliasTransferencia = config.AliasTransferencia,
+                CbuTransferencia = config.CbuTransferencia,
+                TitularTransferencia = config.TitularTransferencia,
+                BancoTransferencia = config.BancoTransferencia
             };
         }
 
@@ -49,6 +57,14 @@ namespace Celumarket.Application.Services
 
             if (dto.DescuentoTransferencia > 100)
                 throw new ArgumentException("El descuento por transferencia no puede superar el 100%.");
+            if (string.IsNullOrWhiteSpace(dto.AliasTransferencia))
+                throw new ArgumentException("El alias de transferencia es obligatorio.");
+            if (string.IsNullOrWhiteSpace(dto.CbuTransferencia))
+                throw new ArgumentException("El CBU de transferencia es obligatorio.");
+            if (string.IsNullOrWhiteSpace(dto.TitularTransferencia))
+                throw new ArgumentException("El titular de transferencia es obligatorio.");
+            if (string.IsNullOrWhiteSpace(dto.BancoTransferencia))
+                throw new ArgumentException("El banco de transferencia es obligatorio.");
 
             var config = await _configRepo.ObtenerConfigActualAsync();
             if (config == null)
@@ -56,6 +72,11 @@ namespace Celumarket.Application.Services
 
             config.Actualizar(dto.DescuentoTransferencia, dto.UmbralEnvioGratis);
             config.ActualizarTextoBannerHero(dto.TextoBannerHero);
+            config.ActualizarDatosTransferencia(
+                dto.AliasTransferencia,
+                dto.CbuTransferencia,
+                dto.TitularTransferencia,
+                dto.BancoTransferencia);
 
             await _unitOfWork.GuardarAsync();
 
@@ -63,7 +84,11 @@ namespace Celumarket.Application.Services
             {
                 DescuentoTransferencia = config.DescuentoTransferencia,
                 UmbralEnvioGratis = config.UmbralEnvioGratis,
-                TextoBannerHero = string.IsNullOrWhiteSpace(config.TextoBannerHero) ? "¡Bienvenido!" : config.TextoBannerHero
+                TextoBannerHero = string.IsNullOrWhiteSpace(config.TextoBannerHero) ? "¡Bienvenido!" : config.TextoBannerHero,
+                AliasTransferencia = config.AliasTransferencia,
+                CbuTransferencia = config.CbuTransferencia,
+                TitularTransferencia = config.TitularTransferencia,
+                BancoTransferencia = config.BancoTransferencia
             };
         }
     }

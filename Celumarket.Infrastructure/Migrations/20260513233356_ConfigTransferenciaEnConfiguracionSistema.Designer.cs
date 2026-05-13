@@ -4,6 +4,7 @@ using Celumarket.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Celumarket.Infrastructure.Migrations
 {
     [DbContext(typeof(CelumarketContext))]
-    partial class CelumarketContextModelSnapshot : ModelSnapshot
+    [Migration("20260513233356_ConfigTransferenciaEnConfiguracionSistema")]
+    partial class ConfigTransferenciaEnConfiguracionSistema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -12,8 +12,8 @@ type ResultadoPagoProps = {
 const contenidoPorEstado: Record<EstadoPago, { etiqueta: string; titulo: string; descripcion: string; color: string; fondo: string; icono: ReactNode }> = {
 	exitoso: {
 		etiqueta: "Confirmación de compra",
-		titulo: "Pago aprobado",
-		descripcion: "Tu pago fue aprobado correctamente. Ya podés seguir el estado desde Mis pedidos.",
+		titulo: "Pago exitoso",
+		descripcion: "Tu pago con Mercado Pago fue aprobado correctamente.",
 		color: "#1E8E5A",
 		fondo: "#eaf8f1",
 		icono: (
@@ -66,7 +66,7 @@ export const ResultadoPago = ({ estado, onIrATienda, onVerMisPedidos }: Resultad
 					<h1 className="mt-5 text-center text-[38px] font-extrabold leading-none text-[#001830]">{contenido.titulo}</h1>
 					<p className="mx-auto mt-3 max-w-2xl text-center text-[17px] text-[#4b5563]">{contenido.descripcion}</p>
 					<div className="mx-auto mt-7 max-w-2xl rounded-xl border border-[#e8edf3] bg-[#f8fafc] px-5 py-4 text-center text-[15px] text-[#334155]">
-						Podés consultar el detalle y estado actualizado del pedido desde tu panel de cliente.
+						Podés revisar el detalle y estado actualizado de tu pedido en Mis pedidos.
 					</div>
 					<div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
 						<button onClick={onVerMisPedidos} className="h-12 rounded-lg bg-[#015cb9] px-7 text-[15px] font-semibold text-white hover:bg-[#017AF4] transition-colors">

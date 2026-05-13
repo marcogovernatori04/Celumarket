@@ -6,6 +6,10 @@ const estadoInicial: ConfiguracionSistema = {
 	descuentoTransferencia: 10,
 	umbralEnvioGratis: 499999,
 	textoBannerHero: "¡Bienvenido!",
+	aliasTransferencia: "celumarket",
+	cbuTransferencia: "0000003100000000000000",
+	titularTransferencia: "Celumarket S.A.",
+	bancoTransferencia: "Banco Nación",
 };
 
 export const AdminConfiguracionPanel = () => {
@@ -38,6 +42,10 @@ export const AdminConfiguracionPanel = () => {
 				descuentoTransferencia: Number(form.descuentoTransferencia),
 				umbralEnvioGratis: Number(form.umbralEnvioGratis),
 				textoBannerHero: form.textoBannerHero,
+				aliasTransferencia: form.aliasTransferencia,
+				cbuTransferencia: form.cbuTransferencia,
+				titularTransferencia: form.titularTransferencia,
+				bancoTransferencia: form.bancoTransferencia,
 			});
 			setForm(actualizada);
 			setOk("Configuración guardada.");
@@ -103,6 +111,50 @@ export const AdminConfiguracionPanel = () => {
 								...prev,
 								descuentoTransferencia: Number(e.target.value),
 							}))
+						}
+						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+					/>
+				</label>
+
+				<label className="flex flex-col gap-1 text-sm text-[#334155] md:col-span-2">
+					Titular transferencia
+					<input
+						value={form.titularTransferencia}
+						onChange={(e) =>
+							setForm((prev) => ({ ...prev, titularTransferencia: e.target.value }))
+						}
+						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+					/>
+				</label>
+
+				<label className="flex flex-col gap-1 text-sm text-[#334155]">
+					Alias transferencia
+					<input
+						value={form.aliasTransferencia}
+						onChange={(e) =>
+							setForm((prev) => ({ ...prev, aliasTransferencia: e.target.value }))
+						}
+						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+					/>
+				</label>
+
+				<label className="flex flex-col gap-1 text-sm text-[#334155]">
+					CBU transferencia
+					<input
+						value={form.cbuTransferencia}
+						onChange={(e) =>
+							setForm((prev) => ({ ...prev, cbuTransferencia: e.target.value }))
+						}
+						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+					/>
+				</label>
+
+				<label className="flex flex-col gap-1 text-sm text-[#334155] md:col-span-2">
+					Banco transferencia
+					<input
+						value={form.bancoTransferencia}
+						onChange={(e) =>
+							setForm((prev) => ({ ...prev, bancoTransferencia: e.target.value }))
 						}
 						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
 					/>

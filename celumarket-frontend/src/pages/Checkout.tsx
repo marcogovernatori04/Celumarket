@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Footer } from "../components/Footer";
 import { clienteService } from "../services/clienteService";
 import { pedidoService, type MetodoPago } from "../services/pedidoService";
 import { carritoService, type ItemCarrito } from "../services/carritoService";
 import { CheckoutEnvioStep, type DatosEnvio } from "../components/checkout/CheckoutEnvioStep";
 import { CheckoutFacturacionStep, type DatosFacturacion } from "../components/checkout/CheckoutFacturacionStep";
 import { CheckoutPagoStep } from "../components/checkout/CheckoutPagoStep";
+import { CheckoutFooter } from "../components/checkout/CheckoutFooter";
 
 type CheckoutProps = {
 	reservaSegundosIniciales: number;
@@ -135,10 +135,10 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 	}, [segundosRestantes]);
 
 	return (
-		<div className="min-h-screen bg-[#f5f5f5] flex flex-col">
-			<section className="mx-auto w-full max-w-[1120px] flex-1 px-6 py-8">
-				<h1 className="text-[34px] font-extrabold leading-none text-[#001830]">Checkout</h1>
-				<div className="mt-4 rounded-xl border border-[#dfe5eb] bg-white px-3.5 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+		<div className="min-h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col">
+			<section className="mx-auto w-full max-w-[1120px] flex-1 min-h-0 px-6 py-4 overflow-hidden">
+				<h1 className="text-[30px] font-extrabold leading-none text-[#001830]">Checkout</h1>
+				<div className="mt-3 rounded-xl border border-[#dfe5eb] bg-white px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
 					<div className="flex items-center gap-2.5 text-[13px]">
 						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 1 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>1 Envío</span>
 						<span className="text-[#9ca3af]">•</span>
@@ -157,7 +157,7 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 				{loading ? (
 					<p className="mt-8 text-gray-600">Cargando checkout...</p>
 				) : (
-					<div className="mt-6 rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-5">
+					<div className="mt-4 h-[calc(100%-108px)] min-h-0 overflow-auto rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-4">
 						{step === 1 && (
 							<CheckoutEnvioStep
 								direccionInicial={direccionInicial}
@@ -204,7 +204,9 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 					</div>
 				)}
 			</section>
-			<Footer />
+			<div className="mt-auto">
+				<CheckoutFooter />
+			</div>
 		</div>
 	);
 };

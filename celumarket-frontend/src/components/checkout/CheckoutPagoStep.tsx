@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { pedidoService, type MetodoPago } from "../../services/pedidoService";
 import type { DatosEnvio } from "./CheckoutEnvioStep";
 import type { ItemCarrito } from "../../services/carritoService";
@@ -26,6 +26,15 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 	const [enviando, setEnviando] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
+
+	useEffect(() => {
+		if (!mostrarModalConfirmacion) return;
+		const prevOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		return () => {
+			document.body.style.overflow = prevOverflow;
+		};
+	}, [mostrarModalConfirmacion]);
 
 	const reservaExpirada = segundosRestantes <= 0;
 	const metodoSeleccionado = metodos.find((m) => m.id === metodoPagoId);

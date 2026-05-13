@@ -22,6 +22,10 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 		descuentoTransferencia: 10,
 		umbralEnvioGratis: 499999,
 		textoBannerHero: "¡Bienvenido!",
+		aliasTransferencia: "celumarket",
+		cbuTransferencia: "0000003100000000000000",
+		titularTransferencia: "Celumarket S.A.",
+		bancoTransferencia: "Banco Nación",
 	});
 
 	useEffect(() => {

@@ -52,6 +52,7 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 		direccionInicial?.provincia &&
 		direccionInicial?.codigoPostal
 	);
+	const [modoDireccion, setModoDireccion] = useState<"guardada" | "nueva">(tieneDireccionGuardada ? "guardada" : "nueva");
 
 	const buscarTarifa = async () => {
 		setErrorTarifa(null);
@@ -92,7 +93,18 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 		if (tipoEnvio !== "retiro-local" && !tarifa) return;
 
 		if (tipoEnvio === "domicilio") {
-			if (!direccion.calle || !direccion.numero || !direccion.localidad || !direccion.provincia || !direccion.codigoPostal) {
+			const direccionAUsar = modoDireccion === "guardada" && direccionInicial
+				? {
+					calle: direccionInicial.calle,
+					numero: direccionInicial.numero,
+					pisoDepto: direccionInicial.pisoDepto ?? "",
+					localidad: direccionInicial.localidad,
+					provincia: direccionInicial.provincia,
+					codigoPostal: String(direccionInicial.codigoPostal),
+				}
+				: direccion;
+
+			if (!direccionAUsar.calle || !direccionAUsar.numero || !direccionAUsar.localidad || !direccionAUsar.provincia || !direccionAUsar.codigoPostal) {
 				setErrorTarifa("Completá la dirección de entrega para envío a domicilio.");
 				return;
 			}
@@ -101,12 +113,12 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 				tipoEnvio,
 				tarifa,
 				direccionEntrega: {
-					calle: direccion.calle,
-					numero: direccion.numero,
-					pisoDepto: direccion.pisoDepto || undefined,
-					localidad: direccion.localidad,
-					provincia: direccion.provincia,
-					codigoPostal: Number(direccion.codigoPostal),
+					calle: direccionAUsar.calle,
+					numero: direccionAUsar.numero,
+					pisoDepto: direccionAUsar.pisoDepto || undefined,
+					localidad: direccionAUsar.localidad,
+					provincia: direccionAUsar.provincia,
+					codigoPostal: Number(direccionAUsar.codigoPostal),
 				},
 			});
 			return;
@@ -137,11 +149,13 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 		(tipoEnvio === "retiro-local" ||
 			Boolean(tarifa)) &&
 		(tipoEnvio !== "domicilio" ||
-			(Boolean(direccion.calle) &&
-				Boolean(direccion.numero) &&
-				Boolean(direccion.localidad) &&
-				Boolean(direccion.provincia) &&
-				Boolean(direccion.codigoPostal)));
+			(modoDireccion === "guardada"
+				? tieneDireccionGuardada
+				: (Boolean(direccion.calle) &&
+					Boolean(direccion.numero) &&
+					Boolean(direccion.localidad) &&
+					Boolean(direccion.provincia) &&
+					Boolean(direccion.codigoPostal))));
 
 	return (
 		<div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
@@ -171,16 +185,46 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 										>
 												<h3 className="text-[18px] font-bold text-[#001830]">Dirección de entrega</h3>
 												{tieneDireccionGuardada && (
-													<p className="mt-1.5 text-sm text-[#4b5563]">Usando tu dirección guardada en perfil.</p>
+													<div className="mt-3 rounded-lg border border-[#dfe5eb] bg-[#f8fafc] p-3">
+														<p className="text-sm font-semibold text-[#1e1e1e]">Dirección para este pedido</p>
+														<div className="mt-2 flex flex-col gap-2 text-sm">
+															<label className="inline-flex items-center gap-2">
+																<input
+																	type="radio"
+																	name="modoDireccion"
+																	checked={modoDireccion === "guardada"}
+																	onChange={() => setModoDireccion("guardada")}
+																/>
+																<span>Usar dirección guardada</span>
+															</label>
+															<label className="inline-flex items-center gap-2">
+																<input
+																	type="radio"
+																	name="modoDireccion"
+																	checked={modoDireccion === "nueva"}
+																	onChange={() => setModoDireccion("nueva")}
+																/>
+																<span>Ingresar otra dirección</span>
+															</label>
+														</div>
+														{modoDireccion === "guardada" && (
+															<p className="mt-2 text-sm text-[#4b5563]">
+																{direccionInicial?.calle} {direccionInicial?.numero}
+																{direccionInicial?.pisoDepto ? ` - ${direccionInicial.pisoDepto}` : ""}, {direccionInicial?.localidad}, {direccionInicial?.provincia} ({direccionInicial?.codigoPostal})
+															</p>
+														)}
+													</div>
 												)}
-												<div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-												<input disabled={tieneDireccionGuardada} className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px] disabled:bg-[#f3f4f6] disabled:text-[#6b7280]" placeholder="Calle" value={direccion.calle} onChange={(e) => setDireccion((s) => ({ ...s, calle: e.target.value }))} />
-												<input disabled={tieneDireccionGuardada} className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px] disabled:bg-[#f3f4f6] disabled:text-[#6b7280]" placeholder="Número" value={direccion.numero} onChange={(e) => setDireccion((s) => ({ ...s, numero: e.target.value }))} />
-												<input disabled={tieneDireccionGuardada} className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px] disabled:bg-[#f3f4f6] disabled:text-[#6b7280]" placeholder="Piso/Depto (opcional)" value={direccion.pisoDepto} onChange={(e) => setDireccion((s) => ({ ...s, pisoDepto: e.target.value }))} />
-												<input disabled={tieneDireccionGuardada} className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px] disabled:bg-[#f3f4f6] disabled:text-[#6b7280]" placeholder="Localidad" value={direccion.localidad} onChange={(e) => setDireccion((s) => ({ ...s, localidad: e.target.value }))} />
-												<input disabled={tieneDireccionGuardada} className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px] disabled:bg-[#f3f4f6] disabled:text-[#6b7280]" placeholder="Provincia" value={direccion.provincia} onChange={(e) => setDireccion((s) => ({ ...s, provincia: e.target.value }))} />
-													<input disabled={tieneDireccionGuardada} className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px] disabled:bg-[#f3f4f6] disabled:text-[#6b7280]" placeholder="Código postal" value={direccion.codigoPostal} onChange={(e) => setDireccion((s) => ({ ...s, codigoPostal: e.target.value }))} />
-												</div>
+												{(!tieneDireccionGuardada || modoDireccion === "nueva") && (
+													<div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+														<input className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px]" placeholder="Calle" value={direccion.calle} onChange={(e) => setDireccion((s) => ({ ...s, calle: e.target.value }))} />
+														<input className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px]" placeholder="Número" value={direccion.numero} onChange={(e) => setDireccion((s) => ({ ...s, numero: e.target.value }))} />
+														<input className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px]" placeholder="Piso/Depto (opcional)" value={direccion.pisoDepto} onChange={(e) => setDireccion((s) => ({ ...s, pisoDepto: e.target.value }))} />
+														<input className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px]" placeholder="Localidad" value={direccion.localidad} onChange={(e) => setDireccion((s) => ({ ...s, localidad: e.target.value }))} />
+														<input className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px]" placeholder="Provincia" value={direccion.provincia} onChange={(e) => setDireccion((s) => ({ ...s, provincia: e.target.value }))} />
+														<input className="h-11 rounded-lg border border-[#d5dde6] px-3 text-[15px]" placeholder="Código postal" value={direccion.codigoPostal} onChange={(e) => setDireccion((s) => ({ ...s, codigoPostal: e.target.value }))} />
+													</div>
+												)}
 										</div>
 									</div>
 
