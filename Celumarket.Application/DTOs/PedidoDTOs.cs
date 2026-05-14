@@ -73,7 +73,21 @@ namespace Celumarket.Application.DTOs
             public string TipoEnvio { get; set; } = string.Empty;
             public decimal CostoEnvio { get; set; }
             public DireccionEntregaDTO? DireccionEntrega { get; set; }
+            public DatosPagoMercadoPagoDTO? DatosPagoMercadoPago { get; set; }
             public List<LineaDetallePedidoClienteDTO> Lineas { get; set; } = new();
+        }
+
+        public class DatosPagoMercadoPagoDTO
+        {
+            public string? PaymentIdExterno { get; set; }
+            public string? MetodoPagoId { get; set; }
+            public string? TipoPagoId { get; set; }
+            public int Cuotas { get; set; }
+            public decimal? ValorCuota { get; set; }
+            public decimal? MontoTotalFinal { get; set; }
+            public decimal? MontoPagado { get; set; }
+            public decimal? MontoNetoRecibido { get; set; }
+            public DateTime? FechaAprobacionUtc { get; set; }
         }
 
         public class LineaDetallePedidoClienteDTO

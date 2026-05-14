@@ -34,7 +34,7 @@ export const CheckoutSidebarActions = ({
 	const valorEnvioTexto = costoEnvio === 0 ? "Gratis" : `$${costoEnvio.toLocaleString("es-AR")}`;
 
 	return (
-		<aside className="lg:sticky lg:top-24 lg:h-fit">
+		<aside className="lg:sticky lg:top-0 lg:h-fit lg:self-start">
 			<div className="rounded-xl border border-[#dfe5eb] bg-white p-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
 				<p className="text-[15px] text-[#4b5563]">{pasoLabel}</p>
 				<p className="mt-1 font-semibold text-[#001830]">{descripcion}</p>

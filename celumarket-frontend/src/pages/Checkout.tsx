@@ -135,8 +135,8 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 	}, [segundosRestantes]);
 
 	return (
-		<div className="min-h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col">
-			<section className="mx-auto w-full max-w-[1120px] flex-1 min-h-0 px-6 py-4 overflow-hidden">
+		<div className="h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col overflow-hidden">
+			<section className="mx-auto w-full max-w-[1120px] flex-1 min-h-0 px-6 py-3 overflow-hidden">
 				<h1 className="text-[30px] font-extrabold leading-none text-[#001830]">Checkout</h1>
 				<div className="mt-3 rounded-xl border border-[#dfe5eb] bg-white px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
 					<div className="flex items-center gap-2.5 text-[13px]">
@@ -157,7 +157,7 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 				{loading ? (
 					<p className="mt-8 text-gray-600">Cargando checkout...</p>
 				) : (
-					<div className="mt-4 h-[calc(100%-108px)] min-h-0 overflow-auto rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-4">
+					<div className="mt-4 h-[calc(100%-108px)] min-h-0 overflow-hidden rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-4">
 						{step === 1 && (
 							<CheckoutEnvioStep
 								direccionInicial={direccionInicial}
@@ -204,9 +204,7 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 					</div>
 				)}
 			</section>
-			<div className="mt-auto">
-				<CheckoutFooter />
-			</div>
+			<CheckoutFooter />
 		</div>
 	);
 };

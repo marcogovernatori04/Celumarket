@@ -18,7 +18,7 @@ import { AdminPanel } from "./pages/AdminPanel";
 import { authService } from "./services/authService";
 import { clienteService } from "./services/clienteService";
 import { carritoService } from "./services/carritoService";
-import type { ReservaCheckout } from "./services/pedidoService";
+import { pedidoService, type DetallePedido as DetallePedidoResponse, type ReservaCheckout } from "./services/pedidoService";
 
 type CheckoutLocationState = {
 	reservaSegundosRestantes?: number;
@@ -96,6 +96,15 @@ function App() {
 			window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 		}
 	}, [location.pathname]);
+
+	useEffect(() => {
+		const params = new URLSearchParams(location.search);
+		const pago = params.get("pago");
+		if (!pago) return;
+		if (pago !== "exitoso" && pago !== "fallido" && pago !== "pendiente") return;
+		if (location.pathname === "/resultado-pago") return;
+		navigate(`/resultado-pago?pago=${pago}`, { replace: true });
+	}, [location.pathname, location.search, navigate]);
 
 	const esVistaLogin = location.pathname === "/login";
 	const enTienda =
@@ -255,9 +264,32 @@ function DetallePedidoRoute({ onVolver }: { onVolver: () => void }) {
 
 function ResultadoPagoRoute({ onVerMisPedidos, onIrATienda }: { onVerMisPedidos: () => void; onIrATienda: () => void }) {
 	const [searchParams] = useSearchParams();
+	const [detallePedido, setDetallePedido] = useState<DetallePedidoResponse | null>(null);
 	const pago = searchParams.get("pago");
 	const estado = pago === "exitoso" || pago === "fallido" || pago === "pendiente" ? pago : "pendiente";
-	return <ResultadoPago estado={estado} onVerMisPedidos={onVerMisPedidos} onIrATienda={onIrATienda} />;
+
+	useEffect(() => {
+		const cargarDetalle = async () => {
+			if (estado !== "exitoso") return;
+
+			const externalReference = searchParams.get("external_reference");
+			const pedidoGuardado = sessionStorage.getItem("ultimoPedidoCheckoutId");
+			const pedidoId = Number(externalReference ?? pedidoGuardado);
+
+			if (!Number.isFinite(pedidoId) || pedidoId <= 0) return;
+
+			try {
+				const detalle = await pedidoService.obtenerDetalleMiPedido(pedidoId);
+				setDetallePedido(detalle);
+			} catch {
+				setDetallePedido(null);
+			}
+		};
+
+		void cargarDetalle();
+	}, [estado, searchParams]);
+
+	return <ResultadoPago estado={estado} onVerMisPedidos={onVerMisPedidos} onIrATienda={onIrATienda} detallePedido={detallePedido} />;
 }
 
 export default App;

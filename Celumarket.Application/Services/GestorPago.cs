@@ -51,6 +51,20 @@ namespace Celumarket.Application.Services
             {
                 if (pagoPendiente != null)
                 {
+                    if (dto.DatosMercadoPago != null)
+                    {
+                        pagoPendiente.AsignarDatosMercadoPago(new DatosMercadoPago(
+                            dto.DatosMercadoPago.PaymentIdExterno,
+                            dto.DatosMercadoPago.MetodoPagoId,
+                            dto.DatosMercadoPago.TipoPagoId,
+                            dto.DatosMercadoPago.Cuotas,
+                            dto.DatosMercadoPago.ValorCuota,
+                            dto.DatosMercadoPago.MontoTotalFinal,
+                            dto.DatosMercadoPago.MontoPagado,
+                            dto.DatosMercadoPago.MontoNetoRecibido,
+                            dto.DatosMercadoPago.FechaAprobacionUtc));
+                    }
+
                     pagoPendiente.Aprobar();
                 }
 

@@ -51,6 +51,7 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 				tipoEnvio: datosEnvio.tipoEnvio === "domicilio" ? 0 : datosEnvio.tipoEnvio === "sucursal-correo" ? 1 : 2,
 				direccionEntrega: datosEnvio.tipoEnvio === "domicilio" ? datosEnvio.direccionEntrega : undefined,
 			});
+			sessionStorage.setItem("ultimoPedidoCheckoutId", String(result.pedidoId));
 			if (result.linkMP) {
 				window.location.href = result.linkMP;
 				return true;

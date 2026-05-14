@@ -174,6 +174,22 @@ namespace Celumarket.Infrastructure
                 .HasForeignKey(p => p.MetodoPagoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Pago>(entity =>
+            {
+                entity.OwnsOne(p => p.DatosMercadoPago, mp =>
+                {
+                    mp.Property(x => x.PaymentIdExterno).HasColumnName("MpPaymentIdExterno").HasMaxLength(64);
+                    mp.Property(x => x.MetodoPagoId).HasColumnName("MpMetodoPagoId").HasMaxLength(50);
+                    mp.Property(x => x.TipoPagoId).HasColumnName("MpTipoPagoId").HasMaxLength(50);
+                    mp.Property(x => x.Cuotas).HasColumnName("MpCuotas");
+                    mp.Property(x => x.ValorCuota).HasColumnName("MpValorCuota").HasColumnType("decimal(18,2)");
+                    mp.Property(x => x.MontoTotalFinal).HasColumnName("MpMontoTotalFinal").HasColumnType("decimal(18,2)");
+                    mp.Property(x => x.MontoPagado).HasColumnName("MpMontoPagado").HasColumnType("decimal(18,2)");
+                    mp.Property(x => x.MontoNetoRecibido).HasColumnName("MpMontoNetoRecibido").HasColumnType("decimal(18,2)");
+                    mp.Property(x => x.FechaAprobacionUtc).HasColumnName("MpFechaAprobacionUtc");
+                });
+            });
+
             // envío
             modelBuilder.Entity<Envio>()
                 .HasOne<Pedido>()

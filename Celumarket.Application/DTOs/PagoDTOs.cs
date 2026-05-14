@@ -19,6 +19,20 @@ namespace Celumarket.Application.DTOs
         {
             public int PedidoId { get; set; }
             public bool PagoAprobado { get; set; }  
+            public DatosMercadoPagoDTO? DatosMercadoPago { get; set; }
+        }
+
+        public class DatosMercadoPagoDTO
+        {
+            public string? PaymentIdExterno { get; set; }
+            public string? MetodoPagoId { get; set; }
+            public string? TipoPagoId { get; set; }
+            public int Cuotas { get; set; }
+            public decimal? ValorCuota { get; set; }
+            public decimal? MontoTotalFinal { get; set; }
+            public decimal? MontoPagado { get; set; }
+            public decimal? MontoNetoRecibido { get; set; }
+            public DateTime? FechaAprobacionUtc { get; set; }
         }
 
         public class RegistrarPagoManualDTO

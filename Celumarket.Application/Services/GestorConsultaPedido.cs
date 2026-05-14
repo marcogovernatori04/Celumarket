@@ -102,6 +102,20 @@ namespace Celumarket.Application.Services
                 TipoEnvio = tipoEnvio,
                 CostoEnvio = pedido.CostoEnvio,
                 DireccionEntrega = direccionEntrega,
+                DatosPagoMercadoPago = ultimoPago?.DatosMercadoPago == null
+                    ? null
+                    : new PedidoDTOs.DatosPagoMercadoPagoDTO
+                    {
+                        PaymentIdExterno = ultimoPago.DatosMercadoPago.PaymentIdExterno,
+                        MetodoPagoId = ultimoPago.DatosMercadoPago.MetodoPagoId,
+                        TipoPagoId = ultimoPago.DatosMercadoPago.TipoPagoId,
+                        Cuotas = ultimoPago.DatosMercadoPago.Cuotas,
+                        ValorCuota = ultimoPago.DatosMercadoPago.ValorCuota,
+                        MontoTotalFinal = ultimoPago.DatosMercadoPago.MontoTotalFinal,
+                        MontoPagado = ultimoPago.DatosMercadoPago.MontoPagado,
+                        MontoNetoRecibido = ultimoPago.DatosMercadoPago.MontoNetoRecibido,
+                        FechaAprobacionUtc = ultimoPago.DatosMercadoPago.FechaAprobacionUtc
+                    },
                 Lineas = pedido.Lineas.Select(l => new PedidoDTOs.LineaDetallePedidoClienteDTO
                 {
                     Id = l.Id,

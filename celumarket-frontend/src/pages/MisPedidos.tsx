@@ -33,9 +33,9 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 	};
 
 	return (
-		<div className="min-h-screen bg-[#f5f5f5] flex flex-col">
-			<section className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
-				<h1 className="mb-6 text-3xl font-bold text-[#001830]">Mis pedidos</h1>
+		<div className="h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col overflow-hidden">
+			<section className="mx-auto flex w-full max-w-5xl flex-1 min-h-0 flex-col px-6 py-6 overflow-hidden">
+				<h1 className="mb-4 text-3xl font-bold text-[#001830]">Mis pedidos</h1>
 				{loading && <p className="text-gray-600">Cargando pedidos...</p>}
 				{error && <p className="text-red-600">{error}</p>}
 				{!loading && !error && pedidos.length === 0 && (
@@ -44,7 +44,7 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 					</div>
 				)}
 				{!loading && !error && pedidos.length > 0 && (
-					<div className="space-y-3">
+					<div className="flex-1 min-h-0 space-y-3 overflow-y-auto pr-1">
 						{pedidos.map((pedido) => (
 							<div key={pedido.id} className="rounded-lg border border-[#dfe5eb] bg-white p-5 shadow-sm">
 								<div className="flex flex-wrap items-center justify-between gap-3">

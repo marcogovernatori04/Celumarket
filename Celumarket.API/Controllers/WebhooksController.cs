@@ -72,10 +72,27 @@ namespace Celumarket.API.Controllers
                 if (string.Equals(pago.Status, "approved", StringComparison.OrdinalIgnoreCase)
                     && int.TryParse(pago.ExternalReference, out int pedidoId))
                 {
+                    var montoTotalFinal = pago.TransactionDetails?.TotalPaidAmount;
+                    var valorCuota = (pago.Installments.HasValue && pago.Installments.Value > 1 && montoTotalFinal.HasValue)
+                        ? Math.Round(montoTotalFinal.Value / pago.Installments.Value, 2)
+                        : montoTotalFinal;
+
                     await _gestorPago.ProcesarRespuestaPasarelaAsync(new PagoDTOs.RespuestaPasarelaDTO
                     {
                         PedidoId = pedidoId,
-                        PagoAprobado = true
+                        PagoAprobado = true,
+                        DatosMercadoPago = new PagoDTOs.DatosMercadoPagoDTO
+                        {
+                            PaymentIdExterno = pago.Id?.ToString(),
+                            MetodoPagoId = pago.PaymentMethodId,
+                            TipoPagoId = pago.PaymentTypeId,
+                            Cuotas = pago.Installments ?? 0,
+                            ValorCuota = valorCuota,
+                            MontoTotalFinal = montoTotalFinal,
+                            MontoPagado = pago.TransactionAmount,
+                            MontoNetoRecibido = pago.TransactionDetails?.NetReceivedAmount,
+                            FechaAprobacionUtc = pago.DateApproved?.ToUniversalTime()
+                        }
                     });
                 }
             }

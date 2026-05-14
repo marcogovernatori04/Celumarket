@@ -62,6 +62,17 @@ export type DetallePedido = {
 	metodoPago: string;
 	tipoEnvio: string;
 	costoEnvio: number;
+	datosPagoMercadoPago?: {
+		paymentIdExterno?: string | null;
+		metodoPagoId?: string | null;
+		tipoPagoId?: string | null;
+		cuotas: number;
+		valorCuota?: number | null;
+		montoTotalFinal?: number | null;
+		montoPagado?: number | null;
+		montoNetoRecibido?: number | null;
+		fechaAprobacionUtc?: string | null;
+	} | null;
 	direccionEntrega?: {
 		calle: string;
 		numero: string;

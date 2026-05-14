@@ -20,6 +20,7 @@ namespace Celumarket.Domain
         public DateTime Fecha { get; private set; }
         public decimal Monto { get; private set; }
         public string Estado { get; private set; }
+        public DatosMercadoPago? DatosMercadoPago { get; private set; }
         public EstadoPago EstadoPago
         {
             get => Estado switch
@@ -58,6 +59,11 @@ namespace Celumarket.Domain
         {
             if (EstadoPago == EstadoPago.Aprobado) throw new InvalidOperationException("No se puede rechazar un pago aprobado.");
             Estado = EstadoRechazado;
-        }   
+        }
+
+        public void AsignarDatosMercadoPago(DatosMercadoPago datosMercadoPago)
+        {
+            DatosMercadoPago = datosMercadoPago ?? throw new ArgumentNullException(nameof(datosMercadoPago));
+        }
     }
 }
