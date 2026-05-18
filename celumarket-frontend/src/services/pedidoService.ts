@@ -43,6 +43,52 @@ export type MisPedidosItem = {
 	estadoPedido?: string;
 };
 
+export type AdminPedidoItem = {
+	id: number;
+	clienteId?: number;
+	clienteNombre?: string;
+	fecha?: string;
+	estado?: string;
+	tipoEnvio?: number;
+	montoTotal?: number;
+};
+
+export type AdminPedidoDetalleLinea = {
+	id: number;
+	marca?: string;
+	modelo?: string;
+	color?: string;
+	cantidad: number;
+	precioUnitario: number;
+	subtotal: number;
+};
+
+export type AdminPedidoDetalle = {
+	id: number;
+	clienteId: number;
+	estado?: string;
+	fecha?: string;
+	fechaVencimiento?: string;
+	tipoEnvio?: number;
+	montoTotal?: number;
+	costoEnvio?: number;
+	metodoPago?: string | null;
+	estadoPago?: string | null;
+	lineas: AdminPedidoDetalleLinea[];
+};
+
+export type AdminEnvioItem = {
+	envioId: number;
+	pedidoId: number;
+	estado: string;
+	tipo: string;
+	costo: number;
+	direccionEntrega: string;
+	fechaEstimada?: string;
+	fechaDespacho?: string;
+	codigoSeguimiento?: string;
+};
+
 export type DetallePedidoLinea = {
 	id: number;
 	marca: string;
@@ -103,6 +149,33 @@ export const pedidoService = {
 	async obtenerMisPedidos(): Promise<MisPedidosItem[]> {
 		const { data } = await api.get<MisPedidosItem[]>("/Pedidos/mis-pedidos");
 		return data;
+	},
+
+	async obtenerTodosAdmin(): Promise<AdminPedidoItem[]> {
+		const { data } = await api.get<AdminPedidoItem[]>("/Pedidos/todos");
+		return data;
+	},
+
+	async obtenerDetalleAdmin(pedidoId: number): Promise<AdminPedidoDetalle> {
+		const { data } = await api.get<AdminPedidoDetalle>(`/Pedidos/${pedidoId}/detalle-admin`);
+		return data;
+	},
+
+	async marcarPagadoAdmin(pedidoId: number): Promise<void> {
+		await api.put(`/Pedidos/${pedidoId}/pagar`);
+	},
+
+	async cancelarAdmin(pedidoId: number): Promise<void> {
+		await api.put(`/Pedidos/${pedidoId}/cancelar`);
+	},
+
+	async listarEnviosAdmin(): Promise<AdminEnvioItem[]> {
+		const { data } = await api.get<AdminEnvioItem[]>("/Envios");
+		return data;
+	},
+
+	async despacharEnvioAdmin(envioId: number, numeroSeguimiento: string): Promise<void> {
+		await api.put(`/Envios/${envioId}/despachar`, { numeroSeguimiento });
 	},
 
 	async obtenerDetalleMiPedido(pedidoId: number): Promise<DetallePedido> {

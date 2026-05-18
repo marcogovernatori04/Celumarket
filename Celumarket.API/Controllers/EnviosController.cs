@@ -12,11 +12,13 @@ namespace Celumarket.API.Controllers
     public class EnviosController : ControllerBase
     {
         private readonly IEnvioRepository _envioRepo;
+        private readonly IPedidoRepository _pedidoRepo;
         private readonly IGestorEnvio _gestorEnvio;
 
-        public EnviosController(IEnvioRepository envioRepo, IGestorEnvio gestorEnvio)
+        public EnviosController(IEnvioRepository envioRepo, IPedidoRepository pedidoRepo, IGestorEnvio gestorEnvio)
         {
             _envioRepo = envioRepo;
+            _pedidoRepo = pedidoRepo;
             _gestorEnvio = gestorEnvio;
         }
 
@@ -44,6 +46,17 @@ namespace Celumarket.API.Controllers
         [HttpPut("{envioId}/despachar")]
         public async Task<IActionResult> Despachar(int envioId, [FromBody] EnvioDTOs.DespacharEnvioDTO dto)
         {
+            var envio = await _envioRepo.ObtenerPorIdAsync(envioId);
+            if (envio == null)
+                return NotFound(new { error = "Envío no encontrado." });
+
+            var pedido = await _pedidoRepo.ObtenerPorIdAsync(envio.PedidoId);
+            if (pedido == null)
+                return NotFound(new { error = "Pedido no encontrado para el envío." });
+
+            if (pedido.EstadoPedido != Domain.EstadoPedido.Pagado)
+                return BadRequest(new { error = "Solo se pueden despachar envíos de pedidos pagados." });
+
             await _gestorEnvio.DespacharEnvioAsync(envioId, dto.NumeroSeguimiento);
             return Ok(new { Mensaje = "Envío despachado con éxito." });
         }
