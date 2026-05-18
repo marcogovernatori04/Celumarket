@@ -166,6 +166,14 @@ export const AdminPedidosPanel = () => {
 
 	const puedeDespachar = (detalle: AdminPedidoDetalle) => estaPagado(detalle.estado);
 
+	if (loading) {
+		return (
+			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+				<p className="text-[#5b6673]">Cargando pedidos...</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			<div>
@@ -201,10 +209,9 @@ export const AdminPedidosPanel = () => {
 				</div>
 			</div>
 
-			{loading && <p className="text-[#5b6673]">Cargando pedidos...</p>}
 			{error && <p className="text-red-600">{error}</p>}
 
-			{!loading && !error && (
+			{!error && (
 				<div className="mt-6 min-h-0 flex-1 overflow-y-auto rounded-xl border border-black/10 bg-white">
 					<div className="overflow-x-auto">
 					<table className="min-w-full text-left">

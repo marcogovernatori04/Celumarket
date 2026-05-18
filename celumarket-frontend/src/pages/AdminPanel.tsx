@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AdminSidebar, type AdminSectionKey } from "../components/admin/AdminSidebar";
 import { AdminCelularesPanel } from "../components/admin/AdminCelularesPanel";
 import { AdminConfiguracionPanel } from "../components/admin/AdminConfiguracionPanel";
+import { AdminEnviosPanel } from "../components/admin/AdminEnviosPanel";
 import { AdminPedidosPanel } from "../components/admin/AdminPedidosPanel";
 import { AdminUsuariosPanel } from "../components/admin/AdminUsuariosPanel";
 
@@ -16,6 +17,8 @@ export const AdminPanel = () => {
 					<div className="h-full min-h-0 overflow-hidden">
 						{seccionActiva === "celulares" ? (
 							<AdminCelularesPanel />
+						) : seccionActiva === "envios" ? (
+							<AdminEnviosPanel />
 						) : seccionActiva === "pedidos" ? (
 							<AdminPedidosPanel />
 						) : seccionActiva === "usuarios" ? (

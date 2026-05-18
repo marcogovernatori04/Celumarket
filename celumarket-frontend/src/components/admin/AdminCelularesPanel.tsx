@@ -37,6 +37,7 @@ export const AdminCelularesPanel = () => {
 	const [celulares, setCelulares] = useState<CelularListado[]>([]);
 	const [cargando, setCargando] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [busqueda, setBusqueda] = useState("");
 	const [creando, setCreando] = useState(false);
 	const [guardandoCreacion, setGuardandoCreacion] = useState(false);
 	const [eliminandoCelularId, setEliminandoCelularId] = useState<number | null>(null);
@@ -335,8 +336,29 @@ export const AdminCelularesPanel = () => {
 		return colorId;
 	};
 
+	const busquedaNormalizada = busqueda.trim().toLowerCase();
+	const celularesFiltrados = celulares.filter((c) => {
+		if (!busquedaNormalizada) return true;
+		const termino = busquedaNormalizada.startsWith("#")
+			? busquedaNormalizada.slice(1)
+			: busquedaNormalizada;
+		const esSoloDigitos = /^\d+$/.test(termino);
+		const idMatch = esSoloDigitos ? String(c.id) === termino : false;
+		const texto = `${c.marca} ${c.modelo}`.toLowerCase();
+		const nombreMatch = texto.includes(termino);
+		return idMatch || nombreMatch;
+	});
+
+	if (cargando) {
+		return (
+			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+				<p className="text-[#5b6673]">Cargando celulares...</p>
+			</div>
+		);
+	}
+
 	return (
-		<div>
+		<div className="flex h-full min-h-0 flex-col">
 			<div className="flex items-center justify-between gap-3">
 				<h2 className="text-2xl font-bold text-[#001830]">Celulares</h2>
 				<button
@@ -347,6 +369,14 @@ export const AdminCelularesPanel = () => {
 				</button>
 			</div>
 			<p className="mt-1 text-sm text-[#5b6673]">Listado general con detalle expandible por equipo.</p>
+			<div className="mt-3">
+				<input
+					value={busqueda}
+					onChange={(e) => setBusqueda(e.target.value)}
+					placeholder="Buscar por #id, marca o modelo..."
+					className="h-9 w-full max-w-[360px] rounded-md border border-[#cdd6e1] bg-white px-3 text-sm text-[#1e1e1e] placeholder:text-[#94a3b8]"
+				/>
+			</div>
 			{creando && (
 				<div className="mt-4 rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
 					<p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#64748b]">Alta de celular</p>
@@ -448,11 +478,10 @@ export const AdminCelularesPanel = () => {
 				</div>
 			)}
 
-			{cargando && <p className="mt-6 text-[#5b6673]">Cargando celulares...</p>}
 			{error && <p className="mt-6 text-red-600">{error}</p>}
 
-			{!cargando && !error && (
-				<div className="mt-6 overflow-hidden rounded-xl border border-black/10">
+			{!error && (
+				<div className="mt-6 min-h-0 flex-1 overflow-y-auto rounded-xl border border-black/10">
 					<div className="grid grid-cols-[110px_1.2fr_1fr_1fr_90px_100px] items-center bg-[#eef3f8] px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#334155]">
 						<span>Imagen</span>
 						<span>Modelo</span>
@@ -462,7 +491,7 @@ export const AdminCelularesPanel = () => {
 						<span className="text-center">Borrar</span>
 					</div>
 					<div className="divide-y divide-black/10 bg-white">
-						{celulares.map((c) => {
+						{celularesFiltrados.map((c) => {
 							const detalle = detallePorId[c.id];
 							const expandido = expandidoId === c.id;
 							return (
@@ -522,6 +551,11 @@ export const AdminCelularesPanel = () => {
 								</div>
 							);
 						})}
+						{celularesFiltrados.length === 0 && (
+							<div className="px-4 py-8 text-center text-[#64748b]">
+								No hay celulares para esa búsqueda.
+							</div>
+						)}
 					</div>
 				</div>
 			)}
