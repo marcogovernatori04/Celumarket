@@ -36,14 +36,14 @@ namespace Celumarket.Infrastructure.Repositories
         {
             return await _context.Variaciones
                 .Include(v => v.Celular)
-                .Where(v => v.StockDisponible <= umbral)
+                .Where(v => (v.Stock - v.StockBloqueado) <= umbral)
                 .OrderBy(v => v.Stock)
                 .Select(v => new StockCriticoDTO
                 {
                     VariacionId = v.Id,
                     MarcaModelo = $"{v.Celular.Marca} {v.Celular.Modelo}",
                     Precio = v.Precio,
-                    StockActual = v.StockDisponible
+                    StockActual = v.Stock - v.StockBloqueado
                 })
                 .ToListAsync();
         }
@@ -51,44 +51,142 @@ namespace Celumarket.Infrastructure.Repositories
         public async Task<IEnumerable<FacturacionDiariaDTO>> ObtenerFacturacionUlt30DiasAsync()
         {
             var fechaInicio = DateTime.Now.Date.AddDays(-30);
-
-            return await _context.Pedidos
+            var pedidos = await _context.Pedidos
                 .Where(p => p.Fecha >= fechaInicio && p.Estado == Pedido.EstadoPagado)
-                .GroupBy(p => p.Fecha.Date)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Fecha,
+                    p.DescuentoAplicado,
+                    p.CostoEnvio
+                })
+                .ToListAsync();
+
+            if (pedidos.Count == 0)
+                return Enumerable.Empty<FacturacionDiariaDTO>();
+
+            var pedidoIds = pedidos.Select(p => p.Id).ToList();
+
+            var subtotalesPorPedido = await _context.LineasPedido
+                .Where(l => pedidoIds.Contains(l.PedidoId))
+                .GroupBy(l => l.PedidoId)
+                .Select(g => new
+                {
+                    PedidoId = g.Key,
+                    Subtotal = g.Sum(x => x.PrecioUnitario * x.Cantidad)
+                })
+                .ToDictionaryAsync(x => x.PedidoId, x => x.Subtotal);
+
+            return pedidos
+                .Select(p =>
+                {
+                    var subtotal = subtotalesPorPedido.TryGetValue(p.Id, out var s) ? s : 0m;
+                    return new
+                    {
+                        Fecha = p.Fecha.Date,
+                        TotalPedido = subtotal - p.DescuentoAplicado + p.CostoEnvio
+                    };
+                })
+                .GroupBy(x => x.Fecha)
                 .Select(g => new FacturacionDiariaDTO
                 {
                     Fecha = g.Key,
                     CantidadPedidos = g.Count(),
-                    TotalFacturado = g.Sum(p => p.MontoTotal)
+                    TotalFacturado = g.Sum(x => x.TotalPedido)
                 })
                 .OrderBy(x => x.Fecha)
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<IEnumerable<FacturacionDiariaDTO>> ObtenerFacturacionPorMesAsync(int anio, int mes)
         {
-            return await _context.Pedidos
+            var pedidos = await _context.Pedidos
                 .Where(p => p.Estado == Pedido.EstadoPagado && p.Fecha.Year == anio && p.Fecha.Month == mes)
-                .GroupBy(p => p.Fecha.Date)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Fecha,
+                    p.DescuentoAplicado,
+                    p.CostoEnvio
+                })
+                .ToListAsync();
+
+            if (pedidos.Count == 0)
+                return Enumerable.Empty<FacturacionDiariaDTO>();
+
+            var pedidoIds = pedidos.Select(p => p.Id).ToList();
+
+            var subtotalesPorPedido = await _context.LineasPedido
+                .Where(l => pedidoIds.Contains(l.PedidoId))
+                .GroupBy(l => l.PedidoId)
+                .Select(g => new
+                {
+                    PedidoId = g.Key,
+                    Subtotal = g.Sum(x => x.PrecioUnitario * x.Cantidad)
+                })
+                .ToDictionaryAsync(x => x.PedidoId, x => x.Subtotal);
+
+            return pedidos
+                .Select(p =>
+                {
+                    var subtotal = subtotalesPorPedido.TryGetValue(p.Id, out var s) ? s : 0m;
+                    return new
+                    {
+                        Fecha = p.Fecha.Date,
+                        TotalPedido = subtotal - p.DescuentoAplicado + p.CostoEnvio
+                    };
+                })
+                .GroupBy(x => x.Fecha)
                 .Select(g => new FacturacionDiariaDTO
                 {
                     Fecha = g.Key,
                     CantidadPedidos = g.Count(),
-                    TotalFacturado = g.Sum(p => p.MontoTotal)
+                    TotalFacturado = g.Sum(x => x.TotalPedido)
                 })
                 .OrderBy(x => x.Fecha)
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<DashboardDTO> ObtenerReportesBasicosAsync()
         {
+            var pedidosPagados = await _context.Pedidos
+                .Where(p => p.Estado == Pedido.EstadoPagado)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.DescuentoAplicado,
+                    p.CostoEnvio
+                })
+                .ToListAsync();
+
+            decimal recaudacionTotal = 0m;
+            if (pedidosPagados.Count > 0)
+            {
+                var pedidoIds = pedidosPagados.Select(p => p.Id).ToList();
+                var subtotalesPorPedido = await _context.LineasPedido
+                    .Where(l => pedidoIds.Contains(l.PedidoId))
+                    .GroupBy(l => l.PedidoId)
+                    .Select(g => new
+                    {
+                        PedidoId = g.Key,
+                        Subtotal = g.Sum(x => x.PrecioUnitario * x.Cantidad)
+                    })
+                    .ToDictionaryAsync(x => x.PedidoId, x => x.Subtotal);
+
+                recaudacionTotal = pedidosPagados.Sum(p =>
+                {
+                    var subtotal = subtotalesPorPedido.TryGetValue(p.Id, out var s) ? s : 0m;
+                    return subtotal - p.DescuentoAplicado + p.CostoEnvio;
+                });
+            }
+
             var resumen = new DashboardDTO
             {
-                TotalUsuarios = await _context.Usuarios.CountAsync(),
+                TotalClientes = await _context.Clientes.CountAsync(),
                 PedidosPendientes = await _context.Pedidos.CountAsync(p => p.Estado == Pedido.EstadoPendienteDePago),
                 ProductosSinStock = await _context.Variaciones.CountAsync(v => v.Stock == 0),
                 TotalPedidos = await _context.Pedidos.CountAsync(),
-                RecaudacionTotal = await _context.Pedidos.Where(p => p.Estado == Pedido.EstadoPagado).SumAsync(p => p.MontoTotal)
+                RecaudacionTotal = recaudacionTotal
             };
 
             return resumen;

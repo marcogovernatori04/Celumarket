@@ -103,7 +103,7 @@ function App() {
 		if (!pago) return;
 		if (pago !== "exitoso" && pago !== "fallido" && pago !== "pendiente") return;
 		if (location.pathname === "/resultado-pago") return;
-		navigate(`/resultado-pago?pago=${pago}`, { replace: true });
+		navigate(`/resultado-pago${location.search}`, { replace: true });
 	}, [location.pathname, location.search, navigate]);
 
 	const esVistaLogin = location.pathname === "/login";
@@ -265,31 +265,68 @@ function DetallePedidoRoute({ onVolver }: { onVolver: () => void }) {
 function ResultadoPagoRoute({ onVerMisPedidos, onIrATienda }: { onVerMisPedidos: () => void; onIrATienda: () => void }) {
 	const [searchParams] = useSearchParams();
 	const [detallePedido, setDetallePedido] = useState<DetallePedidoResponse | null>(null);
+	const [estadoFinal, setEstadoFinal] = useState<"exitoso" | "fallido" | "pendiente" | null>(null);
 	const pago = searchParams.get("pago");
-	const estado = pago === "exitoso" || pago === "fallido" || pago === "pendiente" ? pago : "pendiente";
+	const estadoQuery = pago === "exitoso" || pago === "fallido" || pago === "pendiente" ? pago : "pendiente";
 
 	useEffect(() => {
 		const cargarDetalle = async () => {
-			if (estado !== "exitoso") return;
-
 			const externalReference = searchParams.get("external_reference");
 			const pedidoGuardado = sessionStorage.getItem("ultimoPedidoCheckoutId");
 			const pedidoId = Number(externalReference ?? pedidoGuardado);
 
-			if (!Number.isFinite(pedidoId) || pedidoId <= 0) return;
+			if (!Number.isFinite(pedidoId) || pedidoId <= 0) {
+				setEstadoFinal(estadoQuery);
+				return;
+			}
 
 			try {
-				const detalle = await pedidoService.obtenerDetalleMiPedido(pedidoId);
-				setDetallePedido(detalle);
+				const maxIntentos = estadoQuery === "exitoso" ? 6 : 1;
+				for (let intento = 1; intento <= maxIntentos; intento++) {
+					const detalle = await pedidoService.obtenerDetalleMiPedido(pedidoId);
+					setDetallePedido(detalle);
+
+					const estadoPedido = detalle.estado?.trim().toLowerCase();
+					if (estadoPedido === "pagado") {
+						setEstadoFinal("exitoso");
+						return;
+					}
+					if (estadoPedido === "cancelado") {
+						setEstadoFinal("fallido");
+						return;
+					}
+
+					const esUltimoIntento = intento === maxIntentos;
+					if (estadoPedido === "pendiente de pago" && !esUltimoIntento && estadoQuery === "exitoso") {
+						await new Promise((resolve) => setTimeout(resolve, 2000));
+						continue;
+					}
+
+					if (estadoPedido === "pendiente de pago") {
+						setEstadoFinal("pendiente");
+						return;
+					}
+
+					setEstadoFinal(estadoQuery);
+					return;
+				}
 			} catch {
 				setDetallePedido(null);
+				setEstadoFinal(estadoQuery);
 			}
 		};
 
 		void cargarDetalle();
-	}, [estado, searchParams]);
+	}, [estadoQuery, searchParams]);
 
-	return <ResultadoPago estado={estado} onVerMisPedidos={onVerMisPedidos} onIrATienda={onIrATienda} detallePedido={detallePedido} />;
+	return (
+		<ResultadoPago
+			estado={estadoFinal ?? estadoQuery}
+			onVerMisPedidos={onVerMisPedidos}
+			onIrATienda={onIrATienda}
+			detallePedido={detallePedido}
+		/>
+	);
 }
 
 export default App;

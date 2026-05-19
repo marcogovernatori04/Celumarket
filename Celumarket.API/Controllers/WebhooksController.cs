@@ -5,6 +5,7 @@ using MercadoPago.Config;
 using MercadoPago.Resource.Payment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
@@ -32,15 +33,18 @@ namespace Celumarket.API.Controllers
         private static readonly TimeSpan MaxWebhookClockSkew = TimeSpan.FromMinutes(5);
         private readonly IGestorPago _gestorPago;
         private readonly IConfiguration _config;
+        private readonly IHostEnvironment _hostEnvironment;
         private readonly ILogger<WebhooksController> _logger;
 
         public WebhooksController(
             IGestorPago gestorPago,
             IConfiguration config,
+            IHostEnvironment hostEnvironment,
             ILogger<WebhooksController> logger)
         {
             _gestorPago = gestorPago;
             _config = config;
+            _hostEnvironment = hostEnvironment;
             _logger = logger;
             MercadoPagoConfig.AccessToken = _config["MercadoPago:AccessToken"];
         }
@@ -52,8 +56,15 @@ namespace Celumarket.API.Controllers
             {
                 if (!TryValidateWebhookSignature(out var validationError))
                 {
-                    _logger.LogWarning("Webhook de Mercado Pago rechazado: {Reason}", validationError);
-                    return Unauthorized(new { error = validationError });
+                    if (_hostEnvironment.IsProduction())
+                    {
+                        _logger.LogWarning("Webhook de Mercado Pago rechazado: {Reason}", validationError);
+                        return Unauthorized(new { error = validationError });
+                    }
+
+                    _logger.LogWarning(
+                        "Webhook de Mercado Pago con firma inválida en entorno no productivo. Se continúa procesamiento. Razón: {Reason}",
+                        validationError);
                 }
 
                 if (payload == null || !EsNotificacionDePago(payload))
@@ -68,6 +79,11 @@ namespace Celumarket.API.Controllers
 
                 var client = new PaymentClient();
                 Payment pago = await client.GetAsync(pagoId);
+                _logger.LogInformation(
+                    "Webhook MP recibido. paymentId={PaymentId}, status={Status}, externalReference={ExternalReference}",
+                    pago.Id,
+                    pago.Status,
+                    pago.ExternalReference);
 
                 if (string.Equals(pago.Status, "approved", StringComparison.OrdinalIgnoreCase)
                     && int.TryParse(pago.ExternalReference, out int pedidoId))
@@ -94,6 +110,7 @@ namespace Celumarket.API.Controllers
                             FechaAprobacionUtc = pago.DateApproved?.ToUniversalTime()
                         }
                     });
+                    _logger.LogInformation("Pago MP aprobado procesado para pedidoId={PedidoId}.", pedidoId);
                 }
             }
             catch (Exception ex)

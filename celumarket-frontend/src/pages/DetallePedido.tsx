@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { pedidoService, type DetallePedido as DetallePedidoData } from "../services/pedidoService";
+import { getMetodoPagoLabel, getTipoPagoLabel } from "../utils/mercadoPagoDisplay";
 
 type DetallePedidoProps = {
 	pedidoId: number;
@@ -52,6 +53,16 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 		}
 	};
 
+	const pagosMpRaw = detalle?.pagosMercadoPago && detalle.pagosMercadoPago.length > 0
+		? detalle.pagosMercadoPago
+		: (detalle?.datosPagoMercadoPago ? [detalle.datosPagoMercadoPago] : []);
+
+	const pagosMp = pagosMpRaw.filter((pago, idx, arr) => {
+		const id = pago.paymentIdExterno?.trim();
+		if (!id) return true;
+		return arr.findIndex((p) => p.paymentIdExterno?.trim() === id) === idx;
+	});
+
 	return (
 		<div className="min-h-screen bg-[#f5f5f5] flex flex-col">
 			<section className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
@@ -94,6 +105,29 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 							</div>
 							<p className="mt-4 border-t border-[#e5ebf2] pt-3 text-right text-[24px] font-extrabold leading-none text-[#001830]">Total: ${detalle.montoTotal.toLocaleString("es-AR")}</p>
 						</div>
+						{pagosMp.length > 0 && (
+							<div className="rounded-lg border border-[#dfe5eb] bg-white p-5 shadow-sm">
+								<h2 className="text-xl font-bold text-[#001830]">Detalle del pago</h2>
+								<div className="mt-3 space-y-3">
+									{pagosMp.map((pago, idx) => (
+										<div key={`${pago.paymentIdExterno ?? "pago"}-${idx}`} className="rounded-lg border border-[#e5ebf2] bg-[#f8fafc] p-3">
+											<p className="text-sm font-semibold text-[#001830]">Medio #{idx + 1}</p>
+											<div className="mt-1 grid grid-cols-1 gap-1 text-[14px] text-[#334155] sm:grid-cols-2">
+												<p>Método: {getMetodoPagoLabel(pago.metodoPagoId)}</p>
+												<p>Tipo: {getTipoPagoLabel(pago.tipoPagoId)}</p>
+												<p>Cuotas: {pago.cuotas > 0 ? pago.cuotas : 1}</p>
+												<p>Monto pagado: ${(pago.montoPagado ?? pago.montoTotalFinal ?? 0).toLocaleString("es-AR")}</p>
+												{pago.valorCuota ? <p>Valor cuota: ${pago.valorCuota.toLocaleString("es-AR")}</p> : null}
+												{pago.paymentIdExterno ? <p>Id pago MP: {pago.paymentIdExterno}</p> : null}
+											</div>
+										</div>
+									))}
+									<p className="border-t border-[#e5ebf2] pt-2 text-sm font-semibold text-[#001830]">
+										Total abonado: ${pagosMp.reduce((acc, p) => acc + (p.montoPagado ?? p.montoTotalFinal ?? 0), 0).toLocaleString("es-AR")}
+									</p>
+								</div>
+							</div>
+						)}
 					</div>
 				)}
 			</section>

@@ -74,6 +74,7 @@ namespace Celumarket.Application.DTOs
             public decimal CostoEnvio { get; set; }
             public DireccionEntregaDTO? DireccionEntrega { get; set; }
             public DatosPagoMercadoPagoDTO? DatosPagoMercadoPago { get; set; }
+            public List<DatosPagoMercadoPagoDTO> PagosMercadoPago { get; set; } = new();
             public List<LineaDetallePedidoClienteDTO> Lineas { get; set; } = new();
         }
 

@@ -16,7 +16,7 @@ const sections: Array<{ key: AdminSectionKey; label: string }> = [
 	{ key: "celulares", label: "Celulares" },
 	{ key: "envios", label: "Envíos" },
 	{ key: "pedidos", label: "Pedidos" },
-	{ key: "usuarios", label: "Usuarios" },
+	{ key: "usuarios", label: "Clientes" },
 	{ key: "configuracion", label: "Configuración" },
 ];
 

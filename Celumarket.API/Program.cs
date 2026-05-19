@@ -100,6 +100,7 @@ builder.Services.AddScoped<IImagenRepository, ImagenRepository>();
 builder.Services.AddScoped<IMetodoPagoRepository, MetodoPagoRepository>();
 builder.Services.AddScoped<IPagoRepository, PagoRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IReportesRepository, ReportesRepository>();
 builder.Services.AddScoped<IReservaCheckoutRepository, ReservaCheckoutRepository>();
 builder.Services.AddScoped<IRolRepository, RolRepository>();
 builder.Services.AddScoped<ITarifaZonalRepository, TarifaZonalRepository>();

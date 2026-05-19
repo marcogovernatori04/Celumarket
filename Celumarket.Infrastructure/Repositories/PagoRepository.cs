@@ -39,6 +39,31 @@ namespace Celumarket.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<List<Pago>> ObtenerAprobadosPorPedidoIdAsync(int pedidoId)
+        {
+            return await _context.Pagos
+                .Where(p => p.PedidoId == pedidoId && p.Estado == Pago.EstadoAprobado && p.DatosMercadoPago != null)
+                .OrderBy(p => p.Fecha)
+                .ToListAsync();
+        }
+
+        public async Task<decimal> ObtenerTotalAprobadoPorPedidoIdAsync(int pedidoId)
+        {
+            return await _context.Pagos
+                .Where(p => p.PedidoId == pedidoId && p.Estado == Pago.EstadoAprobado)
+                .Select(p => (decimal?)p.Monto)
+                .SumAsync() ?? 0m;
+        }
+
+        public async Task<bool> ExistePagoMercadoPagoPorExternoAsync(int pedidoId, string paymentIdExterno)
+        {
+            return await _context.Pagos
+                .AnyAsync(p =>
+                    p.PedidoId == pedidoId &&
+                    p.DatosMercadoPago != null &&
+                    p.DatosMercadoPago.PaymentIdExterno == paymentIdExterno);
+        }
+
         public async Task GuardarAsync()
         {
             await _context.SaveChangesAsync();

@@ -16,7 +16,7 @@ export const AdminUsuariosPanel = () => {
 			const data = await clienteService.obtenerUsuarios();
 			setUsuarios(data);
 		} catch {
-			setError("No se pudo cargar la lista de usuarios.");
+			setError("No se pudo cargar la lista de clientes.");
 		} finally {
 			if (esRecarga) setRecargando(false);
 			else setCargando(false);
@@ -30,7 +30,7 @@ export const AdminUsuariosPanel = () => {
 	if (cargando) {
 		return (
 			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
-				<p className="text-[#5b6673]">Cargando usuarios...</p>
+				<p className="text-[#5b6673]">Cargando clientes...</p>
 			</div>
 		);
 	}
@@ -44,7 +44,7 @@ export const AdminUsuariosPanel = () => {
 	return (
 		<div>
 			<div className="flex items-center justify-between gap-3">
-				<h2 className="text-2xl font-bold text-[#001830]">Usuarios</h2>
+				<h2 className="text-2xl font-bold text-[#001830]">Clientes</h2>
 				<button
 					onClick={() => void cargarUsuarios(true)}
 					disabled={recargando}
@@ -54,7 +54,7 @@ export const AdminUsuariosPanel = () => {
 				</button>
 			</div>
 			<p className="mt-1 text-sm text-[#5b6673]">
-				Listado general de usuarios registrados. Total: {usuarios.length}
+				Listado general de clientes registrados. Total: {usuarios.length}
 			</p>
 
 			<div className="mt-6 overflow-hidden rounded-xl border border-black/10">
@@ -67,7 +67,7 @@ export const AdminUsuariosPanel = () => {
 				<div className="divide-y divide-black/10 bg-white">
 					{usuarios.length === 0 ? (
 						<div className="px-4 py-8 text-center text-[#64748b]">
-							No hay usuarios para mostrar.
+							No hay clientes para mostrar.
 						</div>
 					) : (
 						usuarios.map((u) => (

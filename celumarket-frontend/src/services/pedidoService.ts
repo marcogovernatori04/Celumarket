@@ -119,6 +119,17 @@ export type DetallePedido = {
 		montoNetoRecibido?: number | null;
 		fechaAprobacionUtc?: string | null;
 	} | null;
+	pagosMercadoPago?: Array<{
+		paymentIdExterno?: string | null;
+		metodoPagoId?: string | null;
+		tipoPagoId?: string | null;
+		cuotas: number;
+		valorCuota?: number | null;
+		montoTotalFinal?: number | null;
+		montoPagado?: number | null;
+		montoNetoRecibido?: number | null;
+		fechaAprobacionUtc?: string | null;
+	}> | null;
 	direccionEntrega?: {
 		calle: string;
 		numero: string;

@@ -49,11 +49,46 @@ namespace Celumarket.Application.Services
             var pagoPendiente = await _pagoRepo.ObtenerPorPedidoIdAsync(dto.PedidoId);
             if (dto.PagoAprobado)
             {
-                if (pagoPendiente != null)
+                int? metodoMercadoPagoId = pagoPendiente?.MetodoPagoId;
+                if (!metodoMercadoPagoId.HasValue)
                 {
-                    if (dto.DatosMercadoPago != null)
+                    var metodos = await _metodoPagoRepo.ObtenerTodosAsync();
+                    metodoMercadoPagoId = metodos
+                        .FirstOrDefault(m => m.Nombre.Contains("mercado", StringComparison.OrdinalIgnoreCase))
+                        ?.Id;
+                }
+
+                if (dto.DatosMercadoPago != null && metodoMercadoPagoId.HasValue)
+                {
+                    var paymentIdExterno = dto.DatosMercadoPago.PaymentIdExterno?.Trim();
+                    if (!string.IsNullOrWhiteSpace(paymentIdExterno))
                     {
-                        pagoPendiente.AsignarDatosMercadoPago(new DatosMercadoPago(
+                        var yaExiste = await _pagoRepo.ExistePagoMercadoPagoPorExternoAsync(dto.PedidoId, paymentIdExterno);
+                        if (yaExiste)
+                        {
+                            if (pagoPendiente != null)
+                            {
+                                var totalAprobadoExistente = await _pagoRepo.ObtenerTotalAprobadoPorPedidoIdAsync(dto.PedidoId);
+                                if (totalAprobadoExistente >= pagoPendiente.Monto)
+                                {
+                                    pagoPendiente.Aprobar();
+                                    await _gestorPedido.ConfirmarPagoAsync(dto.PedidoId);
+                                }
+                            }
+
+                            await _unitOfWork.GuardarAsync();
+                            return;
+                        }
+                    }
+
+                    var montoEvento = dto.DatosMercadoPago.MontoPagado
+                        ?? dto.DatosMercadoPago.MontoTotalFinal
+                        ?? 0m;
+
+                    if (montoEvento > 0)
+                    {
+                        var pagoEvento = Pago.Pendiente(dto.PedidoId, metodoMercadoPagoId.Value, montoEvento);
+                        pagoEvento.AsignarDatosMercadoPago(new DatosMercadoPago(
                             dto.DatosMercadoPago.PaymentIdExterno,
                             dto.DatosMercadoPago.MetodoPagoId,
                             dto.DatosMercadoPago.TipoPagoId,
@@ -63,12 +98,20 @@ namespace Celumarket.Application.Services
                             dto.DatosMercadoPago.MontoPagado,
                             dto.DatosMercadoPago.MontoNetoRecibido,
                             dto.DatosMercadoPago.FechaAprobacionUtc));
+                        pagoEvento.Aprobar();
+                        await _pagoRepo.AgregarAsync(pagoEvento);
                     }
-
-                    pagoPendiente.Aprobar();
                 }
 
-                await _gestorPedido.ConfirmarPagoAsync(dto.PedidoId);
+                if (pagoPendiente != null)
+                {
+                    var totalAprobado = await _pagoRepo.ObtenerTotalAprobadoPorPedidoIdAsync(dto.PedidoId);
+                    if (totalAprobado >= pagoPendiente.Monto)
+                    {
+                        pagoPendiente.Aprobar();
+                        await _gestorPedido.ConfirmarPagoAsync(dto.PedidoId);
+                    }
+                }
             }
             else
             {

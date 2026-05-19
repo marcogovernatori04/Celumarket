@@ -4,6 +4,7 @@ import { AdminCelularesPanel } from "../components/admin/AdminCelularesPanel";
 import { AdminConfiguracionPanel } from "../components/admin/AdminConfiguracionPanel";
 import { AdminEnviosPanel } from "../components/admin/AdminEnviosPanel";
 import { AdminPedidosPanel } from "../components/admin/AdminPedidosPanel";
+import { AdminReportesPanel } from "../components/admin/AdminReportesPanel";
 import { AdminUsuariosPanel } from "../components/admin/AdminUsuariosPanel";
 
 export const AdminPanel = () => {
@@ -26,12 +27,7 @@ export const AdminPanel = () => {
 						) : seccionActiva === "configuracion" ? (
 							<AdminConfiguracionPanel />
 						) : (
-							<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
-								<p className="text-[18px] font-semibold text-[#001830]">Reportes</p>
-								<p className="mt-1 text-[#5b6673]">
-									En el próximo paso conectamos esta sección a los endpoints de reportes.
-								</p>
-							</div>
+							<AdminReportesPanel onIrASeccion={setSeccionActiva} />
 						)}
 					</div>
 				</section>

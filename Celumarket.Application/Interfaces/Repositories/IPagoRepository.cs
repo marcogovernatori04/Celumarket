@@ -12,6 +12,9 @@ namespace Celumarket.Application.Interfaces.Repositories
         Task AgregarAsync(Pago pago);
         Task<Pago> ObtenerPorPedidoIdAsync(int pedidoId);
         Task<Pago?> ObtenerUltimoPorPedidoIdAsync(int pedidoId);
+        Task<List<Pago>> ObtenerAprobadosPorPedidoIdAsync(int pedidoId);
+        Task<decimal> ObtenerTotalAprobadoPorPedidoIdAsync(int pedidoId);
+        Task<bool> ExistePagoMercadoPagoPorExternoAsync(int pedidoId, string paymentIdExterno);
         Task GuardarAsync();
     }
 }

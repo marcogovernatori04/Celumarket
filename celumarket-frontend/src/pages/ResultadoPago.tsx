@@ -55,9 +55,14 @@ const contenidoPorEstado: Record<EstadoPago, { etiqueta: string; titulo: string;
 
 export const ResultadoPago = ({ estado, onIrATienda, onVerMisPedidos, detallePedido }: ResultadoPagoProps) => {
 	const contenido = contenidoPorEstado[estado];
-	const pagoMp = detallePedido?.datosPagoMercadoPago;
-	const metodoPagoLabel = getMetodoPagoLabel(pagoMp?.metodoPagoId);
-	const tipoPagoLabel = getTipoPagoLabel(pagoMp?.tipoPagoId);
+	const pagosMpRaw = detallePedido?.pagosMercadoPago && detallePedido.pagosMercadoPago.length > 0
+		? detallePedido.pagosMercadoPago
+		: (detallePedido?.datosPagoMercadoPago ? [detallePedido.datosPagoMercadoPago] : []);
+	const pagosMp = pagosMpRaw.filter((pago, idx, arr) => {
+		const id = pago.paymentIdExterno?.trim();
+		if (!id) return true;
+		return arr.findIndex((p) => p.paymentIdExterno?.trim() === id) === idx;
+	});
 
 	return (
 		<div className="min-h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col">
@@ -71,16 +76,26 @@ export const ResultadoPago = ({ estado, onIrATienda, onVerMisPedidos, detallePed
 					</div>
 					<h1 className="mt-4 text-center text-[34px] font-extrabold leading-none text-[#001830]">{contenido.titulo}</h1>
 					<p className="mx-auto mt-2 max-w-2xl text-center text-[16px] text-[#4b5563]">{contenido.descripcion}</p>
-					{estado === "exitoso" && pagoMp && (
+					{estado === "exitoso" && pagosMp.length > 0 && (
 						<div className="mx-auto mt-4 w-full max-w-2xl rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-4 text-left">
 							<p className="text-[15px] font-semibold text-[#001830]">Detalle del pago</p>
-							<div className="mt-2 grid grid-cols-1 gap-1 text-[14px] text-[#334155] sm:grid-cols-2">
-								<p>Método: {metodoPagoLabel}</p>
-								<p>Tipo: {tipoPagoLabel}</p>
-								<p>Cuotas: {pagoMp.cuotas > 0 ? pagoMp.cuotas : 1}</p>
-								<p>Total pagado: ${(pagoMp.montoTotalFinal ?? pagoMp.montoPagado ?? detallePedido?.montoTotal ?? 0).toLocaleString("es-AR")}</p>
-								{pagoMp.valorCuota ? <p>Valor cuota: ${pagoMp.valorCuota.toLocaleString("es-AR")}</p> : null}
-								{pagoMp.paymentIdExterno ? <p>Id pago MP: {pagoMp.paymentIdExterno}</p> : null}
+							<div className="mt-2 space-y-3">
+								{pagosMp.map((pago, idx) => (
+									<div key={`${pago.paymentIdExterno ?? "pago"}-${idx}`} className="rounded-lg border border-[#e5ebf2] bg-white p-3">
+										<p className="text-sm font-semibold text-[#001830]">Medio #{idx + 1}</p>
+										<div className="mt-1 grid grid-cols-1 gap-1 text-[14px] text-[#334155] sm:grid-cols-2">
+											<p>Método: {getMetodoPagoLabel(pago.metodoPagoId)}</p>
+											<p>Tipo: {getTipoPagoLabel(pago.tipoPagoId)}</p>
+											<p>Cuotas: {pago.cuotas > 0 ? pago.cuotas : 1}</p>
+											<p>Monto pagado: ${(pago.montoPagado ?? pago.montoTotalFinal ?? 0).toLocaleString("es-AR")}</p>
+											{pago.valorCuota ? <p>Valor cuota: ${pago.valorCuota.toLocaleString("es-AR")}</p> : null}
+											{pago.paymentIdExterno ? <p>Id pago MP: {pago.paymentIdExterno}</p> : null}
+										</div>
+									</div>
+								))}
+								<p className="text-sm font-semibold text-[#001830]">
+									Total abonado: ${pagosMp.reduce((acc, p) => acc + (p.montoPagado ?? p.montoTotalFinal ?? 0), 0).toLocaleString("es-AR")}
+								</p>
 							</div>
 						</div>
 					)}

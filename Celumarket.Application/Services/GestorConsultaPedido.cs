@@ -34,6 +34,7 @@ namespace Celumarket.Application.Services
                 return null;
 
             var ultimoPago = await _pagoRepo.ObtenerUltimoPorPedidoIdAsync(pedidoId);
+            var pagosAprobadosMp = await _pagoRepo.ObtenerAprobadosPorPedidoIdAsync(pedidoId);
             string metodoPago = "No informado";
             if (ultimoPago != null)
             {
@@ -116,6 +117,21 @@ namespace Celumarket.Application.Services
                         MontoNetoRecibido = ultimoPago.DatosMercadoPago.MontoNetoRecibido,
                         FechaAprobacionUtc = ultimoPago.DatosMercadoPago.FechaAprobacionUtc
                     },
+                PagosMercadoPago = pagosAprobadosMp
+                    .Where(p => p.DatosMercadoPago != null)
+                    .Select(p => new PedidoDTOs.DatosPagoMercadoPagoDTO
+                    {
+                        PaymentIdExterno = p.DatosMercadoPago!.PaymentIdExterno,
+                        MetodoPagoId = p.DatosMercadoPago.MetodoPagoId,
+                        TipoPagoId = p.DatosMercadoPago.TipoPagoId,
+                        Cuotas = p.DatosMercadoPago.Cuotas,
+                        ValorCuota = p.DatosMercadoPago.ValorCuota,
+                        MontoTotalFinal = p.DatosMercadoPago.MontoTotalFinal,
+                        MontoPagado = p.DatosMercadoPago.MontoPagado,
+                        MontoNetoRecibido = p.DatosMercadoPago.MontoNetoRecibido,
+                        FechaAprobacionUtc = p.DatosMercadoPago.FechaAprobacionUtc
+                    })
+                    .ToList(),
                 Lineas = pedido.Lineas.Select(l => new PedidoDTOs.LineaDetallePedidoClienteDTO
                 {
                     Id = l.Id,

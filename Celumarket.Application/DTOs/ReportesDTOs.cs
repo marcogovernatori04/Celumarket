@@ -33,7 +33,7 @@ namespace Celumarket.Application.DTOs
 
         public class DashboardDTO
         {
-            public int TotalUsuarios { get; set; }
+            public int TotalClientes { get; set; }
             public int PedidosPendientes { get; set; }
             public int ProductosSinStock { get; set; }
             public int TotalPedidos { get; set; }
