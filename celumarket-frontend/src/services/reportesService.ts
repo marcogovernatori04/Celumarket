@@ -5,6 +5,8 @@ export type DashboardReporte = {
 	pedidosPendientes: number;
 	productosSinStock: number;
 	totalPedidos: number;
+	recaudacionProductos: number;
+	recaudacionEnvios: number;
 	recaudacionTotal: number;
 };
 
@@ -25,6 +27,8 @@ export type StockCriticoReporte = {
 export type FacturacionDiariaReporte = {
 	fecha: string;
 	cantidadPedidos: number;
+	totalProductos: number;
+	totalEnvio: number;
 	totalFacturado: number;
 };
 

@@ -5,6 +5,7 @@ import { EspecificacionesEditor } from "./EspecificacionesEditor";
 import { VariacionRowEditor } from "./VariacionRowEditor";
 import { ColorSelector } from "./ColorSelector";
 import { useState } from "react";
+import { twAdmin, twBase } from "../../../styles/tw";
 
 type CelularDetalleExpandidoProps = {
 	detalle: CelularDetalle;
@@ -108,13 +109,13 @@ export const CelularDetalleExpandido = ({
 					<p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#64748b]">Variaciones</p>
 					<button
 						onClick={() => setCreandoVariacion((v) => !v)}
-						className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+						className={twBase.actionBtnNeutral}
 					>
 						{creandoVariacion ? "Cancelar" : "Añadir variación"}
 					</button>
 				</div>
 				{creandoVariacion && (
-					<div className="mb-3 rounded-md border border-[#dbe4ef] bg-[#f8fafc] p-3">
+					<div className={`mb-3 ${twAdmin.adminSubCard}`}>
 						<div className="grid grid-cols-1 gap-2 md:grid-cols-4">
 							<ColorSelector
 								value={nuevaVariacion.colorId}
@@ -122,11 +123,11 @@ export const CelularDetalleExpandido = ({
 								onChange={(colorId) => setNuevaVariacion((p) => ({ ...p, colorId }))}
 								onCrearColor={onCrearColor}
 							/>
-							<input placeholder="Almacenamiento" value={nuevaVariacion.almacenamiento} onChange={(e) => setNuevaVariacion((p) => ({ ...p, almacenamiento: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-							<input placeholder="Precio" type="number" value={nuevaVariacion.precio} onChange={(e) => setNuevaVariacion((p) => ({ ...p, precio: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
+							<input placeholder="Almacenamiento" value={nuevaVariacion.almacenamiento} onChange={(e) => setNuevaVariacion((p) => ({ ...p, almacenamiento: e.target.value }))} className={twAdmin.adminInput} />
+							<input placeholder="Precio" type="number" value={nuevaVariacion.precio} onChange={(e) => setNuevaVariacion((p) => ({ ...p, precio: e.target.value }))} className={twAdmin.adminInput} />
 						</div>
 						<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-							<input placeholder="Stock inicial" type="number" value={nuevaVariacion.stockInicial} onChange={(e) => setNuevaVariacion((p) => ({ ...p, stockInicial: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
+							<input placeholder="Stock inicial" type="number" value={nuevaVariacion.stockInicial} onChange={(e) => setNuevaVariacion((p) => ({ ...p, stockInicial: e.target.value }))} className={twAdmin.adminInput} />
 							<div>
 								<input
 									id={`add-var-imagenes-${detalle.id}`}
@@ -146,11 +147,11 @@ export const CelularDetalleExpandido = ({
 								{nuevaVariacion.imagenes.length > 0 && <p className="mt-1 text-xs text-[#475569]">{nuevaVariacion.imagenes.length} imagen(es). La primera será principal.</p>}
 							</div>
 						</div>
-						<button
-							onClick={() => void crearVariacion()}
-							disabled={guardandoVariacionNueva}
-							className="mt-2 h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
-						>
+							<button
+								onClick={() => void crearVariacion()}
+								disabled={guardandoVariacionNueva}
+							className={`mt-2 ${twBase.actionBtnPrimary}`}
+							>
 							{guardandoVariacionNueva ? "Guardando..." : "Guardar variación"}
 						</button>
 					</div>

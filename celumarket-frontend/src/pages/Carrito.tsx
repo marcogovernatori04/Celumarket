@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { carritoService, type CarritoDetalle } from "../services/carritoService";
 import { Footer } from "../components/Footer";
 import { pedidoService, type ReservaCheckout } from "../services/pedidoService";
+import { twBase, twCarrito } from "../styles/tw";
 
 type CarritoProps = {
 	onCambioCarrito?: () => Promise<void> | void;
@@ -81,14 +82,14 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 	};
 
 	return (
-		<div className="flex flex-1 min-h-0 overflow-hidden bg-[#f5f5f5] flex-col">
-			<section className="mx-auto flex w-full max-w-[1080px] flex-1 min-h-0 flex-col overflow-y-auto px-6 py-8">
+		<div className={twCarrito.layout}>
+			<section className={twCarrito.section}>
 				<h1 className="mb-7 text-3xl font-extrabold text-[#001830]">Tu carrito</h1>
 				{error && <p className="text-red-600">{error}</p>}
 				{!error && !carrito && <p className="text-gray-600">Cargando carrito...</p>}
 				{carrito && carrito.items.length === 0 && (
-					<div className="flex flex-1 items-start justify-center pt-14">
-						<div className="w-full max-w-[520px] rounded-xl border border-black/10 bg-white px-8 py-10 text-center shadow-[0_4px_18px_rgba(0,0,0,0.08)]">
+		<div className={twCarrito.emptyWrap}>
+						<div className={twCarrito.emptyCard}>
 							<div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#eaf2fb] text-2xl text-[#015cb9]">
 								🛒
 							</div>
@@ -96,7 +97,7 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 							<p className="mt-2 text-[16px] text-[#5b6673]">Agregá productos para comenzar tu compra.</p>
 							<button
 								onClick={onIrATienda}
-								className="mt-6 h-[42px] rounded-md bg-[#015cb9] px-5 text-[16px] font-medium text-white transition-colors duration-200 hover:bg-[#017AF4]"
+								className={`mt-6 ${twBase.primaryBtnMd}`}
 							>
 								Ir a la tienda
 							</button>
@@ -108,7 +109,7 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 						<div className="lg:pr-6">
 							<div className="space-y-5">
 								{carrito.items.map((item) => (
-									<div key={item.variacionId} className="rounded-md bg-white p-3.5 shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
+									<div key={item.variacionId} className={twCarrito.itemCard}>
 										<div className="grid grid-cols-[132px_1fr_48px] items-center gap-3">
 											<div className="h-[132px] w-[132px] overflow-hidden rounded-md bg-[#ececec]">
 												<img src={item.urlImagen} alt={`${item.marca} ${item.modelo}`} className="h-[132px] w-[132px] scale-125 object-contain" />
@@ -135,7 +136,7 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 						</div>
 
 						<div className="border-l border-black/10 pl-10">
-							<div className="rounded-md bg-white p-4 shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
+							<div className={twCarrito.summaryCard}>
 								<p className="text-[24px] font-medium text-[#1e1e1e]">Subtotal: ${carrito.total.toLocaleString("es-AR")}</p>
 								<p className="text-[18px] text-[#757575]">{carrito.items.length} artículo{carrito.items.length > 1 ? "s" : ""}</p>
 								<div className="my-2 h-px bg-[#d9d9d9]" />
@@ -144,18 +145,18 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 							<button
 								disabled={iniciandoCompra}
 								onClick={iniciarCompra}
-								className={`mt-4 h-[44px] w-full rounded-md text-[21px] transition-colors duration-200 ${!iniciandoCompra ? "bg-[#015cb9] text-white hover:bg-[#017AF4]" : "bg-[#757575] text-[#d9d9d9]"}`}
+								className={`${twCarrito.checkoutBtn} ${!iniciandoCompra ? "bg-[#015cb9] text-white hover:bg-[#017AF4]" : "bg-[#757575] text-[#d9d9d9]"}`}
 							>
 								{iniciandoCompra ? "Iniciando..." : "Iniciar compra"}
 							</button>
 							<button
 								disabled={vaciandoCarrito || iniciandoCompra}
 								onClick={() => setMostrarModalVaciar(true)}
-								className="mt-2 h-[40px] w-full rounded-md border border-black/15 bg-[#eef1f4] text-[16px] text-[#001830] transition-colors duration-200 hover:bg-[#e2e7ec] disabled:cursor-not-allowed disabled:opacity-60"
+								className={twCarrito.secondaryBtn}
 							>
 								{vaciandoCarrito ? "Vaciando..." : "Vaciar carrito"}
 							</button>
-							<div className="mt-4 rounded-md border border-[#cfe0f3] bg-[#eef5fd] p-4 text-[#1f3f62] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+							<div className={twCarrito.infoBox}>
 								<p className="text-[15px] leading-tight">Información: en el checkout vas a elegir envío, datos de facturación y método de pago.</p>
 							</div>
 						</div>
@@ -180,7 +181,7 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 							<button
 								disabled={vaciandoCarrito}
 								onClick={vaciarCarrito}
-								className="h-[38px] rounded-md bg-[#015cb9] px-4 text-[15px] text-white hover:bg-[#017AF4] disabled:opacity-60"
+								className={`${twBase.actionBtnPrimary} h-[38px] px-4 text-[15px] disabled:opacity-60`}
 							>
 								{vaciandoCarrito ? "Vaciando..." : "Vaciar carrito"}
 							</button>

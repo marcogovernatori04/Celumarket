@@ -7,6 +7,7 @@ import {
 	type TopVendidoReporte,
 } from "../../services/reportesService";
 import type { AdminSectionKey } from "./AdminSidebar";
+import { twAdmin, twBase } from "../../styles/tw";
 
 const formatearMonto = (monto: number) => `$${monto.toLocaleString("es-AR")}`;
 const formatearFecha = (raw: string) => {
@@ -80,16 +81,20 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 
 	const resumen30d = useMemo(() => ({
 		totalFacturado: facturacion30d.reduce((acc, it) => acc + it.totalFacturado, 0),
+		totalProductos: facturacion30d.reduce((acc, it) => acc + it.totalProductos, 0),
+		totalEnvio: facturacion30d.reduce((acc, it) => acc + it.totalEnvio, 0),
 		totalPedidos: facturacion30d.reduce((acc, it) => acc + it.cantidadPedidos, 0),
 	}), [facturacion30d]);
 	const resumenMes = useMemo(() => ({
 		totalFacturado: facturacionMes.reduce((acc, it) => acc + it.totalFacturado, 0),
+		totalProductos: facturacionMes.reduce((acc, it) => acc + it.totalProductos, 0),
+		totalEnvio: facturacionMes.reduce((acc, it) => acc + it.totalEnvio, 0),
 		totalPedidos: facturacionMes.reduce((acc, it) => acc + it.cantidadPedidos, 0),
 	}), [facturacionMes]);
 
 	if (loading) {
 		return (
-			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+			<div className={twBase.loadingBox}>
 				<p className="text-[#5b6673]">Cargando reportes...</p>
 			</div>
 		);
@@ -99,10 +104,10 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 		<div className="flex h-full min-h-0 flex-col overflow-x-hidden">
 			<div className="flex items-center justify-between gap-3">
 				<div>
-					<h2 className="text-2xl font-bold text-[#001830]">Reportes</h2>
-					<p className="mt-1 text-sm text-[#5b6673]">Resumen general con métricas clave del sistema.</p>
+					<h2 className={twAdmin.adminSectionTitle}>Reportes</h2>
+					<p className={twAdmin.adminSectionSubtitle}>Resumen general con métricas clave del sistema.</p>
 				</div>
-				<button onClick={() => void cargarTodo(true)} disabled={recargando} className="h-9 rounded-md bg-[#015cb9] px-3 text-sm font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60">
+				<button onClick={() => void cargarTodo(true)} disabled={recargando} className={twAdmin.adminPrimaryBtnSm}>
 					{recargando ? "Recargando..." : "Recargar"}
 				</button>
 			</div>
@@ -115,33 +120,35 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 					<KpiCard titulo="Pedidos pendientes" valor={dashboard?.pedidosPendientes ?? 0} onClick={() => onIrASeccion?.("pedidos")} />
 					<KpiCard titulo="Productos sin stock" valor={dashboard?.productosSinStock ?? 0} onClick={() => onIrASeccion?.("celulares")} />
 					<KpiCard titulo="Total pedidos" valor={dashboard?.totalPedidos ?? 0} onClick={() => onIrASeccion?.("pedidos")} />
-					<KpiCard titulo="Recaudación total" valor={formatearMonto(dashboard?.recaudacionTotal ?? 0)} />
+					<KpiCard titulo="Recaudación productos" valor={formatearMonto(dashboard?.recaudacionProductos ?? 0)} />
+					<KpiCard titulo="Cobrado por envíos" valor={formatearMonto(dashboard?.recaudacionEnvios ?? 0)} />
+					<KpiCard titulo="Recaudación bruta" valor={formatearMonto(dashboard?.recaudacionTotal ?? 0)} />
 				</div>
 
 				<div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
 					<FacturacionCard
 						titulo="Facturación últimos 30 días"
-						resumen={`Pedidos: ${resumen30d.totalPedidos} · Total: ${formatearMonto(resumen30d.totalFacturado)}`}
+						resumen={`Pedidos: ${resumen30d.totalPedidos} · Productos: ${formatearMonto(resumen30d.totalProductos)} · Envío: ${formatearMonto(resumen30d.totalEnvio)} · Total: ${formatearMonto(resumen30d.totalFacturado)}`}
 						items={facturacion30d}
 					/>
-					<div className="min-w-0 rounded-xl border border-black/10 bg-white">
+					<div className={twBase.panel}>
 						<div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3">
 							<div>
 								<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Facturación por mes</h3>
-								<p className="text-xs text-[#5b6673]">Pedidos: {resumenMes.totalPedidos} · Total: {formatearMonto(resumenMes.totalFacturado)}</p>
+								<p className="text-xs text-[#5b6673]">Pedidos: {resumenMes.totalPedidos} · Productos: {formatearMonto(resumenMes.totalProductos)} · Envío: {formatearMonto(resumenMes.totalEnvio)} · Total: {formatearMonto(resumenMes.totalFacturado)}</p>
 							</div>
 							<div className="flex items-center gap-2">
-								<input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} className="h-8 w-24 rounded border border-[#cdd6e1] bg-white px-2 text-xs" />
-								<input type="number" min={1} max={12} value={mes} onChange={(e) => setMes(Number(e.target.value))} className="h-8 w-16 rounded border border-[#cdd6e1] bg-white px-2 text-xs" />
-								<button onClick={() => void aplicarFiltros()} disabled={recargando} className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] disabled:opacity-60">Aplicar</button>
+								<input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} className={`${twBase.miniInput} w-24`} />
+								<input type="number" min={1} max={12} value={mes} onChange={(e) => setMes(Number(e.target.value))} className={`${twBase.miniInput} w-16`} />
+								<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
 							</div>
 						</div>
-						<div className="max-h-[300px] overflow-y-auto overflow-x-hidden divide-y divide-black/10">
+						<div className={twBase.scrollArea}>
 							{facturacionMes.length === 0 ? (
 								<p className="px-4 py-8 text-center text-[#64748b]">Sin facturación para ese período.</p>
 							) : (
 								facturacionMes.map((item, idx) => (
-									<div key={`${item.fecha}-${idx}`} className="grid grid-cols-[auto_auto_1fr] items-center gap-3 px-4 py-3 text-sm">
+									<div key={`${item.fecha}-${idx}`} className={twBase.listRow3}>
 										<p className="font-semibold text-[#001830]">{formatearFecha(item.fecha)}</p>
 										<p className="text-[#334155]">{item.cantidadPedidos} pedidos</p>
 										<p className="justify-self-end font-semibold text-[#001830]">{formatearMonto(item.totalFacturado)}</p>
@@ -153,11 +160,11 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 				</div>
 
 				<div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
-					<section className="min-w-0 rounded-xl border border-black/10 bg-white">
-						<div className="border-b border-black/10 bg-[#eef3f8] px-4 py-3">
+					<section className={twBase.panel}>
+						<div className={twBase.panelHeader}>
 							<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Top 5 vendidos</h3>
 						</div>
-						<div className="min-w-0 divide-y divide-black/10">
+						<div className={`min-w-0 ${twBase.rowDivider}`}>
 							{topVendidos.length === 0 ? (
 								<p className="px-4 py-8 text-center text-[#64748b]">Sin ventas pagadas todavía.</p>
 							) : (
@@ -172,16 +179,16 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 						</div>
 					</section>
 
-					<section className="min-w-0 rounded-xl border border-black/10 bg-white">
+					<section className={twBase.panel}>
 						<div className="flex items-center justify-between gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3">
 							<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Stock crítico</h3>
 							<div className="flex items-center gap-2">
 								<label className="text-xs font-medium text-[#334155]">Umbral</label>
-								<input type="number" min={0} value={umbralStock} onChange={(e) => setUmbralStock(Number(e.target.value))} className="h-8 w-20 rounded border border-[#cdd6e1] bg-white px-2 text-xs" />
-								<button onClick={() => void aplicarFiltros()} disabled={recargando} className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] disabled:opacity-60">Aplicar</button>
+								<input type="number" min={0} value={umbralStock} onChange={(e) => setUmbralStock(Number(e.target.value))} className={`${twBase.miniInput} w-20`} />
+								<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
 							</div>
 						</div>
-						<div className="max-h-[300px] overflow-y-auto overflow-x-hidden divide-y divide-black/10">
+						<div className={twBase.scrollArea}>
 							{stockCritico.length === 0 ? (
 								<p className="px-4 py-8 text-center text-[#64748b]">No hay variaciones bajo el umbral.</p>
 							) : (
@@ -233,7 +240,7 @@ const FacturacionCard = ({
 				<p className="px-4 py-8 text-center text-[#64748b]">Sin datos para mostrar.</p>
 			) : (
 				items.map((item, idx) => (
-					<div key={`${item.fecha}-${idx}`} className="grid grid-cols-[auto_auto_1fr] items-center gap-3 px-4 py-3 text-sm">
+					<div key={`${item.fecha}-${idx}`} className={twBase.listRow3}>
 						<p className="font-semibold text-[#001830]">{formatearFecha(item.fecha)}</p>
 						<p className="text-[#334155]">{item.cantidadPedidos} pedidos</p>
 						<p className="justify-self-end font-semibold text-[#001830]">{formatearMonto(item.totalFacturado)}</p>

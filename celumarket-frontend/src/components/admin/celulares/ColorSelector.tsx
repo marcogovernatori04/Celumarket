@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ColorItem } from "../../../services/colorService";
+import { twBase } from "../../../styles/tw";
 
 type ColorSelectorProps = {
 	value: number | null;
@@ -49,7 +50,7 @@ export const ColorSelector = ({ value, colores, onChange, onCrearColor }: ColorS
 				</div>
 				<button
 					onClick={() => setCreando((v) => !v)}
-					className="rounded-md border border-[#cdd6e1] bg-white px-3 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+					className={twBase.actionBtnNeutral}
 				>
 					{creando ? "Cancelar" : "Nuevo color"}
 				</button>
@@ -73,7 +74,7 @@ export const ColorSelector = ({ value, colores, onChange, onCrearColor }: ColorS
 					<button
 						onClick={() => void crear()}
 						disabled={guardando}
-						className="h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+						className={twBase.actionBtnPrimary}
 					>
 						{guardando ? "Creando..." : "Crear y usar"}
 					</button>

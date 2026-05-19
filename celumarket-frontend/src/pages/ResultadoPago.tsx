@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Footer } from "../components/Footer";
 import type { DetallePedido } from "../services/pedidoService";
 import { getMetodoPagoLabel, getTipoPagoLabel } from "../utils/mercadoPagoDisplay";
+import { twBase, twResultadoPago } from "../styles/tw";
 
 type EstadoPago = "exitoso" | "fallido" | "pendiente";
 
@@ -65,9 +66,9 @@ export const ResultadoPago = ({ estado, onIrATienda, onVerMisPedidos, detallePed
 	});
 
 	return (
-		<div className="min-h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col">
-			<section className="mx-auto w-full max-w-5xl flex-1 min-h-0 px-6 py-6 overflow-auto">
-				<div className="rounded-3xl border border-[#dfe5eb] bg-white p-7 shadow-[0_12px_28px_rgba(0,24,48,0.08)] md:p-8">
+		<div className={twResultadoPago.layout}>
+			<section className={twResultadoPago.section}>
+				<div className={twResultadoPago.card}>
 					<p className="text-center text-[13px] font-semibold uppercase tracking-[0.08em] text-[#6b7280]">{contenido.etiqueta}</p>
 					<div className="mx-auto mt-4 flex h-20 w-20 items-center justify-center rounded-full" style={{ backgroundColor: contenido.fondo }}>
 						<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke={contenido.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -77,13 +78,13 @@ export const ResultadoPago = ({ estado, onIrATienda, onVerMisPedidos, detallePed
 					<h1 className="mt-4 text-center text-[34px] font-extrabold leading-none text-[#001830]">{contenido.titulo}</h1>
 					<p className="mx-auto mt-2 max-w-2xl text-center text-[16px] text-[#4b5563]">{contenido.descripcion}</p>
 					{estado === "exitoso" && pagosMp.length > 0 && (
-						<div className="mx-auto mt-4 w-full max-w-2xl rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-4 text-left">
+						<div className={twResultadoPago.detailBox}>
 							<p className="text-[15px] font-semibold text-[#001830]">Detalle del pago</p>
 							<div className="mt-2 space-y-3">
 								{pagosMp.map((pago, idx) => (
-									<div key={`${pago.paymentIdExterno ?? "pago"}-${idx}`} className="rounded-lg border border-[#e5ebf2] bg-white p-3">
+									<div key={`${pago.paymentIdExterno ?? "pago"}-${idx}`} className={twResultadoPago.detailItem}>
 										<p className="text-sm font-semibold text-[#001830]">Medio #{idx + 1}</p>
-										<div className="mt-1 grid grid-cols-1 gap-1 text-[14px] text-[#334155] sm:grid-cols-2">
+										<div className={twResultadoPago.detailGrid}>
 											<p>Método: {getMetodoPagoLabel(pago.metodoPagoId)}</p>
 											<p>Tipo: {getTipoPagoLabel(pago.tipoPagoId)}</p>
 											<p>Cuotas: {pago.cuotas > 0 ? pago.cuotas : 1}</p>
@@ -99,14 +100,14 @@ export const ResultadoPago = ({ estado, onIrATienda, onVerMisPedidos, detallePed
 							</div>
 						</div>
 					)}
-					<div className="mx-auto mt-5 max-w-2xl rounded-xl border border-[#e8edf3] bg-[#f8fafc] px-5 py-3 text-center text-[15px] text-[#334155]">
+					<div className={twResultadoPago.info}>
 						Podés revisar el detalle y estado actualizado de tu pedido en Mis pedidos.
 					</div>
-					<div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-						<button onClick={onVerMisPedidos} className="h-12 rounded-lg bg-[#015cb9] px-7 text-[15px] font-semibold text-white hover:bg-[#017AF4] transition-colors">
+					<div className={twResultadoPago.actions}>
+						<button onClick={onVerMisPedidos} className={twBase.primaryBtn}>
 							Ver mis pedidos
 						</button>
-						<button onClick={onIrATienda} className="h-12 rounded-lg border border-[#001830] bg-[#f3f4f6] px-7 text-[15px] font-semibold text-[#001830] hover:bg-[#e8ebf0] transition-colors">
+						<button onClick={onIrATienda} className={twBase.secondaryBtn}>
 							Volver a la tienda
 						</button>
 					</div>

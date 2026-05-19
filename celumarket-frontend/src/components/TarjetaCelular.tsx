@@ -1,3 +1,5 @@
+import { twCatalogo } from "../styles/tw";
+
 export interface ProductoCelular {
 	id: number;
 	nombre: string;
@@ -36,11 +38,11 @@ export const TarjetaCelular = ({
 	return (
 		<div
 			onClick={onClick}
-			className="group bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col w-[280px] cursor-pointer"
+			className={twCatalogo.productCard}
 		>
-			<div className="relative bg-[#f0f0f0] rounded-lg mb-3 flex items-center justify-center h-[260px] overflow-hidden">
+			<div className={twCatalogo.productImageWrap}>
 				{producto.etiquetaPromo && (
-					<span className="absolute left-2 top-2 z-10 rounded-full bg-[#dbe9ff] px-2 py-1 text-[11px] font-semibold text-[#0b3f75]">
+					<span className={twCatalogo.productPromoTag}>
 						{producto.etiquetaPromo}
 					</span>
 				)}
@@ -56,25 +58,25 @@ export const TarjetaCelular = ({
 			</h3>
 
 			<div className="flex items-baseline mt-2 mb-1">
-				<span className="text-2xl font-bold text-slate-900">
+				<span className={twCatalogo.productPrice}>
 					${producto.precio.toLocaleString("es-AR")}
 				</span>
 				{producto.precioAnterior &&
 					producto.precioAnterior > producto.precio && (
-						<span className="text-sm text-gray-400 line-through ml-2">
+						<span className={twCatalogo.productOldPrice}>
 							${producto.precioAnterior.toLocaleString("es-AR")}
 						</span>
 					)}
 			</div>
 
 			{producto.precio >= umbralEnvioGratis ? (
-				<span className="mt-1 inline-flex w-fit rounded-full bg-[#E7F7EE] px-2 py-1 text-[12px] font-semibold text-[#1E8E5A]">
+				<span className={twCatalogo.productShippingFree}>
 					Envío gratis
 				</span>
 			) : (
 				<span
 					aria-hidden="true"
-					className="mt-1 inline-flex w-fit rounded-full px-2 py-1 text-[11px] font-semibold invisible"
+					className={twCatalogo.productShippingPlaceholder}
 				>
 					Envío gratis
 				</span>

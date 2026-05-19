@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { clienteService, type UsuarioListado } from "../../services/clienteService";
+import { twAdmin, twBase } from "../../styles/tw";
 
 export const AdminUsuariosPanel = () => {
 	const [usuarios, setUsuarios] = useState<UsuarioListado[]>([]);
@@ -29,7 +30,7 @@ export const AdminUsuariosPanel = () => {
 
 	if (cargando) {
 		return (
-			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+			<div className={twBase.loadingBox}>
 				<p className="text-[#5b6673]">Cargando clientes...</p>
 			</div>
 		);
@@ -44,11 +45,11 @@ export const AdminUsuariosPanel = () => {
 	return (
 		<div>
 			<div className="flex items-center justify-between gap-3">
-				<h2 className="text-2xl font-bold text-[#001830]">Clientes</h2>
+				<h2 className={twAdmin.adminSectionTitle}>Clientes</h2>
 				<button
 					onClick={() => void cargarUsuarios(true)}
 					disabled={recargando}
-					className="h-9 rounded-md bg-[#015cb9] px-3 text-sm font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+					className={`${twBase.actionBtnPrimary} disabled:opacity-60`}
 				>
 					{recargando ? "Recargando..." : "Recargar"}
 				</button>
@@ -58,7 +59,7 @@ export const AdminUsuariosPanel = () => {
 			</p>
 
 			<div className="mt-6 overflow-hidden rounded-xl border border-black/10">
-				<div className="grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center bg-[#eef3f8] px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#334155]">
+				<div className={`grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3 ${twBase.tableHead}`}>
 					<span>Nombre</span>
 					<span>Email</span>
 					<span>Rol</span>
@@ -79,7 +80,7 @@ export const AdminUsuariosPanel = () => {
 									<div className="flex justify-center">
 										<button
 											onClick={() => setExpandidoId((prev) => (prev === u.id ? null : u.id))}
-											className="flex h-8 w-8 items-center justify-center rounded-md border border-[#cdd6e1] text-lg font-semibold text-[#015cb9] transition-colors hover:bg-[#eef5fd]"
+											className={twBase.iconButton}
 										>
 											{expandidoId === u.id ? "−" : "+"}
 										</button>

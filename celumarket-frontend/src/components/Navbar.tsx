@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { twNav } from "../styles/tw";
 
 type NavbarProps = {
 	onIrATienda?: () => void;
@@ -35,25 +36,26 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 	}, [menuAbierto]);
 
 	return (
-		<nav className="bg-[#E6EAEF] border-b border-gray-300 flex items-center justify-between px-10 py-4 shadow-sm">
+		<nav className={twNav.navShell}>
+			<div className={twNav.navContainer}>
 			<div className="flex items-center cursor-pointer" onClick={onIrAInicio}>
 				<img src="/logo.svg" alt="Logo Celumarket" className="h-8" />
 			</div>
 
 			<div className="flex items-center gap-8">
-				<ul className="flex items-center gap-6 text-gray-600 font-medium">
-					<li className="hover:text-black cursor-pointer transition-colors" onClick={esAdmin ? onIrAAdmin : enTienda ? onIrAInicio : onIrATienda}>
+				<ul className={twNav.navLinks}>
+					<li className={twNav.navLinkItem} onClick={esAdmin ? onIrAAdmin : enTienda ? onIrAInicio : onIrATienda}>
 						{esAdmin ? "Panel admin" : enTienda ? "Inicio" : "Tienda"}
 					</li>
-					<li className="hover:text-black cursor-pointer transition-colors">
+					<li className={twNav.navLinkItem}>
 						Contacto
 					</li>
-					<li className="hover:text-black cursor-pointer transition-colors">
+					<li className={twNav.navLinkItem}>
 						Preguntas frecuentes
 					</li>
 				</ul>
 
-				<div className="h-7 w-px bg-gray-300"></div>
+				<div className={twNav.navDivider}></div>
 
 				<div className="flex items-center gap-4">
 					{estaLogueado && (
@@ -61,7 +63,7 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 							<button
 								onClick={() => setMenuAbierto((v) => !v)}
 								aria-expanded={menuAbierto}
-								className="inline-flex items-center gap-1.5 text-sm text-[#1e1e1e] whitespace-nowrap rounded px-2 py-1 hover:bg-[#dce2e9] transition-colors"
+								className={twNav.navPillButton}
 							>
 								<span>Hola, {nombreCliente ?? "Cliente"}</span>
 								<svg
@@ -80,33 +82,33 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 								</svg>
 							</button>
 							<div
-								className={`absolute right-0 mt-2 w-44 origin-top rounded-md border border-gray-200 bg-white py-1 shadow-lg z-20 transition-all duration-200 ${menuAbierto ? "pointer-events-auto opacity-100 scale-y-100 translate-y-0" : "pointer-events-none opacity-0 scale-y-95 -translate-y-1"}`}
+								className={`${twNav.dropdownMenu} ${menuAbierto ? "pointer-events-auto opacity-100 scale-y-100 translate-y-0" : "pointer-events-none opacity-0 scale-y-95 -translate-y-1"}`}
 							>
 								{esAdmin ? (
-									<button onClick={() => { setMenuAbierto(false); onIrAAdmin?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+									<button onClick={() => { setMenuAbierto(false); onIrAAdmin?.(); }} className={twNav.dropdownItem}>
 										Panel admin
 									</button>
 								) : (
 									<>
-										<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+										<button onClick={() => { setMenuAbierto(false); onVerPerfil?.(); }} className={twNav.dropdownItem}>
 											Mi perfil
 										</button>
-										<button onClick={() => { setMenuAbierto(false); onVerMisPedidos?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+										<button onClick={() => { setMenuAbierto(false); onVerMisPedidos?.(); }} className={twNav.dropdownItem}>
 											Mis pedidos
 										</button>
-										<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#1e1e1e] hover:bg-[#f2f5f8]">
+										<button onClick={() => { setMenuAbierto(false); onCambiarClave?.(); }} className={twNav.dropdownItem}>
 											Cambiar clave
 										</button>
 									</>
 								)}
-								<button onClick={() => { setMenuAbierto(false); onLogout?.(); }} className="block w-full px-3 py-2 text-left text-sm text-[#b42318] hover:bg-[#fff1f0]">
+								<button onClick={() => { setMenuAbierto(false); onLogout?.(); }} className={twNav.dropdownDanger}>
 									Cerrar sesión
 								</button>
 							</div>
 						</div>
 					)}
 					{!esAdmin && (
-						<button onClick={onIrACarrito} className="relative cursor-pointer bg-[#015cb9] text-white p-2.5 rounded-full hover:bg-[#017AF4] transition-colors flex items-center justify-center">
+						<button onClick={onIrACarrito} className={twNav.navbarCartBtn}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
@@ -123,7 +125,7 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 							<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
 						</svg>
 						{carritoCantidad > 0 && (
-							<span className="absolute -right-1 -top-1 min-w-[18px] h-[18px] rounded-full bg-white text-[#015cb9] text-[11px] font-bold flex items-center justify-center px-1">
+							<span className={twNav.navbarCartBadge}>
 								{carritoCantidad}
 							</span>
 						)}
@@ -131,11 +133,12 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 					)}
 
 					{!estaLogueado && (
-						<button onClick={onIrALogin} className="cursor-pointer bg-[#015cb9] hover:bg-[#017AF4] text-white font-medium py-2 px-6 rounded-md transition-colors">
+						<button onClick={onIrALogin} className={twNav.navbarLoginBtn}>
 							Iniciar sesión
 						</button>
 					)}
 				</div>
+			</div>
 			</div>
 		</nav>
 	);

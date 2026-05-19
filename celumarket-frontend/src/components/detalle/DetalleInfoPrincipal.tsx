@@ -1,5 +1,6 @@
 import type { CelularDetalle, VariacionDetalle } from "../../models/CelularDetalle";
 import { DetalleSelectorVariaciones } from "./DetalleSelectorVariaciones";
+import { twBase, twDetalleCelular } from "../../styles/tw";
 
 type DetalleInfoPrincipalProps = {
 	detalle: CelularDetalle;
@@ -32,34 +33,34 @@ export const DetalleInfoPrincipal = ({
 }: DetalleInfoPrincipalProps) => {
 	return (
 		<div>
-			<h1 className="text-[30px] leading-tight font-semibold text-[#1e1e1e]">
+			<h1 className={twDetalleCelular.detailTitle}>
 				{detalle.marca} {detalle.modelo}
 			</h1>
-			<p className="mt-1.5 text-[42px] leading-none font-bold text-[#1e1e1e]">
+			<p className={twDetalleCelular.detailPrice}>
 				${variacionActiva.precio.toLocaleString("es-AR")}
 			</p>
 			{variacionActiva.precio >= umbralEnvioGratis && (
-				<span className="mt-2.5 inline-flex w-fit rounded-full bg-[#E7F7EE] px-3 py-1.5 text-[14px] font-semibold text-[#1E8E5A]">
+				<span className={twDetalleCelular.detailShippingFree}>
 					Envío gratis
 				</span>
 			)}
 			{detalle.textoPromocion && (
-				<p className="mt-2.5 inline-flex rounded-full bg-[#dbe9ff] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#0b3f75]">
+				<p className={twDetalleCelular.detailPromoTag}>
 					{detalle.textoPromocion}
 				</p>
 			)}
-			<p className="mt-2.5 text-[14px] text-[#4b6b91]">
+			<p className={twDetalleCelular.detailAuxText}>
 				{descuentoTransferencia}% descuento efectivo/transferencia
 			</p>
-			<p className="mt-0.5 text-[14px] text-[#4b6b91]">
+			<p className={twDetalleCelular.detailAuxTextTight}>
 				Hasta 12 cuotas con tarjeta de crédito/débito
 			</p>
 			{mostrarInfoTecnica && (
 				<>
-					<p className="mt-2.5 text-[14px] leading-relaxed text-[#4b5563]">
+					<p className={twDetalleCelular.detailDescription}>
 						{detalle.descripcion}
 					</p>
-					<div className="mt-3 space-y-1 text-[14px] leading-snug text-[#666]">
+					<div className={twDetalleCelular.detailSpecs}>
 						{detalle.especificaciones.map((esp, idx) => (
 							<p key={idx}>
 								• {esp.nombre}: {esp.valor}
@@ -81,7 +82,7 @@ export const DetalleInfoPrincipal = ({
 
 			<button
 				onClick={onAgregarAlCarrito}
-				className="mt-4 h-11 w-full rounded-md bg-[#015cb9] text-sm font-medium text-white transition-colors duration-200 hover:bg-[#017AF4]"
+				className={`${twBase.primaryBtnMd} mt-4 h-11 w-full text-sm`}
 			>
 				Agregar al carrito
 			</button>

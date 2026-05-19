@@ -1,4 +1,5 @@
 import type { VariacionDetalle } from "../../models/CelularDetalle";
+import { twDetalleCelular } from "../../styles/tw";
 
 type DetalleSelectorVariacionesProps = {
 	almacenamientos: string[];
@@ -21,7 +22,7 @@ export const DetalleSelectorVariaciones = ({
 }: DetalleSelectorVariacionesProps) => {
 	return (
 		<div className="mt-5">
-			<p className="mb-2 text-sm font-medium text-[#1e1e1e]">Almacenamiento</p>
+			<p className={twDetalleCelular.variationLabel}>Almacenamiento</p>
 			<div className="mb-4 flex flex-wrap gap-2.5">
 				{almacenamientos.map((alm) => {
 					const activo = almacenamientoSeleccionado === alm;
@@ -30,7 +31,7 @@ export const DetalleSelectorVariaciones = ({
 							key={alm}
 							type="button"
 							onClick={() => onSelectAlmacenamiento(alm)}
-							className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${activo ? "bg-[#015cb9] text-white" : "bg-[#eef2f7] text-[#4b5563] hover:bg-[#dbe5f1]"}`}
+							className={`${twDetalleCelular.variationStorageBtn} ${activo ? twDetalleCelular.variationStorageActive : twDetalleCelular.variationStorageIdle}`}
 						>
 							{alm}
 						</button>
@@ -38,7 +39,7 @@ export const DetalleSelectorVariaciones = ({
 				})}
 			</div>
 
-			<p className="mb-2 text-sm font-medium text-[#1e1e1e]">Colores</p>
+			<p className={twDetalleCelular.variationLabel}>Colores</p>
 			<div className="flex flex-wrap items-center gap-2">
 				{coloresUnicos.map((variacion) => {
 					const activo = colorSeleccionadoId === variacion.colorId;
@@ -52,7 +53,7 @@ export const DetalleSelectorVariaciones = ({
 							onClick={() => onSelectColor(variacion.colorId)}
 							title={variacion.color}
 							aria-label={`Color ${variacion.color}`}
-							className={`h-9 w-9 rounded-full border-2 transition-all duration-200 ${activo ? "border-[#015cb9] scale-110 shadow-md" : esBlanco ? "border-[#cfd4dc] hover:scale-105 hover:shadow" : "border-white hover:scale-105 hover:shadow"}`}
+							className={`${twDetalleCelular.variationColorBtn} ${activo ? twDetalleCelular.variationColorActive : esBlanco ? twDetalleCelular.variationColorWhite : twDetalleCelular.variationColorDefault}`}
 							style={{ backgroundColor: variacion.colorHex ?? "#6b7280" }}
 						/>
 					);

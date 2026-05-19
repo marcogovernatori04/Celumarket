@@ -8,6 +8,7 @@ import { PorqueElegirnos } from "../components/PorqueElegirnos";
 import { celularService } from "../services/celularService";
 import { configuracionService } from "../services/configuracionService";
 import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
+import { twBase } from "../styles/tw";
 
 type LandingProps = {
 	onIrATienda?: () => void;
@@ -75,7 +76,7 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 	}, []);
 
 	return (
-		<div className="flex flex-col min-h-screen">
+		<div className={`${twBase.pageLayout} flex flex-col`}>
 			<section className="bg-gradient-to-r from-[#001830] to-[#0a0a0a] text-white flex flex-col items-center justify-center py-20 px-4">
 				<h1 className="text-6xl font-bold mb-4 tracking-tight">
 					Celumarket

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { VariacionDetalle } from "../../../models/CelularDetalle";
 import type { ColorItem } from "../../../services/colorService";
 import { ColorSelector } from "./ColorSelector";
+import { twBase } from "../../../styles/tw";
 
 type VariacionRowEditorProps = {
 	variacion: VariacionDetalle;
@@ -139,13 +140,13 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 								<button
 									onClick={() => void guardar()}
 									disabled={guardando}
-									className="h-8 rounded bg-[#015cb9] px-2 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+									className={twBase.actionBtnPrimary}
 								>
 									Guardar
 								</button>
 								<button
 									onClick={() => setEditando(false)}
-									className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+									className={twBase.actionBtnNeutral}
 								>
 									Cancelar
 								</button>
@@ -154,13 +155,13 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 							<div className="flex gap-1">
 								<button
 									onClick={() => setEditando(true)}
-									className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+									className={twBase.actionBtnNeutral}
 								>
 									Editar variación
 								</button>
 								<button
 									onClick={() => void onEliminarVariacion(variacion.id)}
-									className="h-8 rounded border border-[#f3c6c6] bg-white px-2 text-xs font-semibold text-[#b42318] hover:bg-[#fff1f0]"
+									className={twBase.actionBtnDanger}
 								>
 									Eliminar
 								</button>
@@ -202,7 +203,7 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 					/>
 					<label
 						htmlFor={inputFileId}
-						className="h-8 cursor-pointer rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] inline-flex items-center"
+						className={`${twBase.actionBtnNeutral} cursor-pointer inline-flex items-center`}
 					>
 						Seleccionar imagen
 					</label>
@@ -223,7 +224,7 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 							}
 						}}
 						disabled={!archivo || gestionandoImagen}
-						className="h-8 rounded border border-[#cdd6e1] bg-white px-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] disabled:opacity-60"
+						className={twBase.actionBtnNeutral}
 					>
 						Añadir imagen
 					</button>

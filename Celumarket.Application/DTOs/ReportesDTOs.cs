@@ -28,6 +28,8 @@ namespace Celumarket.Application.DTOs
         {
             public DateTime Fecha {  get; set; }
             public int CantidadPedidos { get; set; }
+            public decimal TotalProductos { get; set; }
+            public decimal TotalEnvio { get; set; }
             public decimal TotalFacturado { get; set; }
         }
 
@@ -37,6 +39,8 @@ namespace Celumarket.Application.DTOs
             public int PedidosPendientes { get; set; }
             public int ProductosSinStock { get; set; }
             public int TotalPedidos { get; set; }
+            public decimal RecaudacionProductos { get; set; }
+            public decimal RecaudacionEnvios { get; set; }
             public decimal RecaudacionTotal { get; set; }
         }
     }

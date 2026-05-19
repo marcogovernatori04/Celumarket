@@ -84,7 +84,8 @@ namespace Celumarket.Infrastructure.Repositories
                     return new
                     {
                         Fecha = p.Fecha.Date,
-                        TotalPedido = subtotal - p.DescuentoAplicado + p.CostoEnvio
+                        TotalProductos = subtotal - p.DescuentoAplicado,
+                        TotalEnvio = p.CostoEnvio
                     };
                 })
                 .GroupBy(x => x.Fecha)
@@ -92,7 +93,9 @@ namespace Celumarket.Infrastructure.Repositories
                 {
                     Fecha = g.Key,
                     CantidadPedidos = g.Count(),
-                    TotalFacturado = g.Sum(x => x.TotalPedido)
+                    TotalProductos = g.Sum(x => x.TotalProductos),
+                    TotalEnvio = g.Sum(x => x.TotalEnvio),
+                    TotalFacturado = g.Sum(x => x.TotalProductos + x.TotalEnvio)
                 })
                 .OrderBy(x => x.Fecha)
                 .ToList();
@@ -133,7 +136,8 @@ namespace Celumarket.Infrastructure.Repositories
                     return new
                     {
                         Fecha = p.Fecha.Date,
-                        TotalPedido = subtotal - p.DescuentoAplicado + p.CostoEnvio
+                        TotalProductos = subtotal - p.DescuentoAplicado,
+                        TotalEnvio = p.CostoEnvio
                     };
                 })
                 .GroupBy(x => x.Fecha)
@@ -141,7 +145,9 @@ namespace Celumarket.Infrastructure.Repositories
                 {
                     Fecha = g.Key,
                     CantidadPedidos = g.Count(),
-                    TotalFacturado = g.Sum(x => x.TotalPedido)
+                    TotalProductos = g.Sum(x => x.TotalProductos),
+                    TotalEnvio = g.Sum(x => x.TotalEnvio),
+                    TotalFacturado = g.Sum(x => x.TotalProductos + x.TotalEnvio)
                 })
                 .OrderBy(x => x.Fecha)
                 .ToList();
@@ -159,7 +165,8 @@ namespace Celumarket.Infrastructure.Repositories
                 })
                 .ToListAsync();
 
-            decimal recaudacionTotal = 0m;
+            decimal recaudacionProductos = 0m;
+            decimal recaudacionEnvios = 0m;
             if (pedidosPagados.Count > 0)
             {
                 var pedidoIds = pedidosPagados.Select(p => p.Id).ToList();
@@ -173,11 +180,12 @@ namespace Celumarket.Infrastructure.Repositories
                     })
                     .ToDictionaryAsync(x => x.PedidoId, x => x.Subtotal);
 
-                recaudacionTotal = pedidosPagados.Sum(p =>
+                recaudacionProductos = pedidosPagados.Sum(p =>
                 {
                     var subtotal = subtotalesPorPedido.TryGetValue(p.Id, out var s) ? s : 0m;
-                    return subtotal - p.DescuentoAplicado + p.CostoEnvio;
+                    return subtotal - p.DescuentoAplicado;
                 });
+                recaudacionEnvios = pedidosPagados.Sum(p => p.CostoEnvio);
             }
 
             var resumen = new DashboardDTO
@@ -186,7 +194,9 @@ namespace Celumarket.Infrastructure.Repositories
                 PedidosPendientes = await _context.Pedidos.CountAsync(p => p.Estado == Pedido.EstadoPendienteDePago),
                 ProductosSinStock = await _context.Variaciones.CountAsync(v => v.Stock == 0),
                 TotalPedidos = await _context.Pedidos.CountAsync(),
-                RecaudacionTotal = recaudacionTotal
+                RecaudacionProductos = recaudacionProductos,
+                RecaudacionEnvios = recaudacionEnvios,
+                RecaudacionTotal = recaudacionProductos + recaudacionEnvios
             };
 
             return resumen;

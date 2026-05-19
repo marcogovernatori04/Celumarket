@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { EspecificacionDetalle } from "../../../models/CelularDetalle";
+import { twBase } from "../../../styles/tw";
 
 type EspecificacionesEditorProps = {
 	celularId: number;
@@ -56,7 +57,7 @@ export const EspecificacionesEditor = ({ celularId, especificaciones, onGuardar 
 							/>
 							<button
 								onClick={() => setDraft((prev) => prev.filter((_, i) => i !== index))}
-								className="h-9 rounded border border-[#f3c6c6] bg-white px-3 text-xs font-semibold text-[#b42318] hover:bg-[#fff1f0]"
+								className={twBase.actionBtnDanger}
 							>
 								Quitar
 							</button>
@@ -64,7 +65,7 @@ export const EspecificacionesEditor = ({ celularId, especificaciones, onGuardar 
 					))}
 					<button
 						onClick={() => setDraft((prev) => [...prev, { nombre: "", valor: "" }])}
-						className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+						className={twBase.actionBtnNeutral}
 					>
 						+ Añadir especificación
 					</button>
@@ -72,13 +73,13 @@ export const EspecificacionesEditor = ({ celularId, especificaciones, onGuardar 
 						<button
 							onClick={() => void guardar()}
 							disabled={guardandoCelularId === celularId}
-							className="h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+							className={twBase.actionBtnPrimary}
 						>
 							Guardar especificaciones
 						</button>
 						<button
 							onClick={cancelar}
-							className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+							className={twBase.actionBtnNeutral}
 						>
 							Cancelar
 						</button>
@@ -95,7 +96,7 @@ export const EspecificacionesEditor = ({ celularId, especificaciones, onGuardar 
 					</div>
 					<button
 						onClick={comenzarEdicion}
-						className="mt-2 h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+						className={`mt-2 ${twBase.actionBtnNeutral}`}
 					>
 						Editar especificaciones
 					</button>

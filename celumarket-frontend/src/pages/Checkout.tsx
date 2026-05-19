@@ -6,6 +6,7 @@ import { CheckoutEnvioStep, type DatosEnvio } from "../components/checkout/Check
 import { CheckoutFacturacionStep, type DatosFacturacion } from "../components/checkout/CheckoutFacturacionStep";
 import { CheckoutPagoStep } from "../components/checkout/CheckoutPagoStep";
 import { CheckoutFooter } from "../components/checkout/CheckoutFooter";
+import { twCheckout } from "../styles/tw";
 
 type CheckoutProps = {
 	reservaSegundosIniciales: number;
@@ -135,16 +136,16 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 	}, [segundosRestantes]);
 
 	return (
-		<div className="h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col overflow-hidden">
-			<section className="mx-auto w-full max-w-[1120px] flex-1 min-h-0 px-6 py-3 overflow-hidden">
+		<div className={twCheckout.checkoutShell}>
+			<section className={twCheckout.checkoutSection}>
 				<h1 className="text-[30px] font-extrabold leading-none text-[#001830]">Checkout</h1>
-				<div className="mt-3 rounded-xl border border-[#dfe5eb] bg-white px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+				<div className={twCheckout.checkoutTopCard}>
 					<div className="flex items-center gap-2.5 text-[13px]">
-						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 1 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>1 Envío</span>
+						<span className={`${twCheckout.checkoutStepPillBase} ${step >= 1 ? twCheckout.checkoutStepPillActive : twCheckout.checkoutStepPillIdle}`}>1 Envío</span>
 						<span className="text-[#9ca3af]">•</span>
-						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 2 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>2 Facturación</span>
+						<span className={`${twCheckout.checkoutStepPillBase} ${step >= 2 ? twCheckout.checkoutStepPillActive : twCheckout.checkoutStepPillIdle}`}>2 Facturación</span>
 						<span className="text-[#9ca3af]">•</span>
-						<span className={`rounded-full px-2.5 py-0.5 font-semibold ${step >= 3 ? "bg-[#015cb9] text-white" : "bg-[#edf2f7] text-[#6b7280]"}`}>3 Pago</span>
+						<span className={`${twCheckout.checkoutStepPillBase} ${step >= 3 ? twCheckout.checkoutStepPillActive : twCheckout.checkoutStepPillIdle}`}>3 Pago</span>
 					</div>
 					<p className="mt-1.5 text-[13px] text-[#1e1e1e]">
 						Reserva activa:{" "}

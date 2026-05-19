@@ -7,6 +7,7 @@ import type { CelularDetalle } from "../../models/CelularDetalle";
 import { CelularDetalleExpandido } from "./celulares/CelularDetalleExpandido";
 import { ColorSelector } from "./celulares/ColorSelector";
 import { colorService, type ColorItem } from "../../services/colorService";
+import { twAdmin, twBase } from "../../styles/tw";
 
 type NuevaVariacion = {
 	colorId: number | null;
@@ -351,7 +352,7 @@ export const AdminCelularesPanel = () => {
 
 	if (cargando) {
 		return (
-			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+			<div className={twBase.loadingBox}>
 				<p className="text-[#5b6673]">Cargando celulares...</p>
 			</div>
 		);
@@ -360,50 +361,50 @@ export const AdminCelularesPanel = () => {
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			<div className="flex items-center justify-between gap-3">
-				<h2 className="text-2xl font-bold text-[#001830]">Celulares</h2>
+				<h2 className={twAdmin.adminSectionTitle}>Celulares</h2>
 				<button
 					onClick={() => setCreando((v) => !v)}
-					className="h-9 rounded-md bg-[#015cb9] px-3 text-sm font-semibold text-white hover:bg-[#017AF4]"
+					className={twBase.actionBtnPrimary}
 				>
 					{creando ? "Cancelar alta" : "Nuevo celular"}
 				</button>
 			</div>
-			<p className="mt-1 text-sm text-[#5b6673]">Listado general con detalle expandible por equipo.</p>
+			<p className={twAdmin.adminSectionSubtitle}>Listado general con detalle expandible por equipo.</p>
 			<div className="mt-3">
 				<input
 					value={busqueda}
 					onChange={(e) => setBusqueda(e.target.value)}
 					placeholder="Buscar por #id, marca o modelo..."
-					className="h-9 w-full max-w-[360px] rounded-md border border-[#cdd6e1] bg-white px-3 text-sm text-[#1e1e1e] placeholder:text-[#94a3b8]"
+					className={`${twBase.searchInput} w-full max-w-[360px]`}
 				/>
 			</div>
 			{creando && (
-				<div className="mt-4 rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+				<div className={`mt-4 ${twAdmin.adminCard}`}>
 					<p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#64748b]">Alta de celular</p>
 					<div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-3">
-						<input placeholder="Marca" value={nuevoCelular.marca} onChange={(e) => setNuevoCelular((p) => ({ ...p, marca: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-						<input placeholder="Modelo" value={nuevoCelular.modelo} onChange={(e) => setNuevoCelular((p) => ({ ...p, modelo: e.target.value }))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
+						<input placeholder="Marca" value={nuevoCelular.marca} onChange={(e) => setNuevoCelular((p) => ({ ...p, marca: e.target.value }))} className={twAdmin.adminInput} />
+						<input placeholder="Modelo" value={nuevoCelular.modelo} onChange={(e) => setNuevoCelular((p) => ({ ...p, modelo: e.target.value }))} className={twAdmin.adminInput} />
 					</div>
-					<textarea placeholder="Descripción" value={nuevoCelular.descripcion} onChange={(e) => setNuevoCelular((p) => ({ ...p, descripcion: e.target.value }))} className="mt-2 w-full rounded border border-[#cdd6e1] px-2 py-2 text-sm" rows={3} />
-					<div className="mt-3 rounded-md border border-[#dbe4ef] bg-[#f8fafc] p-3">
+					<textarea placeholder="Descripción" value={nuevoCelular.descripcion} onChange={(e) => setNuevoCelular((p) => ({ ...p, descripcion: e.target.value }))} className={`mt-2 ${twAdmin.adminTextarea}`} rows={3} />
+					<div className={`mt-3 ${twAdmin.adminSubCard}`}>
 						<div className="mb-2 flex items-center justify-between">
 							<p className="text-xs font-semibold uppercase tracking-[0.06em] text-[#64748b]">Variaciones</p>
 							<button
 								onClick={() => setNuevasVariaciones((prev) => [...prev, { colorId: null, precio: "", almacenamiento: "", stockInicial: "", imagenes: [] }])}
-								className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155]"
+								className={twAdmin.adminGhostBtn}
 							>
 								+ Añadir variación
 							</button>
 						</div>
 						<div className="space-y-3">
 							{nuevasVariaciones.map((v, idx) => (
-								<div key={`nueva-var-${idx}`} className="rounded border border-[#dbe4ef] bg-white p-3">
+								<div key={`nueva-var-${idx}`} className={twAdmin.adminWhiteCard}>
 									<div className="mb-2 flex items-center justify-between">
 										<p className="text-xs font-semibold text-[#475569]">Variación #{idx + 1}</p>
 										{nuevasVariaciones.length > 1 && (
 											<button
 												onClick={() => setNuevasVariaciones((prev) => prev.filter((_, i) => i !== idx))}
-												className="h-7 rounded border border-[#f3c6c6] px-2 text-xs font-semibold text-[#b42318]"
+												className={twAdmin.adminDangerBtnXs}
 											>
 												Quitar
 											</button>
@@ -416,11 +417,11 @@ export const AdminCelularesPanel = () => {
 											onChange={(colorId) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, colorId } : it))}
 											onCrearColor={crearColor}
 										/>
-										<input placeholder="Almacenamiento" value={v.almacenamiento} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, almacenamiento: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-										<input placeholder="Precio" type="number" value={v.precio} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, precio: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
+										<input placeholder="Almacenamiento" value={v.almacenamiento} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, almacenamiento: e.target.value } : it))} className={twAdmin.adminInput} />
+										<input placeholder="Precio" type="number" value={v.precio} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, precio: e.target.value } : it))} className={twAdmin.adminInput} />
 									</div>
 									<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-										<input placeholder="Stock inicial" type="number" value={v.stockInicial} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, stockInicial: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
+										<input placeholder="Stock inicial" type="number" value={v.stockInicial} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, stockInicial: e.target.value } : it))} className={twAdmin.adminInput} />
 										<div>
 											<input
 												id={`nueva-variacion-imagenes-${idx}`}
@@ -455,23 +456,23 @@ export const AdminCelularesPanel = () => {
 							))}
 						</div>
 					</div>
-					<div className="mt-3 rounded-md border border-[#dbe4ef] bg-[#f8fafc] p-3">
+					<div className={`mt-3 ${twAdmin.adminSubCard}`}>
 						<p className="text-xs font-semibold uppercase tracking-[0.06em] text-[#64748b]">Especificaciones</p>
 						<div className="mt-2 space-y-2">
 							{nuevasEspecificaciones.map((s, idx) => (
 								<div key={`nueva-spec-${idx}`} className="grid grid-cols-[1fr_1fr_auto] gap-2">
-									<input placeholder="Nombre" value={s.nombre} onChange={(e) => setNuevasEspecificaciones((prev) => prev.map((it, i) => i === idx ? { ...it, nombre: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-									<input placeholder="Valor" value={s.valor} onChange={(e) => setNuevasEspecificaciones((prev) => prev.map((it, i) => i === idx ? { ...it, valor: e.target.value } : it))} className="h-9 rounded border border-[#cdd6e1] px-2 text-sm" />
-									<button onClick={() => setNuevasEspecificaciones((prev) => prev.filter((_, i) => i !== idx))} className="h-9 rounded border border-[#f3c6c6] px-3 text-xs font-semibold text-[#b42318]">Quitar</button>
+									<input placeholder="Nombre" value={s.nombre} onChange={(e) => setNuevasEspecificaciones((prev) => prev.map((it, i) => i === idx ? { ...it, nombre: e.target.value } : it))} className={twAdmin.adminInput} />
+									<input placeholder="Valor" value={s.valor} onChange={(e) => setNuevasEspecificaciones((prev) => prev.map((it, i) => i === idx ? { ...it, valor: e.target.value } : it))} className={twAdmin.adminInput} />
+									<button onClick={() => setNuevasEspecificaciones((prev) => prev.filter((_, i) => i !== idx))} className={twAdmin.adminDangerBtnSm}>Quitar</button>
 								</div>
 							))}
-							<button onClick={() => setNuevasEspecificaciones((prev) => [...prev, { nombre: "", valor: "" }])} className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155]">
+							<button onClick={() => setNuevasEspecificaciones((prev) => [...prev, { nombre: "", valor: "" }])} className={twAdmin.adminGhostBtn}>
 								+ Añadir especificación
 							</button>
 						</div>
 					</div>
 					<div className="mt-3">
-						<button disabled={guardandoCreacion} onClick={() => void crearNuevoCelular()} className="h-9 rounded-md bg-[#015cb9] px-4 text-sm font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60">
+						<button disabled={guardandoCreacion} onClick={() => void crearNuevoCelular()} className={twAdmin.adminPrimaryBtnSm}>
 							{guardandoCreacion ? "Creando..." : "Crear celular"}
 						</button>
 					</div>
@@ -481,8 +482,8 @@ export const AdminCelularesPanel = () => {
 			{error && <p className="mt-6 text-red-600">{error}</p>}
 
 			{!error && (
-				<div className="mt-6 min-h-0 flex-1 overflow-y-auto rounded-xl border border-black/10">
-					<div className="grid grid-cols-[110px_1.2fr_1fr_1fr_90px_100px] items-center bg-[#eef3f8] px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#334155]">
+				<div className={twBase.tableShell}>
+					<div className={`grid grid-cols-[110px_1.2fr_1fr_1fr_90px_100px] items-center px-4 py-3 ${twBase.tableHead}`}>
 						<span>Imagen</span>
 						<span>Modelo</span>
 						<span>Precio base</span>
@@ -513,7 +514,7 @@ export const AdminCelularesPanel = () => {
 										<div className="flex justify-center">
 											<button
 												onClick={() => void toggleDetalle(c.id)}
-												className="flex h-8 w-8 items-center justify-center rounded-md border border-[#cdd6e1] text-lg font-semibold text-[#015cb9] transition-colors hover:bg-[#eef5fd]"
+												className={twBase.iconButton}
 											>
 												{expandido ? "−" : "+"}
 											</button>
@@ -521,7 +522,7 @@ export const AdminCelularesPanel = () => {
 										<div className="flex justify-center">
 											<button
 												onClick={() => setMostrarModalEliminarCelularId(c.id)}
-												className="h-8 rounded border border-[#f3c6c6] bg-white px-2 text-xs font-semibold text-[#b42318] hover:bg-[#fff1f0]"
+												className={twBase.actionBtnDanger}
 											>
 												Eliminar
 											</button>
@@ -561,13 +562,13 @@ export const AdminCelularesPanel = () => {
 			)}
 
 			{mostrarModalEliminarCelularId !== null && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4">
-					<div className="w-full max-w-md rounded-lg bg-white p-5 shadow-xl">
-						<h3 className="text-xl font-semibold text-[#001830]">Eliminar celular</h3>
-						<p className="mt-2 text-sm text-[#475569]">
+				<div className={twAdmin.adminModalOverlay}>
+					<div className={twAdmin.adminModalCard}>
+						<h3 className={twAdmin.adminModalTitle}>Eliminar celular</h3>
+						<p className={twAdmin.adminModalText}>
 							Se eliminará el celular completo junto con sus variaciones e imágenes. Esta acción no se puede deshacer.
 						</p>
-						<div className="mt-5 flex justify-end gap-2">
+						<div className={twAdmin.adminModalActions}>
 							<button
 								disabled={eliminandoCelularId !== null}
 								onClick={() => setMostrarModalEliminarCelularId(null)}

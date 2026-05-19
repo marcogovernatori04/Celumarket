@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { pedidoService, type MisPedidosItem } from "../services/pedidoService";
+import { twCheckout, twLayout } from "../styles/tw";
 
 type MisPedidosProps = {
 	onVerDetalle: (pedidoId: number) => void;
@@ -33,20 +34,20 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 	};
 
 	return (
-		<div className="h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col overflow-hidden">
+		<div className={twCheckout.checkoutShell}>
 			<section className="mx-auto flex w-full max-w-5xl flex-1 min-h-0 flex-col px-6 py-6 overflow-hidden">
 				<h1 className="mb-4 text-3xl font-bold text-[#001830]">Mis pedidos</h1>
 				{loading && <p className="text-gray-600">Cargando pedidos...</p>}
 				{error && <p className="text-red-600">{error}</p>}
 				{!loading && !error && pedidos.length === 0 && (
-					<div className="rounded-lg bg-white p-6 shadow-sm">
+					<div className={twLayout.cardSoft}>
 						<p className="text-[#1e1e1e]">Todavía no tienes pedidos.</p>
 					</div>
 				)}
 				{!loading && !error && pedidos.length > 0 && (
 					<div className="flex-1 min-h-0 space-y-3 overflow-y-auto pr-1">
 						{pedidos.map((pedido) => (
-							<div key={pedido.id} className="rounded-lg border border-[#dfe5eb] bg-white p-5 shadow-sm">
+							<div key={pedido.id} className={twLayout.cardSoft}>
 								<div className="flex flex-wrap items-center justify-between gap-3">
 									<button onClick={() => onVerDetalle(pedido.id)} className="inline-flex items-center gap-2 text-lg font-semibold text-[#001830] hover:text-[#015cb9] transition-colors">
 										<span>Pedido #{pedido.id}</span>

@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { pedidoService, type AdminEnvioItem } from "../../services/pedidoService";
+import { twAdmin, twBase } from "../../styles/tw";
 
 const formatearFecha = (raw?: string) => {
 	if (!raw) return "—";
@@ -103,7 +104,7 @@ export const AdminEnviosPanel = () => {
 
 	if (loading) {
 		return (
-			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+			<div className={twBase.loadingBox}>
 				<p className="text-[#5b6673]">Cargando envíos...</p>
 			</div>
 		);
@@ -112,8 +113,8 @@ export const AdminEnviosPanel = () => {
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			<div>
-				<h2 className="text-2xl font-bold text-[#001830]">Envíos</h2>
-				<p className="mt-1 text-sm text-[#5b6673]">Listado general de envíos del sistema.</p>
+				<h2 className={twAdmin.adminSectionTitle}>Envíos</h2>
+				<p className={twAdmin.adminSectionSubtitle}>Listado general de envíos del sistema.</p>
 				<div className="mt-3 flex flex-wrap gap-2">
 					{[
 						{ key: "todos", label: "Todos" },
@@ -123,10 +124,10 @@ export const AdminEnviosPanel = () => {
 						<button
 							key={item.key}
 							onClick={() => setFiltroEstado(item.key as typeof filtroEstado)}
-							className={`h-8 rounded-md border px-3 text-xs font-semibold transition-colors ${
+							className={`${twBase.filterBtnBase} ${
 								filtroEstado === item.key
-									? "border-[#015cb9] bg-[#eef5fd] text-[#015cb9]"
-									: "border-[#cdd6e1] bg-white text-[#334155] hover:bg-[#f8fafc]"
+									? twBase.filterBtnActive
+									: twBase.filterBtnIdle
 							}`}
 						>
 							{item.label}
@@ -138,17 +139,17 @@ export const AdminEnviosPanel = () => {
 						value={busqueda}
 						onChange={(e) => setBusqueda(e.target.value)}
 						placeholder="Buscar por #pedido, #envío, estado o dirección..."
-						className="h-9 w-full max-w-[420px] rounded-md border border-[#cdd6e1] bg-white px-3 text-sm text-[#1e1e1e] placeholder:text-[#94a3b8]"
+						className={`${twBase.searchInput} w-full max-w-[420px]`}
 					/>
 				</div>
 			</div>
 
 			{error && <p className="mt-3 text-red-600">{error}</p>}
 
-			<div className="mt-6 min-h-0 flex-1 overflow-y-auto rounded-xl border border-black/10 bg-white">
+			<div className={twBase.tableShell}>
 				<div>
 					<table className="w-full table-fixed text-left">
-						<thead className="bg-[#eef3f8] text-xs font-semibold uppercase tracking-[0.08em] text-[#334155]">
+						<thead className={twBase.tableHead}>
 							<tr>
 								<th className="w-[10%] px-4 py-3">Envío</th>
 								<th className="w-[10%] px-4 py-3">Pedido</th>
@@ -172,7 +173,7 @@ export const AdminEnviosPanel = () => {
 									const expandido = expandidoId === envio.envioId;
 									return (
 										<Fragment key={envio.envioId}>
-											<tr className="border-t border-black/10 text-sm text-[#1e1e1e]">
+											<tr className={twBase.tableRow}>
 												<td className="px-4 py-4 font-semibold text-[#001830]">#{envio.envioId}</td>
 												<td className="px-4 py-4">#{envio.pedidoId}</td>
 												<td className="px-4 py-4">{envio.estado || "—"}</td>
@@ -188,7 +189,7 @@ export const AdminEnviosPanel = () => {
 												<td className="px-4 py-4 text-center">
 													<button
 														onClick={() => setExpandidoId((prev) => (prev === envio.envioId ? null : envio.envioId))}
-														className="mx-auto flex h-8 w-8 items-center justify-center rounded-md border border-[#cdd6e1] text-lg font-semibold text-[#015cb9] transition-colors hover:bg-[#eef5fd]"
+														className={`${twBase.iconButton} mx-auto`}
 													>
 														{expandido ? "−" : "+"}
 													</button>
@@ -229,12 +230,12 @@ export const AdminEnviosPanel = () => {
 																			}))
 																		}
 																		placeholder="Código seguimiento"
-																		className="h-8 min-w-0 flex-1 rounded border border-[#cdd6e1] px-2 text-xs"
+																		className={`${twBase.miniInput} min-w-0 flex-1`}
 																	/>
 																	<button
 																		disabled={procesandoEnvioId === envio.envioId}
 																		onClick={() => void despacharEnvio(envio)}
-																		className="h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+																		className={twBase.actionBtnPrimary}
 																	>
 																		Despachar
 																	</button>

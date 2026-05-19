@@ -8,6 +8,7 @@ import { DetalleGaleria } from "../components/detalle/DetalleGaleria";
 import { DetalleInfoPrincipal } from "../components/detalle/DetalleInfoPrincipal";
 import { configuracionService } from "../services/configuracionService";
 import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
+import { twBase } from "../styles/tw";
 
 type DetalleProps = {
 	celularId: number;
@@ -122,27 +123,27 @@ export const DetalleCelular = ({
 
 	if (!detalle || !variacionActiva) {
 		return (
-			<div className="min-h-screen bg-[#f5f5f5] p-10 text-center text-gray-600">
+			<div className={`${twBase.pageLayout} p-10 text-center text-gray-600`}>
 				Cargando detalle...
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-[#f5f5f5]">
+		<div className={twBase.pageLayout}>
 			<div className="mx-auto max-w-6xl px-9 py-7">
 				<div className="mb-6 flex justify-center">
 					<div className="relative w-full max-w-[420px]">
 						<input
 							placeholder="Buscar..."
-							className="h-10 w-full rounded-full border border-[#d9d9d9] bg-white pl-4 pr-10 text-sm text-[#1e1e1e] outline-none"
+							className={twBase.searchPillInput}
 						/>
 						<span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
 							⌕
 						</span>
 					</div>
 				</div>
-				<div className="rounded-xl bg-white p-6">
+				<div className={`${twBase.cardWhite} p-6`}>
 					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 						<DetalleGaleria
 							imagenesActivas={imagenesActivas}

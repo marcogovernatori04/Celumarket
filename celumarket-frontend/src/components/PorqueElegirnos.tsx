@@ -1,13 +1,15 @@
+import { twCatalogo } from "../styles/tw";
+
 export const PorqueElegirnos = () => {
 	return (
-		<div className="mt-14 mx-auto max-w-6xl rounded-2xl bg-white px-8 py-10 shadow-sm">
-			<h3 className="text-center text-3xl font-bold text-[#001830] mb-10">
+		<div className={twCatalogo.whyBuyWrap}>
+			<h3 className={twCatalogo.whyBuyTitle}>
 				¿Por qué comprar con nosotros?
 			</h3>
-			<div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+			<div className={twCatalogo.whyBuyGrid}>
 				<div>
-					<div className="mb-3 flex items-center gap-3">
-						<span className="inline-flex size-10 shrink-0 items-center justify-center text-slate-900">
+					<div className={twCatalogo.whyBuyItemHead}>
+						<span className={twCatalogo.whyBuyIconWrap}>
 							<svg
 								viewBox="0 0 24 24"
 								className="size-7"
@@ -19,18 +21,18 @@ export const PorqueElegirnos = () => {
 								<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
 							</svg>
 						</span>
-						<p className="text-[26px] leading-none font-semibold text-[#001830]">
+						<p className={twCatalogo.whyBuyItemTitle}>
 							Mejores precios
 						</p>
 					</div>
-					<p className="pl-[52px] text-sm text-gray-600">
+					<p className={twCatalogo.whyBuyItemText}>
 						Te garantizamos los mejores precios de la región, al contar
 						con productos importados al menor precio.
 					</p>
 				</div>
 				<div>
-					<div className="mb-3 flex items-center gap-3">
-						<span className="inline-flex size-10 shrink-0 items-center justify-center text-slate-900">
+					<div className={twCatalogo.whyBuyItemHead}>
+						<span className={twCatalogo.whyBuyIconWrap}>
 							<svg
 								viewBox="0 0 24 24"
 								className="size-7"
@@ -42,18 +44,18 @@ export const PorqueElegirnos = () => {
 								<path d="M9 7a3 3 0 0 1 6 0" />
 							</svg>
 						</span>
-						<p className="text-[26px] leading-none font-semibold text-[#001830]">
+						<p className={twCatalogo.whyBuyItemTitle}>
 							Amplia disponibilidad
 						</p>
 					</div>
-					<p className="pl-[52px] text-sm text-gray-600">
+					<p className={twCatalogo.whyBuyItemText}>
 						Contamos con gran stock de productos y te traemos los últimos
 						lanzamientos a tu alcance.
 					</p>
 				</div>
 				<div>
-					<div className="mb-3 flex items-center gap-3">
-						<span className="inline-flex size-10 shrink-0 items-center justify-center text-slate-900">
+					<div className={twCatalogo.whyBuyItemHead}>
+						<span className={twCatalogo.whyBuyIconWrap}>
 							<svg
 								viewBox="0 0 24 24"
 								className="size-7"
@@ -67,11 +69,11 @@ export const PorqueElegirnos = () => {
 								<circle cx="18" cy="18" r="1.5" />
 							</svg>
 						</span>
-						<p className="text-[26px] leading-none font-semibold text-[#001830]">
+						<p className={twCatalogo.whyBuyItemTitle}>
 							Envío a todo el país
 						</p>
 					</div>
-					<p className="pl-[52px] text-sm text-gray-600">
+					<p className={twCatalogo.whyBuyItemText}>
 						Realizamos envíos seguros y confiables para que tu compra
 						llegue rápido.
 					</p>

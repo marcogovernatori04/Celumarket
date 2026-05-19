@@ -4,6 +4,7 @@ import { Footer } from "../components/Footer";
 import { celularService } from "../services/celularService";
 import { configuracionService } from "../services/configuracionService";
 import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
+import { twBase } from "../styles/tw";
 
 type CatalogoProps = {
 	onVerDetalle?: (celularId: number) => void;
@@ -60,7 +61,7 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 		});
 
 	return (
-		<div className="min-h-screen bg-[#f5f5f5] flex flex-col">
+		<div className={`${twBase.pageLayout} flex flex-col`}>
 			<section className="flex-1 px-10 py-8">
 				<div className="mx-auto mb-8 max-w-6xl flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 					<div className="relative w-full lg:max-w-[420px]">
@@ -68,7 +69,7 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 							value={busqueda}
 							onChange={(e) => setBusqueda(e.target.value)}
 							placeholder="Buscar..."
-							className="h-11 w-full rounded-full border border-[#d9d9d9] bg-white pl-4 pr-10 text-sm text-[#1e1e1e] outline-none"
+							className={`${twBase.searchPillInput} h-11`}
 						/>
 						<span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">⌕</span>
 					</div>

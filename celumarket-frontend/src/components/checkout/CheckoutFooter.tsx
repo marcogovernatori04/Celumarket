@@ -1,3 +1,5 @@
+import { twFooter } from "../../styles/tw";
+
 const lockIconUrl = "https://www.figma.com/api/mcp/asset/13e33deb-2d66-419c-af2f-9bd3ac0835b6";
 
 const VisaBadge = () => (
@@ -14,8 +16,8 @@ const MercadoPagoBadge = () => (
 
 export const CheckoutFooter = () => {
 	return (
-		<footer className="border-t border-[#d9d9d9] bg-[#d9d9d9]">
-			<div className="mx-auto flex min-h-[124px] w-full max-w-[1120px] flex-wrap items-center justify-center gap-x-14 gap-y-4 px-6 py-4">
+		<footer className={twFooter.checkoutFooterShell}>
+			<div className={twFooter.checkoutFooterContainer}>
 				<div className="flex shrink-0 items-center">
 					<img src="/logo.svg" alt="Celumarket" className="h-8 w-auto object-contain" />
 				</div>
@@ -35,11 +37,11 @@ export const CheckoutFooter = () => {
 				</div>
 
 				<div className="flex min-w-[240px] flex-col gap-2">
-					<p className="text-[16px] font-semibold leading-none text-black">¿Problemas con tu pago?</p>
-					<p className="text-[12px] font-medium leading-none text-black">
+					<p className={twFooter.checkoutInfoTitle}>¿Problemas con tu pago?</p>
+					<p className={twFooter.checkoutInfoText}>
 						Escribinos a <span className="text-[#186c77]">ayuda@celumarket.com</span>
 					</p>
-					<p className="pt-2 text-[10px] leading-none text-[#666666]">© 2026 Celumarket. Todos los derechos reservados.</p>
+					<p className={twFooter.checkoutMutedText}>© 2026 Celumarket. Todos los derechos reservados.</p>
 				</div>
 			</div>
 		</footer>

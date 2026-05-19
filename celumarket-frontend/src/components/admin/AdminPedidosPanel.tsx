@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { pedidoService, type AdminPedidoDetalle, type AdminPedidoItem } from "../../services/pedidoService";
+import { twAdmin, twBase } from "../../styles/tw";
 
 const formatearFecha = (raw?: string) => {
 	if (!raw) return "—";
@@ -168,7 +169,7 @@ export const AdminPedidosPanel = () => {
 
 	if (loading) {
 		return (
-			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+			<div className={twBase.loadingBox}>
 				<p className="text-[#5b6673]">Cargando pedidos...</p>
 			</div>
 		);
@@ -177,8 +178,8 @@ export const AdminPedidosPanel = () => {
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			<div>
-				<h2 className="text-2xl font-bold text-[#001830]">Pedidos</h2>
-				<p className="mt-1 text-sm text-[#5b6673]">Listado general con detalle expandible por pedido.</p>
+				<h2 className={twAdmin.adminSectionTitle}>Pedidos</h2>
+				<p className={twAdmin.adminSectionSubtitle}>Listado general con detalle expandible por pedido.</p>
 				<div className="mt-3 flex flex-wrap gap-2">
 					{[
 						{ key: "todos", label: "Todos" },
@@ -189,10 +190,10 @@ export const AdminPedidosPanel = () => {
 						<button
 							key={item.key}
 							onClick={() => setFiltroEstado(item.key as typeof filtroEstado)}
-							className={`h-8 rounded-md border px-3 text-xs font-semibold transition-colors ${
+							className={`${twBase.filterBtnBase} ${
 								filtroEstado === item.key
-									? "border-[#015cb9] bg-[#eef5fd] text-[#015cb9]"
-									: "border-[#cdd6e1] bg-white text-[#334155] hover:bg-[#f8fafc]"
+									? twBase.filterBtnActive
+									: twBase.filterBtnIdle
 							}`}
 						>
 							{item.label}
@@ -204,7 +205,7 @@ export const AdminPedidosPanel = () => {
 						value={busqueda}
 						onChange={(e) => setBusqueda(e.target.value)}
 						placeholder="Buscar por #pedido o cliente..."
-						className="h-9 w-full max-w-[360px] rounded-md border border-[#cdd6e1] bg-white px-3 text-sm text-[#1e1e1e] placeholder:text-[#94a3b8]"
+						className={`${twBase.searchInput} w-full max-w-[360px]`}
 					/>
 				</div>
 			</div>
@@ -212,10 +213,10 @@ export const AdminPedidosPanel = () => {
 			{error && <p className="text-red-600">{error}</p>}
 
 			{!error && (
-				<div className="mt-6 min-h-0 flex-1 overflow-y-auto rounded-xl border border-black/10 bg-white">
+				<div className={twBase.tableShell}>
 					<div className="overflow-x-auto">
 					<table className="min-w-full text-left">
-						<thead className="bg-[#eef3f8] text-xs font-semibold uppercase tracking-[0.08em] text-[#334155]">
+						<thead className={twBase.tableHead}>
 							<tr>
 								<th className="px-4 py-3">ID</th>
 								<th className="px-4 py-3">Cliente</th>
@@ -236,7 +237,7 @@ export const AdminPedidosPanel = () => {
 							) : (
 								pedidosFiltrados.map((pedido) => (
 									<Fragment key={pedido.id}>
-										<tr key={pedido.id} className="border-t border-black/10 text-sm text-[#1e1e1e]">
+										<tr key={pedido.id} className={twBase.tableRow}>
 											<td className="px-4 py-4 font-semibold text-[#001830]">#{pedido.id}</td>
 											<td className="px-4 py-4">{pedido.clienteNombre ?? (pedido.clienteId ? `Cliente #${pedido.clienteId}` : "—")}</td>
 											<td className="px-4 py-4">{pedido.estado ?? "—"}</td>
@@ -248,7 +249,7 @@ export const AdminPedidosPanel = () => {
 											<td className="px-4 py-4 text-center">
 												<button
 													onClick={() => void toggleDetalle(pedido.id)}
-													className="flex h-8 w-8 items-center justify-center rounded-md border border-[#cdd6e1] text-lg font-semibold text-[#015cb9] transition-colors hover:bg-[#eef5fd] mx-auto"
+													className={`${twBase.iconButton} mx-auto`}
 												>
 													{expandidoId === pedido.id ? "−" : "+"}
 												</button>
@@ -259,8 +260,8 @@ export const AdminPedidosPanel = () => {
 												<td colSpan={7} className="px-5 py-4">
 													{cargandoDetalleId === pedido.id && <p className="text-sm text-[#5b6673]">Cargando detalle...</p>}
 													{!cargandoDetalleId && detallePorId[pedido.id] && (
-														<div className="space-y-3">
-															<div className="grid grid-cols-1 gap-2 text-sm text-[#1e1e1e] md:grid-cols-2">
+														<div className={twAdmin.adminExpandWrap}>
+															<div className={twAdmin.adminExpandMetaGrid}>
 																<p><span className="font-semibold">Método de pago:</span> {detallePorId[pedido.id].metodoPago ?? "—"}</p>
 																<p><span className="font-semibold">Estado pago:</span> {detallePorId[pedido.id].estadoPago ?? "—"}</p>
 																<p><span className="font-semibold">Costo envío:</span> {(detallePorId[pedido.id].costoEnvio ?? 0) === 0 ? "Gratis" : `$${(detallePorId[pedido.id].costoEnvio ?? 0).toLocaleString("es-AR")}`}</p>
@@ -280,21 +281,21 @@ export const AdminPedidosPanel = () => {
 															</div>
 															<div className="flex flex-wrap items-center gap-2 border-t border-[#dbe4ef] pt-3">
 																{detallePorId[pedido.id] && !puedeMarcarPagado(detallePorId[pedido.id]) && (
-																	<p className="w-full text-xs text-[#64748b]">
+																	<p className={twAdmin.adminHintText}>
 																		Marcar pagado: solo transferencia pendiente y dentro de plazo.
 																	</p>
 																)}
 																<button
 																	disabled={procesandoPedidoId === pedido.id || !detallePorId[pedido.id] || !puedeMarcarPagado(detallePorId[pedido.id])}
 																	onClick={() => void marcarPagado(pedido.id)}
-																	className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] disabled:opacity-60"
+																	className={twBase.actionBtnNeutral}
 																>
 																	Marcar pagado
 																</button>
 																<button
 																	disabled={procesandoPedidoId === pedido.id || !!detallePorId[pedido.id] && estaPagado(detallePorId[pedido.id].estado)}
 																	onClick={() => void cancelarPedido(pedido.id)}
-																	className="h-8 rounded border border-[#f3c6c6] bg-white px-3 text-xs font-semibold text-[#b42318] hover:bg-[#fff1f0] disabled:opacity-60"
+																	className={twBase.actionBtnDanger}
 																>
 																	Cancelar
 																</button>
@@ -304,7 +305,7 @@ export const AdminPedidosPanel = () => {
 																		setCodigoSeguimientoPorPedido((prev) => ({ ...prev, [pedido.id]: e.target.value }))
 																	}
 																	placeholder="Código seguimiento"
-																	className="h-8 rounded border border-[#cdd6e1] px-2 text-xs"
+																	className={twBase.miniInput}
 																/>
 																<button
 																	disabled={
@@ -313,12 +314,12 @@ export const AdminPedidosPanel = () => {
 																		!puedeDespachar(detallePorId[pedido.id])
 																	}
 																	onClick={() => void despacharPedido(pedido.id)}
-																	className="h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+																	className={twBase.actionBtnPrimary}
 																>
 																	Despachar
 																</button>
 																{detallePorId[pedido.id] && !puedeDespachar(detallePorId[pedido.id]) && (
-																	<p className="w-full text-xs text-[#64748b]">
+																	<p className={twAdmin.adminHintText}>
 																		Despachar: solo disponible cuando el pedido está pagado.
 																	</p>
 																)}

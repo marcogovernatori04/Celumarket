@@ -5,6 +5,7 @@ import type { ItemCarrito } from "../../services/carritoService";
 import type { DatosFacturacion } from "./CheckoutFacturacionStep";
 import { CheckoutSidebarActions } from "./CheckoutSidebarActions";
 import { isAxiosError } from "axios";
+import { twBase, twCheckout } from "../../styles/tw";
 
 type Props = {
 	metodos: MetodoPago[];
@@ -73,29 +74,29 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 	};
 
 	return (
-		<div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
+		<div className={twCheckout.checkoutStepGrid}>
 			<div className="space-y-4">
-				<details className="rounded-xl border border-[#dfe5eb] bg-white p-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-					<summary className="cursor-pointer font-semibold text-[#001830]">Envío seleccionado</summary>
-					<p className="mt-2 text-sm text-[#1e1e1e]">{resumenEnvio}</p>
+				<details className={twCheckout.checkoutCardCompact}>
+					<summary className={twCheckout.checkoutSummaryTitle}>Envío seleccionado</summary>
+					<p className={twCheckout.checkoutSummaryText}>{resumenEnvio}</p>
 				</details>
-				<details className="rounded-xl border border-[#dfe5eb] bg-white p-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-					<summary className="cursor-pointer font-semibold text-[#001830]">Datos de facturación</summary>
-					<p className="mt-2 text-sm text-[#1e1e1e]">{resumenFacturacion}</p>
+				<details className={twCheckout.checkoutCardCompact}>
+					<summary className={twCheckout.checkoutSummaryTitle}>Datos de facturación</summary>
+					<p className={twCheckout.checkoutSummaryText}>{resumenFacturacion}</p>
 				</details>
-				<div className="rounded-xl border border-[#dfe5eb] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+				<div className={`${twCheckout.checkoutCard} p-5`}>
 					<h2 className="text-2xl font-bold text-[#001830]">3. Elegí cómo pagar</h2>
 					<div className="mt-4 space-y-3">
 						<button type="button" onClick={() => {
 							const m = metodos.find((x) => x.nombre.toLowerCase().includes("transferencia"));
 							if (m) setMetodoPagoId(m.id);
-						}} className={`w-full rounded-xl border p-4 text-left transition-colors ${metodos.find((x) => x.id === metodoPagoId)?.nombre.toLowerCase().includes("transferencia") ? "border-[#015cb9] bg-[#eef4fb]" : "border-[#d9d9d9] bg-white hover:bg-[#f7fbff]"}`}>
+						}} className={`${twCheckout.checkoutMethodCard} ${metodos.find((x) => x.id === metodoPagoId)?.nombre.toLowerCase().includes("transferencia") ? twCheckout.checkoutMethodActive : twCheckout.checkoutMethodIdle}`}>
 							<p className="font-semibold text-[#001830]">Transferencia bancaria</p>
 						</button>
 						<button type="button" onClick={() => {
 							const m = metodos.find((x) => x.nombre.toLowerCase().includes("mercado pago"));
 							if (m) setMetodoPagoId(m.id);
-						}} className={`w-full rounded-xl border p-4 text-left transition-colors ${metodos.find((x) => x.id === metodoPagoId)?.nombre.toLowerCase().includes("mercado pago") ? "border-[#015cb9] bg-[#eef4fb]" : "border-[#d9d9d9] bg-white hover:bg-[#f7fbff]"}`}>
+						}} className={`${twCheckout.checkoutMethodCard} ${metodos.find((x) => x.id === metodoPagoId)?.nombre.toLowerCase().includes("mercado pago") ? twCheckout.checkoutMethodActive : twCheckout.checkoutMethodIdle}`}>
 							<p className="font-semibold text-[#001830]">Mercado Pago</p>
 							<p className="text-sm text-[#4b5563]">Dinero en cuenta, tarjeta de crédito y débito.</p>
 						</button>
@@ -120,19 +121,19 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 			/>
 
 			{mostrarModalConfirmacion && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4">
-					<div className="w-full max-w-[760px] rounded-xl bg-white p-7 shadow-2xl">
-						<h3 className="text-[30px] font-bold leading-none text-[#001830]">Confirmación final</h3>
+				<div className={twCheckout.checkoutModalOverlay}>
+					<div className={twCheckout.checkoutModalCard}>
+						<h3 className={twCheckout.checkoutModalTitle}>Confirmación final</h3>
 						<div className="mt-5 space-y-4 text-[15px] text-[#1e1e1e]">
 							<div>
-								<p className="text-[17px] font-semibold text-[#001830]">Detalle de la compra</p>
+								<p className={twCheckout.checkoutModalSectionTitle}>Detalle de la compra</p>
 								<div className="mt-1.5 space-y-2">
 									{carritoItems.map((item) => (
-										<div key={item.variacionId} className="flex items-center justify-between gap-3">
+										<div key={item.variacionId} className={twCheckout.checkoutModalItemRow}>
 											<p>
 												{item.marca} {item.modelo} · {item.color} · x{item.cantidad}
 											</p>
-											<p className="text-[16px] font-semibold">
+											<p className={twCheckout.checkoutModalItemAmount}>
 												${(item.precioUnitario * item.cantidad).toLocaleString("es-AR")}
 											</p>
 										</div>
@@ -140,7 +141,7 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 								</div>
 							</div>
 							<div>
-								<p className="text-[17px] font-semibold text-[#001830]">Envío</p>
+								<p className={twCheckout.checkoutModalSectionTitle}>Envío</p>
 								<p>{resumenEnvio}</p>
 								{datosEnvio.tarifa && (
 									<p className="mt-1 text-[#4b5563]">
@@ -149,31 +150,31 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 								)}
 							</div>
 							<div>
-								<p className="text-[17px] font-semibold text-[#001830]">Facturación</p>
+								<p className={twCheckout.checkoutModalSectionTitle}>Facturación</p>
 								<p>{datosFacturacion.nombreCompleto} · DNI {datosFacturacion.dni}</p>
 								<p>{datosFacturacion.email} · {datosFacturacion.telefono}</p>
 							</div>
 							<div>
-								<p className="text-[17px] font-semibold text-[#001830]">Método de pago</p>
+								<p className={twCheckout.checkoutModalSectionTitle}>Método de pago</p>
 								<p>{metodoSeleccionado?.nombre ?? "Sin seleccionar"}</p>
 								{metodoSeleccionado?.nombre?.toLowerCase().includes("mercado pago") && (
 									<p className="mt-1 text-[#4b5563]">Serás redirigido a Mercado Pago para completar el pago.</p>
 								)}
 							</div>
 							<div className="border-t border-[#e5e7eb] pt-3">
-								<p className="text-[30px] font-extrabold leading-none text-[#001830]">Total: ${total.toLocaleString("es-AR")}</p>
+								<p className={twCheckout.checkoutModalTotal}>Total: ${total.toLocaleString("es-AR")}</p>
 							</div>
 						</div>
 						{error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 						<div className="mt-6 flex justify-end gap-3">
-							<button onClick={() => setMostrarModalConfirmacion(false)} className="h-[42px] rounded-lg border border-[#001830] bg-[#f3f4f6] px-6 text-[15px] text-[#001830] hover:bg-[#e8ebf0] transition-colors">Volver</button>
+							<button onClick={() => setMostrarModalConfirmacion(false)} className={twBase.secondaryBtnSm}>Volver</button>
 							<button
 								disabled={reservaExpirada || enviando || !metodoPagoId}
 								onClick={async () => {
 									const ok = await confirmar();
 									if (ok) setMostrarModalConfirmacion(false);
 								}}
-								className={`h-[42px] rounded-lg px-6 text-[15px] text-white transition-colors ${!reservaExpirada && !enviando && metodoPagoId ? "bg-[#015cb9] hover:bg-[#017AF4]" : "bg-[#757575] text-[#d9d9d9]"}`}
+								className={`${twCheckout.checkoutPrimaryBtnSm} ${!reservaExpirada && !enviando && metodoPagoId ? "bg-[#015cb9] hover:bg-[#017AF4]" : "bg-[#757575] text-[#d9d9d9]"}`}
 							>
 								{enviando ? "Confirmando..." : "Confirmar"}
 							</button>

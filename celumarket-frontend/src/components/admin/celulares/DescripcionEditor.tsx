@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { twBase } from "../../../styles/tw";
 
 type DescripcionEditorProps = {
 	celularId: number;
@@ -47,13 +48,13 @@ export const DescripcionEditor = ({ celularId, descripcion, onGuardar }: Descrip
 						<button
 							onClick={() => void guardar()}
 							disabled={guardandoCelularId === celularId}
-							className="h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60"
+							className={twBase.actionBtnPrimary}
 						>
 							Guardar descripción
 						</button>
 						<button
 							onClick={cancelar}
-							className="h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+							className={twBase.actionBtnNeutral}
 						>
 							Cancelar
 						</button>
@@ -64,7 +65,7 @@ export const DescripcionEditor = ({ celularId, descripcion, onGuardar }: Descrip
 					<p className="text-sm text-[#334155]">{descripcion}</p>
 					<button
 						onClick={comenzarEdicion}
-						className="h-8 whitespace-nowrap rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
+						className={`${twBase.actionBtnNeutral} whitespace-nowrap`}
 					>
 						Editar descripción
 					</button>
