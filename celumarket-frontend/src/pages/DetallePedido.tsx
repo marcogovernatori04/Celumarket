@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { pedidoService, type DetallePedido as DetallePedidoData } from "../services/pedidoService";
+import { configuracionService } from "../services/configuracionService";
+import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
 import { getMetodoPagoLabel, getTipoPagoLabel } from "../utils/mercadoPagoDisplay";
 import { twDetallePedido } from "../styles/tw";
 
@@ -14,12 +16,17 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [descargandoFactura, setDescargandoFactura] = useState(false);
+	const [config, setConfig] = useState<ConfiguracionSistema | null>(null);
 
 	useEffect(() => {
 		const cargar = async () => {
 			try {
-				const data = await pedidoService.obtenerDetalleMiPedido(pedidoId);
+				const [data, configData] = await Promise.all([
+					pedidoService.obtenerDetalleMiPedido(pedidoId),
+					configuracionService.obtener().catch(() => null)
+				]);
 				setDetalle(data);
+				setConfig(configData);
 			} catch {
 				setError("No se pudo cargar el detalle del pedido.");
 			} finally {
@@ -63,6 +70,16 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 		if (!id) return true;
 		return arr.findIndex((p) => p.paymentIdExterno?.trim() === id) === idx;
 	});
+	const metodoPagoNormalizado = detalle?.metodoPago?.trim().toLowerCase() ?? "";
+	const estadoNormalizado = detalle?.estado?.trim().toLowerCase() ?? "";
+	const mostrarDatosTransferencia =
+		metodoPagoNormalizado.includes("transferencia") &&
+		(estadoNormalizado.includes("pendiente") || estadoNormalizado.includes("pendiente de pago"));
+	const subtotalProductos = detalle?.lineas.reduce((acc, linea) => acc + linea.subtotal, 0) ?? 0;
+	const costoEnvio = detalle?.costoEnvio ?? 0;
+	const totalEsperadoSinDescuento = subtotalProductos + costoEnvio;
+	const descuentoTransferencia = Math.max(0, totalEsperadoSinDescuento - (detalle?.montoTotal ?? 0));
+	const descuentoTransferenciaRedondeado = Math.round(descuentoTransferencia);
 
 	return (
 		<div className={twDetallePedido.layout}>
@@ -91,6 +108,17 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 							</div>
 							<p className="mt-2 text-sm text-[#1e1e1e]">Dirección de entrega: <span className="font-semibold">{formatearDireccion()}</span></p>
 						</div>
+						{mostrarDatosTransferencia && (
+							<div className={twDetallePedido.panel}>
+								<h2 className="text-xl font-bold text-[#001830]">Datos para transferencia</h2>
+								<div className="mt-3 grid gap-2 text-sm text-[#1e1e1e] md:grid-cols-2">
+									<p><span className="font-semibold">Titular:</span> {config?.titularTransferencia ?? "Celumarket S.A."}</p>
+									<p><span className="font-semibold">Banco:</span> {config?.bancoTransferencia ?? "Banco Nación"}</p>
+									<p><span className="font-semibold">Alias:</span> {config?.aliasTransferencia ?? "celumarket"}</p>
+									<p><span className="font-semibold">CBU:</span> {config?.cbuTransferencia ?? "0000003100000000000000"}</p>
+								</div>
+							</div>
+						)}
 						<div className={twDetallePedido.panel}>
 							<h2 className="text-xl font-bold text-[#001830]">Productos</h2>
 							<div className="mt-3 space-y-2 border-t border-[#e5ebf2] pt-3">
@@ -103,6 +131,24 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 										<p className="font-semibold">${linea.subtotal.toLocaleString("es-AR")}</p>
 									</div>
 								))}
+							</div>
+							<div className="mt-4 space-y-1 border-t border-[#e5ebf2] pt-3 text-sm text-[#1e1e1e]">
+								<div className="flex items-center justify-between">
+									<span>Subtotal productos</span>
+									<span className="font-semibold">${subtotalProductos.toLocaleString("es-AR")}</span>
+								</div>
+								<div className="flex items-center justify-between">
+									<span>Envío</span>
+									<span className={`font-semibold ${costoEnvio === 0 ? "text-[#1E8E5A]" : ""}`}>
+										{costoEnvio === 0 ? "Gratis" : `$${costoEnvio.toLocaleString("es-AR")}`}
+									</span>
+								</div>
+								{descuentoTransferencia > 0 && (
+									<div className="flex items-center justify-between text-[#1E8E5A]">
+										<span>Descuento por transferencia</span>
+										<span className="font-semibold">-${descuentoTransferenciaRedondeado.toLocaleString("es-AR")}</span>
+									</div>
+								)}
 							</div>
 							<p className="mt-4 border-t border-[#e5ebf2] pt-3 text-right text-[24px] font-extrabold leading-none text-[#001830]">Total: ${detalle.montoTotal.toLocaleString("es-AR")}</p>
 						</div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { pedidoService, type MisPedidosItem } from "../services/pedidoService";
 import { twCheckout, twLayout } from "../styles/tw";
+import { formatDateAr } from "../utils/dateTime";
 
 type MisPedidosProps = {
 	onVerDetalle: (pedidoId: number) => void;
@@ -25,13 +26,6 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 		};
 		void cargar();
 	}, []);
-
-	const formatearFecha = (raw?: string) => {
-		if (!raw) return "—";
-		const d = new Date(raw);
-		if (Number.isNaN(d.getTime())) return "—";
-		return d.toLocaleString("es-AR");
-	};
 
 	return (
 		<div className={twCheckout.checkoutShell}>
@@ -57,7 +51,7 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 								</div>
 								<div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[#4b5563]">
 									<p>Estado: <span className="font-medium text-[#1e1e1e]">{pedido.estado ?? pedido.estadoPedido ?? "—"}</span></p>
-									<p>Fecha: <span className="font-medium text-[#1e1e1e]">{formatearFecha(pedido.fechaPedido ?? pedido.fechaCreacion)}</span></p>
+									<p>Fecha: <span className="font-medium text-[#1e1e1e]">{formatDateAr(pedido.fecha ?? pedido.fechaPedido ?? pedido.fechaCreacion)}</span></p>
 								</div>
 							</div>
 						))}

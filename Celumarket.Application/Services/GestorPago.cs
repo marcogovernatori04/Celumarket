@@ -16,17 +16,20 @@ namespace Celumarket.Application.Services
         private readonly IGestorPedido _gestorPedido;
         private readonly IPagoRepository _pagoRepo;
         private readonly IMetodoPagoRepository _metodoPagoRepo;
+        private readonly IPedidoRepository _pedidoRepo;
         private readonly IUnitOfWork _unitOfWork;   
 
         public GestorPago(
             IGestorPedido gestorPedido, 
             IPagoRepository pagoRepo, 
             IMetodoPagoRepository metodoPagoRepo, 
+            IPedidoRepository pedidoRepo,
             IUnitOfWork unitOfWork)
         {
             _gestorPedido = gestorPedido;
             _pagoRepo = pagoRepo;
             _metodoPagoRepo = metodoPagoRepo;
+            _pedidoRepo = pedidoRepo;
             _unitOfWork = unitOfWork;
         }
 
@@ -47,6 +50,10 @@ namespace Celumarket.Application.Services
         public async Task ProcesarRespuestaPasarelaAsync(PagoDTOs.RespuestaPasarelaDTO dto)
         {
             var pagoPendiente = await _pagoRepo.ObtenerPorPedidoIdAsync(dto.PedidoId);
+            const decimal toleranciaCentavos = 0.01m;
+            var pedido = await _pedidoRepo.ObtenerPorIdAsync(dto.PedidoId);
+            var montoObjetivo = pagoPendiente?.Monto ?? pedido?.MontoTotal ?? 0m;
+            decimal montoAprobadoEnEsteEvento = 0m;
             if (dto.PagoAprobado)
             {
                 int? metodoMercadoPagoId = pagoPendiente?.MetodoPagoId;
@@ -69,9 +76,12 @@ namespace Celumarket.Application.Services
                             if (pagoPendiente != null)
                             {
                                 var totalAprobadoExistente = await _pagoRepo.ObtenerTotalAprobadoPorPedidoIdAsync(dto.PedidoId);
-                                if (totalAprobadoExistente >= pagoPendiente.Monto)
+                                if (montoObjetivo > 0 && totalAprobadoExistente + toleranciaCentavos >= montoObjetivo)
                                 {
-                                    pagoPendiente.Aprobar();
+                                    if (pagoPendiente.DatosMercadoPago == null)
+                                        pagoPendiente.Rechazar();
+                                    else
+                                        pagoPendiente.Aprobar();
                                     await _gestorPedido.ConfirmarPagoAsync(dto.PedidoId);
                                 }
                             }
@@ -100,23 +110,36 @@ namespace Celumarket.Application.Services
                             dto.DatosMercadoPago.FechaAprobacionUtc));
                         pagoEvento.Aprobar();
                         await _pagoRepo.AgregarAsync(pagoEvento);
+                        montoAprobadoEnEsteEvento = montoEvento;
                     }
                 }
 
                 if (pagoPendiente != null)
                 {
-                    var totalAprobado = await _pagoRepo.ObtenerTotalAprobadoPorPedidoIdAsync(dto.PedidoId);
-                    if (totalAprobado >= pagoPendiente.Monto)
+                    var totalAprobado = await _pagoRepo.ObtenerTotalAprobadoPorPedidoIdAsync(dto.PedidoId) + montoAprobadoEnEsteEvento;
+                    if (montoObjetivo > 0 && totalAprobado + toleranciaCentavos >= montoObjetivo)
                     {
-                        pagoPendiente.Aprobar();
+                        if (pagoPendiente.DatosMercadoPago == null)
+                            pagoPendiente.Rechazar();
+                        else
+                            pagoPendiente.Aprobar();
                         await _gestorPedido.ConfirmarPagoAsync(dto.PedidoId);
                     }
+                }
+                else
+                {
+                    var totalAprobado = await _pagoRepo.ObtenerTotalAprobadoPorPedidoIdAsync(dto.PedidoId) + montoAprobadoEnEsteEvento;
+                    if (montoObjetivo > 0 && totalAprobado + toleranciaCentavos >= montoObjetivo)
+                        await _gestorPedido.ConfirmarPagoAsync(dto.PedidoId);
                 }
             }
             else
             {
                 if (pagoPendiente == null)
-                    throw new Exception("No se encontró un pago pendiente para este pedido.");
+                {
+                    await _unitOfWork.GuardarAsync();
+                    return;
+                }
 
                 pagoPendiente.Rechazar();
             }

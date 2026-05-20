@@ -36,6 +36,7 @@ export type CheckoutResponse = {
 
 export type MisPedidosItem = {
 	id: number;
+	fecha?: string;
 	fechaPedido?: string;
 	fechaCreacion?: string;
 	montoTotal: number;

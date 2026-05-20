@@ -95,16 +95,21 @@ namespace Celumarket.Application.Services
             await _gestorCarrito.VaciarCarritoAsync(clienteId);
 
             var pedidoCompleto = await _pedidoRepo.ObtenerPorIdAsync(pedidoId);
-            await _gestorPago.GenerarPagoPendienteAsync(new PagoDTOs.GenerarPagoPendienteDTO
-            {
-                PedidoId = pedidoId,
-                MetodoPagoId = request.MetodoPagoId,
-                MontoTotal = pedidoCompleto.MontoTotal
-            });
-
             string? linkMP = null;
-            if (metodo.Nombre.ToLower().Contains("mercado pago"))
+            var esMercadoPago = metodo.Nombre.Contains("mercado pago", StringComparison.OrdinalIgnoreCase);
+            if (esMercadoPago)
+            {
                 linkMP = await _servicioMP.GenerarLinkDePagoAsync(pedidoCompleto);
+            }
+            else
+            {
+                await _gestorPago.GenerarPagoPendienteAsync(new PagoDTOs.GenerarPagoPendienteDTO
+                {
+                    PedidoId = pedidoId,
+                    MetodoPagoId = request.MetodoPagoId,
+                    MontoTotal = pedidoCompleto.MontoTotal
+                });
+            }
 
             return (pedidoId, linkMP, pedidoCompleto.FechaVencimiento, "Pedido generado exitosamente.");
         }

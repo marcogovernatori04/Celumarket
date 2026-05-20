@@ -9,9 +9,9 @@ namespace Celumarket.Infrastructure.Services
         {
             var contenido = new StringBuilder();
             contenido.AppendLine("BT");
-            contenido.AppendLine("/F1 11 Tf");
-            contenido.AppendLine("50 800 Td");
-            contenido.AppendLine("14 TL");
+            contenido.AppendLine("/F1 10 Tf");
+            contenido.AppendLine("36 806 Td");
+            contenido.AppendLine("13 TL");
 
             bool primera = true;
             foreach (var linea in lineas)
@@ -31,7 +31,7 @@ namespace Celumarket.Infrastructure.Services
                 Encoding.ASCII.GetBytes("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"),
                 Encoding.ASCII.GetBytes("2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n"),
                 Encoding.ASCII.GetBytes("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n"),
-                Encoding.ASCII.GetBytes("4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n"),
+                Encoding.ASCII.GetBytes("4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>\nendobj\n"),
                 BuildStreamObject(streamData)
             };
 

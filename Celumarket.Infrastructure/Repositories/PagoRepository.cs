@@ -35,7 +35,8 @@ namespace Celumarket.Infrastructure.Repositories
         {
             return await _context.Pagos
                 .Where(p => p.PedidoId == pedidoId)
-                .OrderByDescending(p => p.Fecha)
+                .OrderByDescending(p => p.Estado == Pago.EstadoAprobado && p.DatosMercadoPago != null)
+                .ThenByDescending(p => p.Fecha)
                 .FirstOrDefaultAsync();
         }
 
