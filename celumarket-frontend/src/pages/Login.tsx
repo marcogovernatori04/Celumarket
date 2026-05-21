@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
 import { passwordService } from "../services/passwordService";
+import { clienteService } from "../services/clienteService";
 import { twAuth } from "../styles/tw";
+import { isAxiosError } from "axios";
 
 type LoginProps = {
 	onLoginExitoso: () => void;
@@ -10,11 +12,29 @@ type LoginProps = {
 export const Login = ({ onLoginExitoso }: LoginProps) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [modoRegistro, setModoRegistro] = useState(false);
 	const [modoRecuperar, setModoRecuperar] = useState(false);
+	const [dni, setDni] = useState("");
+	const [nombre, setNombre] = useState("");
+	const [apellido, setApellido] = useState("");
+	const [telefono, setTelefono] = useState("");
+	const [calle, setCalle] = useState("");
+	const [numero, setNumero] = useState("");
+	const [pisoDepto, setPisoDepto] = useState("");
+	const [localidad, setLocalidad] = useState("");
+	const [provincia, setProvincia] = useState("");
+	const [codigoPostal, setCodigoPostal] = useState("");
 	const [tokenRecuperacion, setTokenRecuperacion] = useState("");
 	const [nuevaClave, setNuevaClave] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [cargando, setCargando] = useState(false);
+
+	const obtenerMensajeError = (err: unknown, fallback: string) => {
+		if (!isAxiosError(err)) return fallback;
+
+		const data = err.response?.data as { error?: string; mensaje?: string; Mensaje?: string } | undefined;
+		return data?.error || data?.mensaje || data?.Mensaje || fallback;
+	};
 
 	const enviar = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -23,8 +43,47 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 		try {
 			await authService.login({ email, password });
 			onLoginExitoso();
-		} catch {
-			setError("Credenciales inválidas o servidor no disponible.");
+		} catch (err) {
+			setError(obtenerMensajeError(err, "Credenciales inválidas o servidor no disponible."));
+		} finally {
+			setCargando(false);
+		}
+	};
+
+	const registrar = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setError(null);
+		if (password.trim().length < 8) {
+			setError("La contraseña debe tener al menos 8 caracteres.");
+			return;
+		}
+
+		const cp = Number(codigoPostal);
+		if (!Number.isInteger(cp) || cp <= 0) {
+			setError("El código postal debe ser un número válido.");
+			return;
+		}
+
+		setCargando(true);
+		try {
+			await clienteService.registrar({
+				dni,
+				nombre,
+				apellido,
+				email,
+				telefono,
+				calle,
+				numero,
+				pisoDepto,
+				localidad,
+				provincia,
+				codigoPostal: cp,
+				password,
+			});
+			await authService.login({ email, password });
+			onLoginExitoso();
+		} catch (err) {
+			setError(obtenerMensajeError(err, "No se pudo registrar la cuenta. Verifica los datos."));
 		} finally {
 			setCargando(false);
 		}
@@ -36,8 +95,8 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 		try {
 			const token = await passwordService.solicitarRecuperacion(email);
 			setTokenRecuperacion(token ?? "");
-		} catch {
-			setError("No se pudo solicitar recuperación.");
+		} catch (err) {
+			setError(obtenerMensajeError(err, "No se pudo solicitar recuperación."));
 		} finally {
 			setCargando(false);
 		}
@@ -51,8 +110,8 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 			setModoRecuperar(false);
 			setTokenRecuperacion("");
 			setNuevaClave("");
-		} catch {
-			setError("No se pudo restablecer la clave.");
+		} catch (err) {
+			setError(obtenerMensajeError(err, "No se pudo restablecer la clave."));
 		} finally {
 			setCargando(false);
 		}
@@ -62,12 +121,47 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 		<div className={twAuth.authBg}>
 			<div className="mx-auto flex w-full max-w-[1440px] justify-center px-4 pt-16">
 				<div className="w-full max-w-[477px]">
-					<form onSubmit={enviar} className={twAuth.authCard}>
+					<form onSubmit={modoRegistro ? registrar : enviar} className={twAuth.authCard}>
 						<div className="mb-5">
 							<label className="mb-2 block text-base text-[#1e1e1e]">Email</label>
 							<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className={twAuth.authInput} required />
 						</div>
-						{!modoRecuperar ? (
+						{!modoRecuperar && modoRegistro ? (
+							<>
+								<div className="mb-3 grid grid-cols-2 gap-3">
+									<input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" className={twAuth.authInput} required />
+									<input value={apellido} onChange={(e) => setApellido(e.target.value)} placeholder="Apellido" className={twAuth.authInput} required />
+								</div>
+								<div className="mb-3 grid grid-cols-2 gap-3">
+									<input value={dni} onChange={(e) => setDni(e.target.value)} placeholder="DNI" className={twAuth.authInput} required />
+									<input value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Teléfono" className={twAuth.authInput} required />
+								</div>
+								<div className="mb-3 grid grid-cols-2 gap-3">
+									<input value={calle} onChange={(e) => setCalle(e.target.value)} placeholder="Calle" className={twAuth.authInput} required />
+									<input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Número" className={twAuth.authInput} required />
+								</div>
+								<div className="mb-3 grid grid-cols-2 gap-3">
+									<input value={pisoDepto} onChange={(e) => setPisoDepto(e.target.value)} placeholder="Piso/Depto (opcional)" className={twAuth.authInput} />
+									<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} placeholder="Código postal" className={twAuth.authInput} required />
+								</div>
+								<div className="mb-5 grid grid-cols-2 gap-3">
+									<input value={localidad} onChange={(e) => setLocalidad(e.target.value)} placeholder="Localidad" className={twAuth.authInput} required />
+									<input value={provincia} onChange={(e) => setProvincia(e.target.value)} placeholder="Provincia" className={twAuth.authInput} required />
+								</div>
+								<div className="mb-5">
+									<label className="mb-2 block text-base text-[#1e1e1e]">Contraseña</label>
+									<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className={twAuth.authInput} required />
+								</div>
+								<button disabled={cargando} className={`${twAuth.authPrimaryBtn} text-xl font-medium leading-none`}>
+									{cargando ? "Creando..." : "Crear cuenta"}
+								</button>
+								<div className="mt-4">
+									<button type="button" onClick={() => setModoRegistro(false)} className="text-base text-[#001524] underline">
+										Ya tengo cuenta
+									</button>
+								</div>
+							</>
+						) : !modoRecuperar ? (
 							<>
 								<div className="mb-5">
 									<label className="mb-2 block text-base text-[#1e1e1e]">Contraseña</label>
@@ -76,9 +170,12 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 								<button disabled={cargando} className={`${twAuth.authPrimaryBtn} text-xl font-medium leading-none`}>
 									{cargando ? "Iniciando..." : "Iniciar sesión"}
 								</button>
-								<div className="mt-5">
+								<div className="mt-4 flex items-center justify-between">
 									<button type="button" onClick={() => setModoRecuperar(true)} className="text-base text-[#001524] underline">
 										Olvidé mi contraseña
+									</button>
+									<button type="button" onClick={() => setModoRegistro(true)} className="text-base text-[#001524] underline">
+										Crear cuenta
 									</button>
 								</div>
 							</>
@@ -103,10 +200,6 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 						)}
 						{error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 					</form>
-
-					<button type="button" className={`mt-5 ${twAuth.authSecondaryBtn}`}>
-						Continuar con Google
-					</button>
 				</div>
 			</div>
 		</div>

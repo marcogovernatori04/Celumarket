@@ -40,6 +40,21 @@ export type UsuarioListado = {
 	totalComprado: number;
 };
 
+export type RegistrarClientePayload = {
+	dni: string;
+	nombre: string;
+	apellido: string;
+	email: string;
+	telefono: string;
+	calle: string;
+	numero: string;
+	pisoDepto?: string;
+	localidad: string;
+	provincia: string;
+	codigoPostal: number;
+	password: string;
+};
+
 export const clienteService = {
 	async obtenerMiPerfil(): Promise<MiPerfil> {
 		const { data } = await api.get<MiPerfil>("/Clientes/mi-perfil");
@@ -53,5 +68,9 @@ export const clienteService = {
 	async obtenerUsuarios(): Promise<UsuarioListado[]> {
 		const { data } = await api.get<UsuarioListado[]>("/Clientes/lista-completa");
 		return data;
+	},
+
+	async registrar(payload: RegistrarClientePayload): Promise<void> {
+		await api.post("/Clientes/registrar", payload);
 	},
 };

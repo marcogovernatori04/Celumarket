@@ -1,0 +1,217 @@
+
+===== PAGE 1 =====
+ 
+Página 1 de 4 
+ 
+ 
+PROYECTO FINAL INTEGRADOR 
+CARRERA: TECNICATURA UNIVERSITARIA EN PROGRAMACIÓN 
+SEDE: SAN NICOLAS LOCALIZACIÓN: SAN NICOLAS 
+ASIGNATURA: TUTORIA 
+CURSO: 2° TURNO:  
+PROFESOR: ING. PABLO AUDOGLIO FECHA:  
+ 
+PROPÓSITO: 
+Evaluar la capacidad del estudiante para  realizar abstracciones de la realidad en función de  la 
+construcción de un pro ducto de software  en el marco de un proyecto , su habilidad para 
+administrar el tiempo y los recursos seleccionados para el logro del objetivo propuesto, su 
+capacidad para integrar el marco teórico establecido y los conocimientos previos adquiridos 
+aplicándolos en el desarrollo del proyecto.  
+ 
+CRITERIOS DE EVALUACIÓN: 
+▪ Claridad en el planteamiento de los objetivos del proyecto. 
+▪ Cohesión y precisión en la especificación de requerimientos de software. 
+▪ Solidez en el análisis del problema de acuerdo a los objetivos del proyecto. 
+▪ Coherencia en la definición de las iteraciones del proyecto. 
+▪ Corrección en el desarrollo de los artefactos técnicos requeridos. 
+▪ Valoración del diseño arquitectónico utilizado. 
+▪ Funcionalidad y robustez del producto de software fabricado. 
+▪ Cumplimiento de los requerimientos mínimos solicitados para el proyecto final. 
+▪ Performance en la presentación del proyecto. 
+ 
+GUÍA: 
+1 - NOMBRE DEL PROYECTO : EL NOMBRE O TÍTULO DEL PROYECTO DESCRIBE EN POCAS PALABRAS SU 
+NATURALEZA. DEBE SER CLARO Y ENTENDIBLE, ASÍ COMO ATRACTIVO Y CONCRETO. 
+2 - SIGLAS DEL PROYECTO : DEFINIR UNA DENOMINACION CORTA POR LA CUAL HACER REFERENCIA AL 
+PROYECTO. 
+ 
+3 - DESCRIPCIÓN DEL PROYECTO: RESUMEN. QUÉ, QUIÉN, CÓMO, CUÁNDO Y DÓNDE. 
+ 
+4 - OBJETIVOS DEL PROYECTO: METAS HACIA LAS CUALES SE DEBE DIRIGIR EL TRABAJO DEL PROYECTO . 
+Debe definir los objetivos en infinitivo (ar -er-ir), indicando claramente que es lo que debe lograrse, y si es 
+posible, en qué período de tiempo debe evaluarse su logro. Recuerde que de los objetivos se desprenden 
+los requerimientos, y que un requerimiento satisface parcial o totalmente un objetivo.  
+ 
+===== PAGE 2 =====
+ 
+Página 2 de 4 
+ 
+5 - DEFINICIÓN DE REQUERIMIENTO S DEL PROYECTO /PRODUCTO: DESCRIPCIÓN DE REQUERIMIENTOS 
+FUNCIONALES, NO  FUNCIONALES, DE CALIDAD, TECNOLOGICOS, DE RENDIMIENTO, ETC. DEBEN 
+INCLUIRSE:  
+▪ MINUTAS DE REUNIÓN, 
+• PROTOTIPOS DE INTERFAZ GRÁFICA, 
+• ESPECIFICACIÓN DE REQUERIMIENTOS. 
+ 
+6 - ALCANCE: DE ACUERDO A LA ESPECIFICACION DE REQUERIMIENTOS, EXPLICITAR QUE FUNCIONALIDAD 
+SE INCLUYE Y CUAL SE EXCLUYE. 
+ 
+▪ INCLUSIONES: FUNCIONALIDAD QUE EL PRODUCTO DEBE POSEER. 
+ 
+▪ EXCLUSIONES: FUNCIONALIDAD DETECTADA QUE EL PRODUCTO NO POSEERA  (al menos en la 
+versión actual). 
+ 
+7 – REGISTRO DE INTERESADOS: IDENTIFICAR CON NOMBRE, ORGANIZACIÓN, LOCALIZACIÓN Y ROL EN 
+EL PROYECTO A CADA INTERESADO. ADEMÁS, DEBERÁ EVALUAR SUS EXPECTATIVAS PRINCIPALES, 
+INFLUENCIA POTENCIAL, Y FASE DE MAYOR INTERES. FINALMENTE, CLASIFICARLOS EN INTERNO / 
+EXTERNO, Y SI REPRESENTA UN APOYO / NEUTRAL / OPOSITOR.  
+ 
+8 - CRONOGRAMA DE HITOS DEL PROYECTO:  DISTRIBUCIÓN DE TIEMPOS DE LOS PRODUCTOS 
+ENTREGABLES INTERMEDIOS Y FINALES QUE SE GENERARÁN EN CADA FASE DEL PROYECTO.  
+ 
+9 - CRITERIOS DE ACEPTACIÓN DEL PRODUCTO: ESPECIFICACIONES DE RENDIMIENTO, TECNOLOGIA, 
+FUNCIONALIDAD QUE DEBEN CUMPLIRSE PARA QUE SE ACEPTE EL PRODUCTO DEL PROYECTO (esto puede 
+especificarse en cada requerimiento). 
+ 
+10 - SUPUESTOS DEL PROYECTO: FACTORES QUE PARA PROPÓSITOS DE LA PLANIFICACIÓN DEL PROYECTO 
+SE CONSIDERAN VERDADEROS. 
+ 
+11 - RESTRICCIONES DEL PROYECTO: FACTORES QUE LIMITAN EL RENDIMIENTO DEL PROYECTO, O DE UN 
+PROCESO DEL PROYECTO. PUEDEN APLICAR A LOS OBJETIVOS DEL PROYECTO O A LOS RECURSOS QUE SE 
+EMPLEAN EN EL PROYECTO. 
+ 
+12 – ITERACIONES DEL PROYECTO: DE ACUERDO A LA METODOLOGÍA, MARCO DE TRABAJO,  O PROCESO 
+DE DESARROLLO QUE GUÍA LA CONSTRUCCIÓN DEL PRODUCTO DE SOFTWARE ; Y  BASANDOSE EN LA 
+ESPECIFICACION DE REQUERIMIENTOS OBTENIDA, DEFINIR LAS ITERACIONES DEL PROYECTO.  
+ 
+CADA ITERACION DETERMINA UN PERÍODO DE TIEMPO DURANTE EL QUE SE TRABAJARÁ SOBRE UN 
+REQUERIMIENTO O CONJUNTO DE REQUERIMIENTOS CON EL FIN DE OBTENER UNA VERSIÓN EJECUTABLE 
+DEL PRODUCTO QUE SATISFACE DICHOS REQUERIMIENTOS Y EN CONSECUENCIA EL LOGRO PARCIAL O 
+TOTAL DE LOS OBJETIVOS DEL PROYECTO. 
+ 
+TOMANDO UNA ITERACION QUE TENGA COMO REFERENCIA UN REQUERIMIENTO “CORE” DE SU  
+PROYECTO (requerimiento de núcleo, principal, no trivial, que describe un proceso complejo,  que tiene 
+reglas de negocios a validar  y que satisface total o parcialmente los objetivos planteados) DESARROLLAR 
+LOS SIGUIENTES ARTEFACTOS PARA LA ITERACIÓN: 
+ 
+1. ESPECIFICACION DE REQUERIMIENTO “CORE” 
+2. GUION DE LA INTERFAZ DE USUARIO (prototipos de interfaz gráfica) 
+3. ANALISIS DE REQUISITOS 
+3.1. MODELO DE CASOS DE USO 
+3.1.1. DIAGRAMAS DE CASO DE USO  (explicitar relaciones de extensión e inclusión 
+si las hubiere) 
+3.1.2. ESPECIFICACION DE CASO DE USO (detallada) 
+===== PAGE 3 =====
+ 
+Página 3 de 4 
+ 
+3.2. MODELO DE DOMINIO 
+3.2.1. DIAGRAMA DE DOMINIO CONCEPTUAL DEL PROBLEMA  (conceptos 
+relacionados) 
+4. ANALISIS DEL DISEÑO PRELIMINAR 
+4.1.1. DIAGRAMAS DE ROBUSTEZ (opcional metodología ICONIX). 
+4.1.2. DIAGRAMA DE DOMINIO ACTUALIZADO  (con atributos, relaciones, y 
+multiplicidad) 
+5. DISEÑO DETALLADO 
+5.1. DIAGRAMA DE SECUENCIAS (explicitando la arquitectura de la aplicación) 
+5.2. DIAGRAMA DE CLASES (con atributos, métodos, relaciones, y multiplicidad) 
+6. IMPLEMENTACION 
+6.1. CODIGO 
+6.2. PERSISTENCIA (modelo de datos especificando cardinalidad de las relaciones, 
+claves primarias y foráneas) 
+ 
+SUGERENCIA: SI FUERA POSIBLE, ESPECIFICAR EL PROCESO DE NEGOCIO RELACIONADO CON EL 
+REQUERIMIENTO “CORE” REPRESENTANDOLO CON EL SIGUIENTE ARTEFACTO: 
+▪ DIAGRAMA DE TRANSICION DE ESTADOS  (describir las reglas de negocio que se deben 
+cumplir en cada transición de estados con una nota asociada a la transición).  
+ 
+13 - REPORTES / INDICADORES / ESTADÍSTICAS: EL PRODUCTO DE SOFTWARE DEBE CONTAR CON  AL 
+MENOS UN REPORTE, INDICADOR, ESTADISTICA, QUE CRUCE DATOS PARA OBTENER INFORMACIÓN QUE 
+AGREGUE VALOR A UN ACTOR DEL SISTEMA Y LO ASISTA EN LA TOMA DE DECISIONES.  DEBE HABER AL 
+MENOS UN REPORTE QUE CONTENGA UN GRAFICO Y RESUMA INFORMACIÓN. 
+14 – MANUALES E INSTRUCTIVOS: REALIZAR UN INSTRUCTIVO DE USO  SOBRE EL REQUERIMIENTO 
+“CORE” PARA EL USUARIO FINAL DE LA APLICACIÓN.  PUEDE UTILIZARSE SOFTWARE DE TERCEROS EN LA 
+ELABORACIÓN DE TUTORIALES, VIDEOS, E INSTRUCTIVOS. 
+15 – ANEXOS: CONSIDERANDO LAS ACTIVIDADES CUSTODIALES DE SU PROYECTO, DESARROLLAR LOS 
+SIGUIENTES ANEXOS: 
+ 
+15.1 - ARQUITECTURA:  DESCRIBIR EL ESTILO ARQUITECT ÓNICO DEL SOFTWARE REALIZANDO UNA 
+ABSTRACCIÓN QUE REPRESENTE Y EXPLIQUE LA ARQUITECTURA UTILIZADA. 
+EJEMPLO GENÉRICO:  el estilo arquitectónico que mejor se adapta a los requerimientos actuales del 
+proyecto, responde al estilo arquitectónico de trabajo en N capas: VISTA, CONTROLADORA, MODELO.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+15.2 - SEGURIDAD: DEBERÁ IMPLEMENTAR UN MÓDULO DE SEGURIDAD DE LA APLICACIÓN QUE PERMITA 
+GESTIONAR LOS PERMISOS DE ACCESO A LAS DIFERENTES ÁREAS DEL SISTEMA POR PARTE DE LOS 
+CONTROL
+ADORA 
+VISTA 
+ MODELO 
+Usuario 
+Url: https://sitio/pagina 
+SQL  
+SERVER 
+HTML 
+C# 
+ C# 
+1 
+2 
+4 
+3 
+5 
+6 
+7 
+===== PAGE 4 =====
+ 
+Página 4 de 4 
+ 
+USUARIOS. EL ADMINISTRADOR  DE LA SEGURIDAD  PODRÁ GESTIONAR USUARIOS, Y GRUPOS DE 
+USUARIOS,  ASIGNANDOLE PERMISOS A LOS GRUPOS Y UNO O VARIOS GRUPOS A LOS  USUARIOS. 
+POSIBLEMENTE, DEBERÁ TRABAJAR CON LOS SIGUIENTES REQUERIMIENTOS REFERIDOS A LA SEGURIDAD 
+DE APLICACIÓN:  
+▪ Iniciar Sesión. 
+▪ Cerrar Sesión. 
+▪ Gestionar Usuarios. 
+­ Agregar Usuario. 
+­ Modificar Usuario. 
+­ Eliminar Usuario. 
+­ Resetear Clave. 
+▪ Gestionar Grupos. 
+­ Agregar Grupo. 
+­ Modificar Grupo. 
+­ Eliminar Grupo. 
+▪ Cambiar Clave. 
+▪ Recuperar Clave. 
+ 
+ 
+REQUERIMIENTOS MÍNIMOS TECNICATURA UNIVERSITARIA EN PROGRAMACIÓN: 
+▪ TIPO APLICACIÓN: ESCRITORIO / WEB / MOBILE 
+▪ METODOLOGÍA: PROCESO UNIFICADO / ICONIX / SCRUM / KANBAN  
+▪ PARADIGMA: ORIENTADO A OBJETOS 
+▪ ITERACIONES: UNA ITERACION SOBRE UN REQUERIMIENTO CORE. 
+▪ PUNTOS DE LA GUÍA REQUERIDOS: 1 AL 14, ANEXOS 15.1, y 15.2. 
+ 
+CONSIDERACIONES GENERALES: 
+Para la presentación del trabajo deberá considerarse lo siguiente: 
+▪ El producto de software presentado debe estar desarrollado en forma completa, es 
+decir, toda funcionalidad de soporte a los procesos y requerimientos principales debe 
+estar desarrollada y opcionalmente documentada. 
+▪ Deberán tener en cuenta las formalidades como: portada, resumen ejecutivo, índice de 
+contenidos, encabezado y pie de página, consideraciones, aclaraciones, conclusiones y 
+bibliografía. 
+▪ La documentación deberá entregarse en formato PDF, y el código y su ejecución deberá 
+presentarse en la fecha de examen. 
+  
