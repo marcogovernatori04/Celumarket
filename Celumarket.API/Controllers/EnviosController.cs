@@ -8,7 +8,7 @@ namespace Celumarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Ventas,Soporte")]
     public class EnviosController : ControllerBase
     {
         private readonly IEnvioRepository _envioRepo;
@@ -43,6 +43,7 @@ namespace Celumarket.API.Controllers
             return Ok(resultado);
         }
 
+        [Authorize(Roles = "Admin,Soporte")]
         [HttpPut("{envioId}/despachar")]
         public async Task<IActionResult> Despachar(int envioId, [FromBody] EnvioDTOs.DespacharEnvioDTO dto)
         {
@@ -61,6 +62,7 @@ namespace Celumarket.API.Controllers
             return Ok(new { Mensaje = "Envío despachado con éxito." });
         }
 
+        [Authorize(Roles = "Admin,Soporte")]
         [HttpPut("{envioId}/entregar")]
         public async Task<IActionResult> Entregar(int envioId)
         {

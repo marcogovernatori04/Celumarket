@@ -15,7 +15,11 @@ const formatearMonto = (monto?: number) =>
 const estaDespachado = (estado?: string) =>
 	(estado ?? "").trim().toLowerCase().includes("despach");
 
-export const AdminEnviosPanel = () => {
+type AdminEnviosPanelProps = {
+	puedeGestionar?: boolean;
+};
+
+export const AdminEnviosPanel = ({ puedeGestionar = false }: AdminEnviosPanelProps) => {
 	const [envios, setEnvios] = useState<AdminEnvioItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -220,26 +224,33 @@ export const AdminEnviosPanel = () => {
 															{despachado ? (
 																<span className="text-xs font-semibold text-[#0f766e]">Ya despachado</span>
 															) : (
-																<div className="flex max-w-[420px] items-center gap-2">
-																	<input
-																		value={codigoSeguimientoPorEnvio[envio.envioId] ?? ""}
-																		onChange={(e) =>
-																			setCodigoSeguimientoPorEnvio((prev) => ({
-																				...prev,
-																				[envio.envioId]: e.target.value,
-																			}))
-																		}
-																		placeholder="Código seguimiento"
-																		className={`${twBase.miniInput} min-w-0 flex-1`}
-																	/>
-																	<button
-																		disabled={procesandoEnvioId === envio.envioId}
-																		onClick={() => void despacharEnvio(envio)}
-																		className={twBase.actionBtnPrimary}
-																	>
-																		Despachar
-																	</button>
-																</div>
+																<>
+																	{!puedeGestionar && (
+																		<p className={twAdmin.adminHintText}>
+																			Modo lectura: este rol no puede despachar envíos.
+																		</p>
+																	)}
+																	<div className="flex max-w-[420px] items-center gap-2">
+																		<input
+																			value={codigoSeguimientoPorEnvio[envio.envioId] ?? ""}
+																			onChange={(e) =>
+																				setCodigoSeguimientoPorEnvio((prev) => ({
+																					...prev,
+																					[envio.envioId]: e.target.value,
+																				}))
+																			}
+																			placeholder="Código seguimiento"
+																			className={`${twBase.miniInput} min-w-0 flex-1`}
+																		/>
+																		<button
+																			disabled={!puedeGestionar || procesandoEnvioId === envio.envioId}
+																			onClick={() => void despacharEnvio(envio)}
+																			className={twBase.actionBtnPrimary}
+																		>
+																			Despachar
+																		</button>
+																	</div>
+																</>
 															)}
 														</div>
 													</td>

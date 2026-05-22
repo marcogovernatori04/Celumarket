@@ -6,7 +6,7 @@ const formatearFecha = (raw?: string) => {
 	if (!raw) return "—";
 	const d = new Date(raw);
 	if (Number.isNaN(d.getTime())) return "—";
-	return d.toLocaleString("es-AR");
+	return d.toLocaleDateString("es-AR");
 };
 
 const estaFechaVencida = (raw?: string) => {
@@ -23,9 +23,21 @@ const formatearTipoEnvio = (tipoEnvio?: number) => {
 	return "—";
 };
 
-export const AdminPedidosPanel = () => {
+type AdminPedidosPanelProps = {
+	puedeMarcarPagado?: boolean;
+	puedeCancelar?: boolean;
+	puedeDespachar?: boolean;
+	filtroInicial?: "todos" | "pendiente" | "pagado" | "cancelado";
+};
+
+export const AdminPedidosPanel = ({
+	puedeMarcarPagado = false,
+	puedeCancelar = false,
+	puedeDespachar = false,
+	filtroInicial = "todos",
+}: AdminPedidosPanelProps) => {
 	const [pedidos, setPedidos] = useState<AdminPedidoItem[]>([]);
-	const [filtroEstado, setFiltroEstado] = useState<"todos" | "pendiente" | "pagado" | "cancelado">("todos");
+	const [filtroEstado, setFiltroEstado] = useState<"todos" | "pendiente" | "pagado" | "cancelado">(filtroInicial);
 	const [busqueda, setBusqueda] = useState("");
 	const [expandidoId, setExpandidoId] = useState<number | null>(null);
 	const [detallePorId, setDetallePorId] = useState<Record<number, AdminPedidoDetalle>>({});
@@ -82,6 +94,10 @@ export const AdminPedidosPanel = () => {
 	useEffect(() => {
 		void cargarPedidos();
 	}, []);
+
+	useEffect(() => {
+		setFiltroEstado(filtroInicial);
+	}, [filtroInicial]);
 
 	const toggleDetalle = async (pedidoId: number) => {
 		if (expandidoId === pedidoId) {
@@ -158,14 +174,14 @@ export const AdminPedidosPanel = () => {
 		}
 	};
 
-	const puedeMarcarPagado = (detalle: AdminPedidoDetalle) => {
+	const puedeMarcarPagadoPedido = (detalle: AdminPedidoDetalle) => {
 		const metodo = (detalle.metodoPago ?? "").trim().toLowerCase();
 		const esTransferencia = metodo.includes("transferencia");
 		const vencido = estaFechaVencida(detalle.fechaVencimiento);
 		return esTransferencia && !estaPagado(detalle.estado) && !estaCancelado(detalle.estado) && !vencido;
 	};
 
-	const puedeDespachar = (detalle: AdminPedidoDetalle) => estaPagado(detalle.estado);
+	const puedeDespacharPedido = (detalle: AdminPedidoDetalle) => estaPagado(detalle.estado);
 
 	if (loading) {
 		return (
@@ -280,20 +296,25 @@ export const AdminPedidosPanel = () => {
 																)}
 															</div>
 															<div className="flex flex-wrap items-center gap-2 border-t border-[#dbe4ef] pt-3">
-																{detallePorId[pedido.id] && !puedeMarcarPagado(detallePorId[pedido.id]) && (
+																{!puedeMarcarPagado && !puedeCancelar && !puedeDespachar && (
+																	<p className={twAdmin.adminHintText}>
+																		Modo lectura: este rol no puede modificar pedidos.
+																	</p>
+																)}
+																{detallePorId[pedido.id] && !puedeMarcarPagadoPedido(detallePorId[pedido.id]) && (
 																	<p className={twAdmin.adminHintText}>
 																		Marcar pagado: solo transferencia pendiente y dentro de plazo.
 																	</p>
 																)}
 																<button
-																	disabled={procesandoPedidoId === pedido.id || !detallePorId[pedido.id] || !puedeMarcarPagado(detallePorId[pedido.id])}
+																	disabled={!puedeMarcarPagado || procesandoPedidoId === pedido.id || !detallePorId[pedido.id] || !puedeMarcarPagadoPedido(detallePorId[pedido.id])}
 																	onClick={() => void marcarPagado(pedido.id)}
 																	className={twBase.actionBtnNeutral}
 																>
 																	Marcar pagado
 																</button>
 																<button
-																	disabled={procesandoPedidoId === pedido.id || !!detallePorId[pedido.id] && estaPagado(detallePorId[pedido.id].estado)}
+																	disabled={!puedeCancelar || procesandoPedidoId === pedido.id || !!detallePorId[pedido.id] && estaPagado(detallePorId[pedido.id].estado)}
 																	onClick={() => void cancelarPedido(pedido.id)}
 																	className={twBase.actionBtnDanger}
 																>
@@ -309,16 +330,17 @@ export const AdminPedidosPanel = () => {
 																/>
 																<button
 																	disabled={
+																		!puedeDespachar ||
 																		procesandoPedidoId === pedido.id ||
 																		!detallePorId[pedido.id] ||
-																		!puedeDespachar(detallePorId[pedido.id])
+																		!puedeDespacharPedido(detallePorId[pedido.id])
 																	}
 																	onClick={() => void despacharPedido(pedido.id)}
 																	className={twBase.actionBtnPrimary}
 																>
 																	Despachar
 																</button>
-																{detallePorId[pedido.id] && !puedeDespachar(detallePorId[pedido.id]) && (
+																{detallePorId[pedido.id] && !puedeDespacharPedido(detallePorId[pedido.id]) && (
 																	<p className={twAdmin.adminHintText}>
 																		Despachar: solo disponible cuando el pedido está pagado.
 																	</p>

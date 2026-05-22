@@ -15,6 +15,7 @@ type DetalleInfoPrincipalProps = {
 	mostrarInfoTecnica?: boolean;
 	umbralEnvioGratis?: number;
 	descuentoTransferencia?: number;
+	mostrarAccionCompra?: boolean;
 };
 
 export const DetalleInfoPrincipal = ({
@@ -30,6 +31,7 @@ export const DetalleInfoPrincipal = ({
 	mostrarInfoTecnica = true,
 	umbralEnvioGratis = 499999,
 	descuentoTransferencia = 10,
+	mostrarAccionCompra = true,
 }: DetalleInfoPrincipalProps) => {
 	return (
 		<div>
@@ -80,12 +82,14 @@ export const DetalleInfoPrincipal = ({
 				onSelectColor={onSelectColor}
 			/>
 
-			<button
-				onClick={onAgregarAlCarrito}
-				className={`${twBase.primaryBtnMd} mt-4 h-11 w-full text-sm`}
-			>
-				Agregar al carrito
-			</button>
+			{mostrarAccionCompra && (
+				<button
+					onClick={onAgregarAlCarrito}
+					className={`${twBase.primaryBtnMd} mt-4 h-11 w-full text-sm`}
+				>
+					Agregar al carrito
+				</button>
+			)}
 		</div>
 	);
 };

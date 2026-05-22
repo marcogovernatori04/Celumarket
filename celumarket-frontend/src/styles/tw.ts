@@ -68,8 +68,8 @@ export const twLayout = {
 	pageShell: "min-h-screen bg-[#f5f5f5] flex flex-col",
 	pageSection: "mx-auto w-full max-w-4xl flex-1 px-6 py-10",
 	cardSoft: "rounded-lg border border-[#dfe5eb] bg-white p-5 shadow-sm",
-	adminShell: "mx-auto h-[calc(100dvh-72px)] w-full max-w-[1280px] overflow-hidden px-6 py-6",
-	adminContentCard: "min-h-0 overflow-hidden rounded-xl border border-black/10 bg-white p-6 shadow-[0_4px_14px_rgba(0,0,0,0.06)]",
+	adminShell: "h-[calc(100dvh-72px)] w-full overflow-hidden px-5 py-6 lg:px-7 lg:py-7",
+	adminContentCard: "min-h-0 overflow-hidden rounded-xl border border-black/10 bg-white p-5 shadow-[0_4px_14px_rgba(0,0,0,0.06)] lg:p-6",
 };
 
 export const twCarrito = {

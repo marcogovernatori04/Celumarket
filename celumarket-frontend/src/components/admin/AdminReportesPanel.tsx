@@ -6,10 +6,25 @@ import {
 	type StockCriticoReporte,
 	type TopVendidoReporte,
 } from "../../services/reportesService";
+import {
+	CartesianGrid,
+	Legend,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
 import type { AdminSectionKey } from "./AdminSidebar";
 import { twAdmin, twBase } from "../../styles/tw";
 
 const formatearMonto = (monto: number) => `$${monto.toLocaleString("es-AR")}`;
+const formatearMontoCorto = (monto: number) => {
+	if (monto >= 1_000_000) return `$${(monto / 1_000_000).toFixed(1)}M`;
+	if (monto >= 1_000) return `$${(monto / 1_000).toFixed(0)}k`;
+	return `$${monto.toLocaleString("es-AR")}`;
+};
 const formatearFecha = (raw: string) => {
 	const d = new Date(raw);
 	if (Number.isNaN(d.getTime())) return "—";
@@ -19,9 +34,10 @@ const hoy = new Date();
 
 type AdminReportesPanelProps = {
 	onIrASeccion?: (seccion: AdminSectionKey) => void;
+	onIrAPedidosConFiltro?: (filtro: "todos" | "pendiente" | "pagado" | "cancelado") => void;
 };
 
-export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) => {
+export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: AdminReportesPanelProps) => {
 	const [dashboard, setDashboard] = useState<DashboardReporte | null>(null);
 	const [topVendidos, setTopVendidos] = useState<TopVendidoReporte[]>([]);
 	const [stockCritico, setStockCritico] = useState<StockCriticoReporte[]>([]);
@@ -91,6 +107,16 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 		totalEnvio: facturacionMes.reduce((acc, it) => acc + it.totalEnvio, 0),
 		totalPedidos: facturacionMes.reduce((acc, it) => acc + it.cantidadPedidos, 0),
 	}), [facturacionMes]);
+	const serieFacturacion30d = useMemo(
+		() =>
+			facturacion30d.map((item) => ({
+				fecha: formatearFecha(item.fecha),
+				totalFacturado: item.totalFacturado,
+				totalProductos: item.totalProductos,
+				totalEnvio: item.totalEnvio,
+			})),
+		[facturacion30d],
+	);
 
 	if (loading) {
 		return (
@@ -114,57 +140,63 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 
 			{error && <p className="mt-3 text-red-600">{error}</p>}
 
-			<div className="mt-5 min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1">
-				<div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-					<KpiCard titulo="Clientes" valor={dashboard?.totalClientes ?? 0} onClick={() => onIrASeccion?.("usuarios")} />
-					<KpiCard titulo="Pedidos pendientes" valor={dashboard?.pedidosPendientes ?? 0} onClick={() => onIrASeccion?.("pedidos")} />
-					<KpiCard titulo="Productos sin stock" valor={dashboard?.productosSinStock ?? 0} onClick={() => onIrASeccion?.("celulares")} />
-					<KpiCard titulo="Total pedidos" valor={dashboard?.totalPedidos ?? 0} onClick={() => onIrASeccion?.("pedidos")} />
+			<div className="mt-3 min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1">
+				<div className="w-full">
+				<div className="grid grid-cols-1 gap-2.5 md:grid-cols-3">
 					<KpiCard titulo="Recaudación productos" valor={formatearMonto(dashboard?.recaudacionProductos ?? 0)} />
 					<KpiCard titulo="Cobrado por envíos" valor={formatearMonto(dashboard?.recaudacionEnvios ?? 0)} />
 					<KpiCard titulo="Recaudación bruta" valor={formatearMonto(dashboard?.recaudacionTotal ?? 0)} />
 				</div>
-
-				<div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
-					<FacturacionCard
-						titulo="Facturación últimos 30 días"
-						resumen={`Pedidos: ${resumen30d.totalPedidos} · Productos: ${formatearMonto(resumen30d.totalProductos)} · Envío: ${formatearMonto(resumen30d.totalEnvio)} · Total: ${formatearMonto(resumen30d.totalFacturado)}`}
-						items={facturacion30d}
-					/>
-					<div className={twBase.panel}>
-						<div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3">
-							<div>
-								<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Facturación por mes</h3>
-								<p className="text-xs text-[#5b6673]">Pedidos: {resumenMes.totalPedidos} · Productos: {formatearMonto(resumenMes.totalProductos)} · Envío: {formatearMonto(resumenMes.totalEnvio)} · Total: {formatearMonto(resumenMes.totalFacturado)}</p>
-							</div>
-							<div className="flex items-center gap-2">
-								<input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} className={`${twBase.miniInput} w-24`} />
-								<input type="number" min={1} max={12} value={mes} onChange={(e) => setMes(Number(e.target.value))} className={`${twBase.miniInput} w-16`} />
-								<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
-							</div>
-						</div>
-						<div className={twBase.scrollArea}>
-							{facturacionMes.length === 0 ? (
-								<p className="px-4 py-8 text-center text-[#64748b]">Sin facturación para ese período.</p>
-							) : (
-								facturacionMes.map((item, idx) => (
-									<div key={`${item.fecha}-${idx}`} className={twBase.listRow3}>
-										<p className="font-semibold text-[#001830]">{formatearFecha(item.fecha)}</p>
-										<p className="text-[#334155]">{item.cantidadPedidos} pedidos</p>
-										<p className="justify-self-end font-semibold text-[#001830]">{formatearMonto(item.totalFacturado)}</p>
-									</div>
-								))
-							)}
-						</div>
-					</div>
+				<div className="my-2.5 h-px w-full bg-[#d9e1ea]" />
+				<div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:grid-cols-4">
+					<KpiCard titulo="Clientes" valor={dashboard?.totalClientes ?? 0} onClick={() => onIrASeccion?.("usuarios")} />
+					<KpiCard titulo="Pedidos pendientes" valor={dashboard?.pedidosPendientes ?? 0} onClick={() => onIrAPedidosConFiltro?.("pendiente")} />
+					<KpiCard titulo="Productos sin stock" valor={dashboard?.productosSinStock ?? 0} onClick={() => onIrASeccion?.("celulares")} />
+					<KpiCard titulo="Total pedidos" valor={dashboard?.totalPedidos ?? 0} onClick={() => onIrASeccion?.("pedidos")} />
 				</div>
 
-				<div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
-					<section className={twBase.panel}>
+				<div className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-2">
+					<div className="min-w-0">
+						<FacturacionCard
+							titulo="Facturación últimos 30 días"
+							resumen={`Pedidos: ${resumen30d.totalPedidos} · Productos: ${formatearMonto(resumen30d.totalProductos)} · Envío: ${formatearMonto(resumen30d.totalEnvio)} · Total: ${formatearMonto(resumen30d.totalFacturado)}`}
+							items={facturacion30d}
+							serie={serieFacturacion30d}
+						/>
+					</div>
+					<div className="min-w-0 space-y-3">
+						<div className={twBase.panel}>
+							<div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3">
+								<div>
+									<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Facturación por mes</h3>
+									<p className="text-xs text-[#5b6673]">Pedidos: {resumenMes.totalPedidos} · Productos: {formatearMonto(resumenMes.totalProductos)} · Envío: {formatearMonto(resumenMes.totalEnvio)} · Total: {formatearMonto(resumenMes.totalFacturado)}</p>
+								</div>
+								<div className="flex items-center gap-2">
+									<input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} className={`${twBase.miniInput} w-24`} />
+									<input type="number" min={1} max={12} value={mes} onChange={(e) => setMes(Number(e.target.value))} className={`${twBase.miniInput} w-16`} />
+									<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
+								</div>
+							</div>
+							<div className="max-h-[180px] overflow-y-auto overflow-x-hidden divide-y divide-black/10">
+								{facturacionMes.length === 0 ? (
+									<p className="px-4 py-8 text-center text-[#64748b]">Sin facturación para ese período.</p>
+								) : (
+									facturacionMes.map((item, idx) => (
+										<div key={`${item.fecha}-${idx}`} className={twBase.listRow3}>
+											<p className="font-semibold text-[#001830]">{formatearFecha(item.fecha)}</p>
+											<p className="text-[#334155]">{item.cantidadPedidos} pedidos</p>
+											<p className="justify-self-end font-semibold text-[#001830]">{formatearMonto(item.totalFacturado)}</p>
+										</div>
+									))
+								)}
+							</div>
+						</div>
+
+						<section className={twBase.panel}>
 						<div className={twBase.panelHeader}>
 							<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Top 5 vendidos</h3>
 						</div>
-						<div className={`min-w-0 ${twBase.rowDivider}`}>
+						<div className="min-w-0 divide-y divide-black/10">
 							{topVendidos.length === 0 ? (
 								<p className="px-4 py-8 text-center text-[#64748b]">Sin ventas pagadas todavía.</p>
 							) : (
@@ -177,9 +209,9 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 								))
 							)}
 						</div>
-					</section>
+						</section>
 
-					<section className={twBase.panel}>
+						<section className={twBase.panel}>
 						<div className="flex items-center justify-between gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3">
 							<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Stock crítico</h3>
 							<div className="flex items-center gap-2">
@@ -188,7 +220,7 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 								<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
 							</div>
 						</div>
-						<div className={twBase.scrollArea}>
+						<div className="min-w-0 divide-y divide-black/10">
 							{stockCritico.length === 0 ? (
 								<p className="px-4 py-8 text-center text-[#64748b]">No hay variaciones bajo el umbral.</p>
 							) : (
@@ -201,7 +233,9 @@ export const AdminReportesPanel = ({ onIrASeccion }: AdminReportesPanelProps) =>
 								))
 							)}
 						</div>
-					</section>
+						</section>
+					</div>
+				</div>
 				</div>
 			</div>
 		</div>
@@ -214,10 +248,10 @@ const KpiCard = ({ titulo, valor, onClick }: { titulo: string; valor: number | s
 		tabIndex={onClick ? 0 : undefined}
 		onClick={onClick}
 		onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(); } : undefined}
-		className={`min-w-0 rounded-xl border border-black/10 bg-white px-4 py-3 ${onClick ? "cursor-pointer transition-colors hover:bg-[#f8fbff]" : ""}`}
+		className={`min-w-0 rounded-xl border border-black/10 bg-white px-3 py-2 ${onClick ? "cursor-pointer transition-colors hover:bg-[#f8fbff]" : ""}`}
 	>
-		<p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#64748b]">{titulo}</p>
-		<p className="mt-1 break-words text-[clamp(1.1rem,2vw,1.75rem)] font-bold leading-tight text-[#001830]">{valor}</p>
+		<p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#64748b]">{titulo}</p>
+		<p className="mt-0.5 break-words text-[clamp(0.95rem,1.4vw,1.25rem)] font-bold leading-tight text-[#001830]">{valor}</p>
 	</div>
 );
 
@@ -225,17 +259,41 @@ const FacturacionCard = ({
 	titulo,
 	resumen,
 	items,
+	serie,
 }: {
 	titulo: string;
 	resumen: string;
 	items: FacturacionDiariaReporte[];
+	serie: Array<{
+		fecha: string;
+		totalFacturado: number;
+		totalProductos: number;
+		totalEnvio: number;
+	}>;
 }) => (
 	<div className="min-w-0 rounded-xl border border-black/10 bg-white">
-		<div className="border-b border-black/10 bg-[#eef3f8] px-4 py-3">
+		<div className="border-b border-black/10 bg-[#eef3f8] px-3 py-2">
 			<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">{titulo}</h3>
 			<p className="text-xs text-[#5b6673]">{resumen}</p>
 		</div>
-		<div className="max-h-[300px] overflow-y-auto overflow-x-hidden divide-y divide-black/10">
+		<div className="h-[240px] border-b border-black/10 bg-white px-2 py-1.5 xl:h-[320px]">
+			<ResponsiveContainer width="100%" height="100%">
+				<LineChart data={serie} margin={{ top: 6, right: 6, left: 2, bottom: 0 }}>
+					<CartesianGrid strokeDasharray="3 3" stroke="#e6edf5" />
+					<XAxis dataKey="fecha" tick={{ fill: "#5b6673", fontSize: 9 }} />
+					<YAxis tickFormatter={formatearMontoCorto} tick={{ fill: "#5b6673", fontSize: 9 }} />
+					<Tooltip
+						formatter={(value) => formatearMonto(Number(value ?? 0))}
+						contentStyle={{ borderRadius: 10, border: "1px solid #dbe4ef" }}
+					/>
+					<Legend wrapperStyle={{ fontSize: "10px" }} />
+					<Line type="monotone" dataKey="totalFacturado" name="Total facturado" stroke="#015cb9" strokeWidth={2.2} dot={false} />
+					<Line type="monotone" dataKey="totalProductos" name="Total productos" stroke="#1e8e5a" strokeWidth={2} dot={false} />
+					<Line type="monotone" dataKey="totalEnvio" name="Total envío" stroke="#f59e0b" strokeWidth={2} dot={false} />
+				</LineChart>
+			</ResponsiveContainer>
+		</div>
+		<div className="max-h-[110px] overflow-y-auto overflow-x-hidden divide-y divide-black/10">
 			{items.length === 0 ? (
 				<p className="px-4 py-8 text-center text-[#64748b]">Sin datos para mostrar.</p>
 			) : (

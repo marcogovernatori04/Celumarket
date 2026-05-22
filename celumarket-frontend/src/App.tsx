@@ -29,13 +29,15 @@ function App() {
 	const location = useLocation();
 	const [estaLogueado, setEstaLogueado] = useState(authService.estaLogueado());
 	const [esAdmin, setEsAdmin] = useState(authService.esAdmin());
+	const [esInterno, setEsInterno] = useState(authService.esInterno());
+	const [rolUsuario, setRolUsuario] = useState<string | null>(authService.obtenerRolActual());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
 	const [carritoCantidad, setCarritoCantidad] = useState(0);
 	const [toastCarrito, setToastCarrito] = useState<string | null>(null);
 	const [pedidoConfirmadoId, setPedidoConfirmadoId] = useState<number | null>(null);
 
 	const recargarCarritoCantidad = async () => {
-		if (!estaLogueado || esAdmin) {
+		if (!estaLogueado || !authService.esCliente()) {
 			setCarritoCantidad(0);
 			return;
 		}
@@ -53,12 +55,18 @@ function App() {
 			if (!estaLogueado) {
 				setNombreCliente(null);
 				setEsAdmin(false);
+				setEsInterno(false);
+				setRolUsuario(null);
 				return;
 			}
-			const admin = authService.esAdmin();
+			const rol = authService.obtenerRolActual();
+			const admin = rol === "Admin";
+			const interno = rol === "Admin" || rol === "Ventas" || rol === "Soporte";
+			setRolUsuario(rol);
 			setEsAdmin(admin);
-			if (admin) {
-				setNombreCliente("Admin");
+			setEsInterno(interno);
+			if (interno) {
+				setNombreCliente(rol ?? "Interno");
 				return;
 			}
 			try {
@@ -70,6 +78,8 @@ function App() {
 				setEstaLogueado(false);
 				setNombreCliente(null);
 				setEsAdmin(false);
+				setEsInterno(false);
+				setRolUsuario(null);
 				navigate("/login", { replace: true });
 			}
 		};
@@ -80,6 +90,8 @@ function App() {
 		const handleUnauthorized = () => {
 			setEstaLogueado(false);
 			setEsAdmin(false);
+			setEsInterno(false);
+			setRolUsuario(null);
 			setNombreCliente(null);
 			navigate("/login", { replace: true });
 		};
@@ -89,7 +101,7 @@ function App() {
 
 	useEffect(() => {
 		void recargarCarritoCantidad();
-	}, [estaLogueado, esAdmin, location.pathname]);
+	}, [estaLogueado, esInterno, location.pathname]);
 
 	useEffect(() => {
 		if (location.pathname.startsWith("/celulares/")) {
@@ -128,6 +140,8 @@ function App() {
 					enTienda={enTienda}
 					estaLogueado={estaLogueado}
 					esAdmin={esAdmin}
+					esInterno={esInterno}
+					rolUsuario={rolUsuario}
 					nombreCliente={nombreCliente}
 					carritoCantidad={carritoCantidad}
 					onIrATienda={() => navigate("/catalogo")}
@@ -137,11 +151,13 @@ function App() {
 					onVerPerfil={() => navigate("/mi-perfil")}
 					onVerMisPedidos={() => navigate("/mis-pedidos")}
 					onCambiarClave={() => navigate("/cambiar-clave")}
-					onIrACarrito={() => navigate(estaLogueado && !esAdmin ? "/carrito" : "/login")}
+					onIrACarrito={() => navigate(estaLogueado && authService.esCliente() ? "/carrito" : "/login")}
 					onLogout={() => {
 						authService.logout();
 						setEstaLogueado(false);
 						setEsAdmin(false);
+						setEsInterno(false);
+						setRolUsuario(null);
 						navigate("/");
 					}}
 				/>
@@ -170,9 +186,13 @@ function App() {
 							<Login
 								onLoginExitoso={() => {
 									setEstaLogueado(true);
-									const admin = authService.esAdmin();
+									const rol = authService.obtenerRolActual();
+									const admin = rol === "Admin";
+									const interno = rol === "Admin" || rol === "Ventas" || rol === "Soporte";
 									setEsAdmin(admin);
-									navigate(admin ? "/admin" : "/carrito");
+									setEsInterno(interno);
+									setRolUsuario(rol);
+									navigate(interno ? "/admin" : "/carrito");
 								}}
 							/>
 						}
@@ -180,7 +200,7 @@ function App() {
 					<Route
 						path="/carrito"
 						element={
-							!estaLogueado || esAdmin ? (
+							!estaLogueado || !authService.esCliente() ? (
 								<Navigate to="/login" replace />
 							) : (
 								<Carrito
@@ -195,17 +215,17 @@ function App() {
 					/>
 					<Route
 						path="/checkout"
-						element={!estaLogueado || esAdmin ? <Navigate to="/login" replace /> : <CheckoutRoute onCompraConfirmada={(pedidoId) => {
+						element={!estaLogueado || !authService.esCliente() ? <Navigate to="/login" replace /> : <CheckoutRoute onCompraConfirmada={(pedidoId) => {
 							setPedidoConfirmadoId(pedidoId);
 							void recargarCarritoCantidad();
 							navigate("/compra-confirmada");
 						}} onVolverCarrito={() => navigate("/carrito")} />}
 					/>
-					<Route path="/admin" element={esAdmin ? <AdminPanel /> : <Navigate to="/login" replace />} />
-					<Route path="/cambiar-clave" element={<CambiarClave onVolver={() => navigate("/")} />} />
-					<Route path="/mi-perfil" element={<MiPerfil />} />
-					<Route path="/mis-pedidos" element={<MisPedidos onVerDetalle={(pedidoId) => navigate(`/mis-pedidos/${pedidoId}`)} />} />
-					<Route path="/mis-pedidos/:pedidoId" element={<DetallePedidoRoute onVolver={() => navigate("/mis-pedidos")} />} />
+					<Route path="/admin" element={esInterno ? <AdminPanel rol={rolUsuario} /> : <Navigate to="/login" replace />} />
+					<Route path="/cambiar-clave" element={authService.esCliente() ? <CambiarClave onVolver={() => navigate("/")} /> : <Navigate to="/admin" replace />} />
+					<Route path="/mi-perfil" element={authService.esCliente() ? <MiPerfil /> : <Navigate to="/admin" replace />} />
+					<Route path="/mis-pedidos" element={authService.esCliente() ? <MisPedidos onVerDetalle={(pedidoId) => navigate(`/mis-pedidos/${pedidoId}`)} /> : <Navigate to="/admin" replace />} />
+					<Route path="/mis-pedidos/:pedidoId" element={authService.esCliente() ? <DetallePedidoRoute onVolver={() => navigate("/mis-pedidos")} /> : <Navigate to="/admin" replace />} />
 					<Route
 						path="/compra-confirmada"
 						element={<CompraConfirmada pedidoId={pedidoConfirmadoId} onVerMisPedidos={() => navigate("/mis-pedidos")} onIrATienda={() => navigate("/catalogo")} />}

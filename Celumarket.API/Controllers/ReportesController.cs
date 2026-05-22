@@ -16,7 +16,7 @@ namespace Celumarket.API.Controllers
             _reportesRepo = reportesRepo;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("top-vendidos")]
         public async Task<IActionResult> ObtenerTopVendidos()
         {
@@ -24,7 +24,7 @@ namespace Celumarket.API.Controllers
             return Ok(reporte);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("stock-critico")]
         public async Task<IActionResult> ObtenerStockCritico([FromQuery] int umbral = 5)
         {
@@ -32,7 +32,7 @@ namespace Celumarket.API.Controllers
             return Ok(reporte);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("facturacion-30d")]
         public async Task<IActionResult> ObtenerFacturacion30D()
         {
@@ -40,7 +40,7 @@ namespace Celumarket.API.Controllers
             return Ok(reporte);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("facturacion-mes")]
         public async Task<IActionResult> ObtenerFacturacionPorMes(int anio, int mes)
         {
@@ -56,7 +56,7 @@ namespace Celumarket.API.Controllers
             return Ok(reporte);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("dashboard")]
         public async Task<IActionResult> ObtenerReportesBasicos()
         {

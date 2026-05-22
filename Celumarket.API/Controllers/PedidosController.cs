@@ -85,7 +85,7 @@ namespace Celumarket.API.Controllers
             });
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Soporte")]
         [HttpPut("{pedidoId}/pagar")]
         public async Task<IActionResult> ConfirmarPago(int pedidoId)
         {
@@ -151,7 +151,7 @@ namespace Celumarket.API.Controllers
             return File(contenido, "application/pdf", nombreArchivo);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("todos")]
         public async Task<IActionResult> VerTodosLosPedidos()
         {
@@ -175,7 +175,7 @@ namespace Celumarket.API.Controllers
             return Ok(resultado);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("{pedidoId}/detalle-admin")]
         public async Task<IActionResult> VerDetallePedidoAdmin(int pedidoId)
         {

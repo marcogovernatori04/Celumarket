@@ -4,6 +4,7 @@ export interface CelularListado {
 	modelo: string;
 	precioMinimo: number;
 	cantidadColores: number;
+	stockTotal: number;
 	urlImagenPrincipal: string;
 }
 

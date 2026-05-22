@@ -8,6 +8,7 @@ import { DetalleGaleria } from "../components/detalle/DetalleGaleria";
 import { DetalleInfoPrincipal } from "../components/detalle/DetalleInfoPrincipal";
 import { configuracionService } from "../services/configuracionService";
 import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
+import { authService } from "../services/authService";
 import { twBase } from "../styles/tw";
 
 type DetalleProps = {
@@ -37,6 +38,7 @@ export const DetalleCelular = ({
 		titularTransferencia: "Celumarket S.A.",
 		bancoTransferencia: "Banco Nación",
 	});
+	const esInterno = authService.esInterno();
 
 	useEffect(() => {
 		const cargar = async () => {
@@ -176,6 +178,7 @@ export const DetalleCelular = ({
 							mostrarInfoTecnica={false}
 							umbralEnvioGratis={config.umbralEnvioGratis}
 							descuentoTransferencia={config.descuentoTransferencia}
+							mostrarAccionCompra={!esInterno}
 						/>
 					</div>
 					<div className="mt-6 rounded-xl border border-[#e6ebf2] bg-[#f8fafc] p-5">

@@ -190,6 +190,7 @@ namespace Celumarket.Application.Services
                 Modelo = c.Modelo,
                 PrecioMinimo = c.Variaciones.Any() ? c.Variaciones.Min(v => v.Precio) : 0,
                 CantidadColores = c.Variaciones.Select(v => v.ColorId).Distinct().Count(),
+                StockTotal = c.Variaciones.Sum(v => v.StockDisponible),
                 UrlImagenPrincipal = c.Variaciones
                                         .OrderBy(v => v.Id)
                                         .Select(v =>

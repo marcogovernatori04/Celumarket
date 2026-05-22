@@ -57,8 +57,29 @@ export const authService = {
 		return null;
 	},
 
+	obtenerRolActual(): string | null {
+		return authService.obtenerRol(localStorage.getItem("token"));
+	},
+
 	esAdmin() {
-		return authService.obtenerRol(localStorage.getItem("token")) === "Admin";
+		return authService.obtenerRolActual() === "Admin";
+	},
+
+	esVentas() {
+		return authService.obtenerRolActual() === "Ventas";
+	},
+
+	esSoporte() {
+		return authService.obtenerRolActual() === "Soporte";
+	},
+
+	esCliente() {
+		return authService.obtenerRolActual() === "Cliente";
+	},
+
+	esInterno() {
+		const rol = authService.obtenerRolActual();
+		return rol === "Admin" || rol === "Ventas" || rol === "Soporte";
 	},
 
 	estaLogueado() {

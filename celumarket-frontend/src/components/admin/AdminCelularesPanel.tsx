@@ -483,11 +483,12 @@ export const AdminCelularesPanel = () => {
 
 			{!error && (
 				<div className={twBase.tableShell}>
-					<div className={`grid grid-cols-[110px_1.2fr_1fr_1fr_90px_100px] items-center px-4 py-3 ${twBase.tableHead}`}>
+					<div className={`grid grid-cols-[110px_1.2fr_1fr_1fr_1fr_90px_100px] items-center px-4 py-3 ${twBase.tableHead}`}>
 						<span>Imagen</span>
 						<span>Modelo</span>
 						<span>Precio base</span>
 						<span>Colores</span>
+						<span>Stock total</span>
 						<span className="text-center">Ver más</span>
 						<span className="text-center">Borrar</span>
 					</div>
@@ -497,7 +498,7 @@ export const AdminCelularesPanel = () => {
 							const expandido = expandidoId === c.id;
 							return (
 								<div key={c.id}>
-									<div className="grid grid-cols-[110px_1.2fr_1fr_1fr_90px_100px] items-center px-4 py-3">
+									<div className="grid grid-cols-[110px_1.2fr_1fr_1fr_1fr_90px_100px] items-center px-4 py-3">
 										<div className="h-20 w-20 overflow-hidden rounded-md bg-[#ececec]">
 											<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className="h-20 w-20 object-contain" />
 										</div>
@@ -511,6 +512,7 @@ export const AdminCelularesPanel = () => {
 										</div>
 										<p className="text-sm text-[#1e293b]">${c.precioMinimo.toLocaleString("es-AR")}</p>
 										<p className="text-sm text-[#1e293b]">{c.cantidadColores}</p>
+										<p className="text-sm font-semibold text-[#1e293b]">{c.stockTotal}</p>
 										<div className="flex justify-center">
 											<button
 												onClick={() => void toggleDetalle(c.id)}

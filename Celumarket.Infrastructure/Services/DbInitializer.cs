@@ -13,14 +13,13 @@ namespace Celumarket.Infrastructure.Services
     {
         public static async Task SeedAsync(CelumarketContext context, IServicioSeguridad servicioSeguridad)
         {
-            if (!await context.Roles.AnyAsync())
+            var rolesRequeridos = new[] { "Admin", "Cliente", "Ventas", "Soporte" };
+            foreach (var rolNombre in rolesRequeridos)
             {
-                context.Roles.AddRange(
-                    new Rol("Admin"),
-                    new Rol("Cliente")
-                );
-                await context.SaveChangesAsync();
+                if (!await context.Roles.AnyAsync(r => r.Nombre == rolNombre))
+                    context.Roles.Add(new Rol(rolNombre));
             }
+            await context.SaveChangesAsync();
 
             if (!await context.MetodosPago.AnyAsync())
             {
@@ -40,6 +39,30 @@ namespace Celumarket.Infrastructure.Services
 
                 var admin = new Usuario("admin@celumarket.com", passHash, rolAdmin.Id);
                 context.Usuarios.Add(admin);
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.Usuarios.AnyAsync(u => u.Email == "ventas@celumarket.com"))
+            {
+                var rolVentas = await context.Roles.FirstOrDefaultAsync(r => r.Nombre == "Ventas");
+                if (rolVentas == null)
+                    throw new InvalidOperationException("No se encontró el rol 'Ventas' para asignar al usuario interno.");
+                string passHash = servicioSeguridad.EncriptarPassword("ventas123");
+
+                var ventas = new Usuario("ventas@celumarket.com", passHash, rolVentas.Id);
+                context.Usuarios.Add(ventas);
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.Usuarios.AnyAsync(u => u.Email == "ayuda@celumarket.com"))
+            {
+                var rolSoporte = await context.Roles.FirstOrDefaultAsync(r => r.Nombre == "Soporte");
+                if (rolSoporte == null)
+                    throw new InvalidOperationException("No se encontró el rol 'Soporte' para asignar al usuario interno.");
+                string passHash = servicioSeguridad.EncriptarPassword("soporte123");
+
+                var soporte = new Usuario("ayuda@celumarket.com", passHash, rolSoporte.Id);
+                context.Usuarios.Add(soporte);
                 await context.SaveChangesAsync();
             }
 

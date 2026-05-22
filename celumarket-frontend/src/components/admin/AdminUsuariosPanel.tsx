@@ -8,6 +8,7 @@ export const AdminUsuariosPanel = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [recargando, setRecargando] = useState(false);
 	const [expandidoId, setExpandidoId] = useState<number | null>(null);
+	const [busqueda, setBusqueda] = useState("");
 
 	const cargarUsuarios = async (esRecarga = false) => {
 		if (esRecarga) setRecargando(true);
@@ -27,6 +28,30 @@ export const AdminUsuariosPanel = () => {
 	useEffect(() => {
 		void cargarUsuarios();
 	}, []);
+
+	const busquedaNormalizada = busqueda.trim().toLowerCase();
+	const usuariosFiltrados = usuarios.filter((u) => {
+		if (!busquedaNormalizada) return true;
+		const termino = busquedaNormalizada.startsWith("#")
+			? busquedaNormalizada.slice(1)
+			: busquedaNormalizada;
+
+		const tokensNombre = (u.nombreCompleto ?? "")
+			.toLowerCase()
+			.split(/\s+/)
+			.filter(Boolean);
+		const tokensEmail = (u.email ?? "")
+			.toLowerCase()
+			.split(/\s+/)
+			.filter(Boolean);
+		const telefono = (u.telefono ?? "").toLowerCase();
+
+		const nombreMatch = tokensNombre.some((token) => token.startsWith(termino));
+		const emailMatch = tokensEmail.some((token) => token.startsWith(termino));
+		const telefonoMatch = telefono.startsWith(termino);
+
+		return nombreMatch || emailMatch || telefonoMatch;
+	});
 
 	if (cargando) {
 		return (
@@ -55,8 +80,16 @@ export const AdminUsuariosPanel = () => {
 				</button>
 			</div>
 			<p className="mt-1 text-sm text-[#5b6673]">
-				Listado general de clientes registrados. Total: {usuarios.length}
+				Listado general de clientes registrados. Total: {usuariosFiltrados.length}
 			</p>
+			<div className="mt-3">
+				<input
+					value={busqueda}
+					onChange={(e) => setBusqueda(e.target.value)}
+					placeholder="Buscar por nombre, email o teléfono..."
+					className={`${twBase.searchInput} w-full max-w-[420px]`}
+				/>
+			</div>
 
 			<div className="mt-6 overflow-hidden rounded-xl border border-black/10">
 				<div className={`grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3 ${twBase.tableHead}`}>
@@ -66,12 +99,12 @@ export const AdminUsuariosPanel = () => {
 					<span className="text-center">Ver más</span>
 				</div>
 				<div className="divide-y divide-black/10 bg-white">
-					{usuarios.length === 0 ? (
+					{usuariosFiltrados.length === 0 ? (
 						<div className="px-4 py-8 text-center text-[#64748b]">
-							No hay clientes para mostrar.
+							No hay clientes para el filtro seleccionado.
 						</div>
 					) : (
-						usuarios.map((u) => (
+						usuariosFiltrados.map((u) => (
 							<div key={u.id}>
 								<div className="grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3">
 									<p className="text-base font-semibold text-[#001830]">{u.nombreCompleto}</p>

@@ -23,6 +23,7 @@ namespace Celumarket.Application.DTOs
             public string Modelo { get; set; }
             public decimal PrecioMinimo { get; set; }
             public int CantidadColores { get; set; }
+            public int StockTotal { get; set; }
             public string UrlImagenPrincipal { get; set; }
         }
 

@@ -15,10 +15,12 @@ type NavbarProps = {
 	onVerMisPedidos?: () => void;
 	carritoCantidad?: number;
 	esAdmin?: boolean;
+	esInterno?: boolean;
+	rolUsuario?: string | null;
 	onIrAAdmin?: () => void;
 };
 
-export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, onVerMisPedidos, carritoCantidad = 0, esAdmin = false, onIrAAdmin }: NavbarProps) => {
+export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onLogout, enTienda = false, estaLogueado = false, nombreCliente, onCambiarClave, onVerPerfil, onVerMisPedidos, carritoCantidad = 0, esAdmin = false, esInterno = false, rolUsuario, onIrAAdmin }: NavbarProps) => {
 	const [menuAbierto, setMenuAbierto] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,6 +37,17 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 		return () => document.removeEventListener("mousedown", handleClickFuera);
 	}, [menuAbierto]);
 
+	const textoNavegacionPrincipal = esInterno
+		? "Catálogo"
+		: enTienda
+			? "Inicio"
+			: "Tienda";
+	const accionNavegacionPrincipal = esInterno
+		? onIrATienda
+		: enTienda
+			? onIrAInicio
+			: onIrATienda;
+
 	return (
 		<nav className={twNav.navShell}>
 			<div className={twNav.navContainer}>
@@ -44,8 +57,8 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 
 			<div className="flex items-center gap-8">
 				<ul className={twNav.navLinks}>
-					<li className={twNav.navLinkItem} onClick={esAdmin ? onIrAAdmin : enTienda ? onIrAInicio : onIrATienda}>
-						{esAdmin ? "Panel admin" : enTienda ? "Inicio" : "Tienda"}
+					<li className={twNav.navLinkItem} onClick={esAdmin ? onIrAAdmin : accionNavegacionPrincipal}>
+						{esAdmin ? "Panel admin" : textoNavegacionPrincipal}
 					</li>
 					<li className={twNav.navLinkItem}>
 						Contacto
@@ -84,9 +97,9 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 							<div
 								className={`${twNav.dropdownMenu} ${menuAbierto ? "pointer-events-auto opacity-100 scale-y-100 translate-y-0" : "pointer-events-none opacity-0 scale-y-95 -translate-y-1"}`}
 							>
-								{esAdmin ? (
+								{esInterno ? (
 									<button onClick={() => { setMenuAbierto(false); onIrAAdmin?.(); }} className={twNav.dropdownItem}>
-										Panel admin
+										Panel admin{rolUsuario ? ` (${rolUsuario})` : ""}
 									</button>
 								) : (
 									<>
@@ -107,7 +120,7 @@ export const Navbar = ({ onIrATienda, onIrAInicio, onIrACarrito, onIrALogin, onL
 							</div>
 						</div>
 					)}
-					{!esAdmin && (
+					{!esInterno && (
 						<button onClick={onIrACarrito} className={twNav.navbarCartBtn}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

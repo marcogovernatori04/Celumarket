@@ -98,7 +98,7 @@ namespace Celumarket.API.Controllers
             return Ok(new { Mensaje = "Clave restablecida con éxito." });
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Ventas,Soporte")]
         [HttpGet("lista-completa")]
         public async Task<IActionResult> ObtenerTodos()
         {
