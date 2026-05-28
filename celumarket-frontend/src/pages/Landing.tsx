@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
 	TarjetaCelular,
 	type ProductoCelular,
@@ -19,6 +19,8 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 	const [productos, setProductos] = useState<ProductoCelular[]>([]);
 	const [cargando, setCargando] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [indiceDestacado, setIndiceDestacado] = useState(0);
+	const [animacionEntrada, setAnimacionEntrada] = useState<"left" | "right">("right");
 	const [config, setConfig] = useState<ConfiguracionSistema>({
 		descuentoTransferencia: 10,
 		umbralEnvioGratis: 499999,
@@ -75,24 +77,38 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 		obtenerProductos();
 	}, []);
 
+	const irAnterior = () => {
+		setAnimacionEntrada("left");
+		setIndiceDestacado((actual) =>
+			productos.length === 0 ? 0 : (actual - 1 + productos.length) % productos.length,
+		);
+	};
+
+	const irSiguiente = () => {
+		setAnimacionEntrada("right");
+		setIndiceDestacado((actual) =>
+			productos.length === 0 ? 0 : (actual + 1) % productos.length,
+		);
+	};
+
 	return (
 		<div className={`${twBase.pageLayout} flex flex-col`}>
-			<section className="bg-gradient-to-r from-[#001830] to-[#0a0a0a] text-white flex flex-col items-center justify-center py-20 px-4">
-				<h1 className="text-6xl font-bold mb-4 tracking-tight">
+			<section className="flex flex-col items-center justify-center bg-gradient-to-r from-[#001830] to-[#0a0a0a] px-4 py-14 text-white sm:px-6 sm:py-16 lg:py-20">
+				<h1 className="mb-3 text-center text-[2.35rem] font-bold tracking-tight sm:mb-4 sm:text-5xl lg:text-6xl">
 					Celumarket
 				</h1>
-				<p className="text-2xl text-gray-300 mb-8">Tu lugar móvil</p>
-				<button onClick={onIrATienda} className="bg-[#015cb9] hover:bg-[#017AF4] hover:scale-105 active:scale-100 text-white font-medium py-3 px-14 rounded-md transition-transform transition-colors duration-200 text-xl">
+				<p className="mb-7 text-lg text-gray-300 sm:mb-8 sm:text-xl lg:text-2xl">Tu lugar móvil</p>
+				<button onClick={onIrATienda} className="rounded-md bg-[#015cb9] px-10 py-3 text-lg font-medium text-white transition-transform transition-colors duration-200 hover:scale-105 hover:bg-[#017AF4] active:scale-100 sm:px-14 sm:text-xl">
 					Ir a la tienda
 				</button>
 			</section>
 
-			<div className="bg-[#015cb9] text-white text-center py-2 font-medium tracking-wide">
+			<div className="bg-[#015cb9] py-2 text-center text-sm font-medium tracking-wide text-white sm:text-base">
 				{config.textoBannerHero?.trim() || "¡Bienvenido!"}
 			</div>
 
-			<section className="py-16 px-10 bg-[#F5F5F5] flex-grow">
-				<h2 className="text-3xl font-bold text-center text-slate-900 mb-10 tracking-tight">
+			<section className="flex-grow bg-[#F5F5F5] px-4 py-10 sm:px-6 sm:py-12 lg:px-10 lg:py-16">
+				<h2 className="mb-7 text-center text-[1.75rem] font-bold tracking-tight text-slate-900 sm:mb-9 sm:text-[2rem] lg:mb-10 lg:text-3xl">
 					Destacados
 				</h2>
 
@@ -108,16 +124,40 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 				)}
 
 				{!cargando && !error && (
-					<div className="flex justify-center gap-6 flex-wrap">
-						{productos.map((prod) => (
-							<TarjetaCelular
-								key={prod.id}
-								producto={prod}
-								umbralEnvioGratis={config.umbralEnvioGratis}
-								descuentoTransferencia={config.descuentoTransferencia}
-								onClick={() => onVerDetalle?.(prod.id)}
-							/>
-						))}
+					<div className="mx-auto w-full max-w-[1240px]">
+						<div className="mx-auto grid w-full max-w-[980px] grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2 sm:gap-4">
+							<button
+								type="button"
+								aria-label="Destacado anterior"
+								onClick={irAnterior}
+								className="inline-flex h-10 w-10 items-center justify-center justify-self-center rounded-full border border-[#cdd6e1] bg-white text-[#001830] shadow-sm transition-colors hover:bg-[#eef3f8]"
+							>
+								‹
+							</button>
+							<div className="flex justify-center pb-2">
+								{productos[indiceDestacado] && (
+									<div
+										key={`${productos[indiceDestacado].id}-${indiceDestacado}`}
+										className={animacionEntrada === "right" ? "animate-[carouselInRight_280ms_ease-out]" : "animate-[carouselInLeft_280ms_ease-out]"}
+									>
+										<TarjetaCelular
+											producto={productos[indiceDestacado]}
+											umbralEnvioGratis={config.umbralEnvioGratis}
+											descuentoTransferencia={config.descuentoTransferencia}
+											onClick={() => onVerDetalle?.(productos[indiceDestacado].id)}
+										/>
+									</div>
+								)}
+							</div>
+							<button
+								type="button"
+								aria-label="Siguiente destacado"
+								onClick={irSiguiente}
+								className="inline-flex h-10 w-10 items-center justify-center justify-self-center rounded-full border border-[#cdd6e1] bg-white text-[#001830] shadow-sm transition-colors hover:bg-[#eef3f8]"
+							>
+								›
+							</button>
+						</div>
 					</div>
 				)}
 

@@ -49,11 +49,11 @@ export const TarjetaCelular = ({
 				<img
 					src={producto.imagen}
 					alt={producto.nombre}
-					className="w-full h-full object-contain drop-shadow-md transition-transform duration-300 scale-[1.40] group-hover:scale-[1.45]"
+					className="h-full w-full object-contain drop-shadow-md transition-transform duration-300 scale-[1.24] group-hover:scale-[1.30] sm:scale-[1.34] sm:group-hover:scale-[1.40] lg:scale-[1.40] lg:group-hover:scale-[1.45]"
 				/>
 			</div>
 
-			<h3 className="text-lg font-bold text-slate-900 leading-tight group-hover:text-[#015cb9] transition-colors duration-300 truncate">
+			<h3 className="truncate text-[1.02rem] font-bold leading-tight text-slate-900 transition-colors duration-300 group-hover:text-[#015cb9] sm:text-lg">
 				{producto.nombre}
 			</h3>
 

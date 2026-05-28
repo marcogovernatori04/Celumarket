@@ -75,6 +75,9 @@ export type AdminPedidoDetalle = {
 	costoEnvio?: number;
 	metodoPago?: string | null;
 	estadoPago?: string | null;
+	envioEstado?: string | null;
+	envioFechaDespacho?: string | null;
+	envioCodigoSeguimiento?: string | null;
 	lineas: AdminPedidoDetalleLinea[];
 };
 

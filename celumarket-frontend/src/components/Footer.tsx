@@ -4,7 +4,7 @@ export const Footer = () => {
 	return (
 		<footer className={twFooter.footerShell}>
 			<div className={twFooter.footerGrid}>
-				<div className="flex items-start justify-center">
+				<div className="flex items-start justify-start sm:justify-center">
 					<img src="/logo.svg" alt="Celumarket" className="h-7 w-auto object-contain" />
 				</div>
 
@@ -25,9 +25,9 @@ export const Footer = () => {
 					</ul>
 				</div>
 
-				<div className="md:justify-self-end md:w-full md:max-w-[420px]">
+				<div className="w-full sm:col-span-2 lg:col-span-1 lg:justify-self-end lg:max-w-[520px]">
 					<p className="mb-3 text-sm text-gray-700">Suscribite al newsletter para recibir las últimas novedades!</p>
-					<div className="flex flex-col gap-2 sm:flex-row">
+					<div className="flex flex-col gap-2 md:flex-row">
 						<input
 							type="email"
 							placeholder="Email..."

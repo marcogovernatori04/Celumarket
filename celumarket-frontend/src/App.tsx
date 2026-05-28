@@ -3,6 +3,8 @@ import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearch
 import { Navbar } from "./components/Navbar";
 import { NavbarLogin } from "./components/NavbarLogin";
 import { Landing } from "./pages/Landing";
+import { Contacto } from "./pages/Contacto";
+import { PreguntasFrecuentes } from "./pages/PreguntasFrecuentes";
 import { Catalogo } from "./pages/Catalogo";
 import { DetalleCelular } from "./pages/DetalleCelular";
 import { Login } from "./pages/Login";
@@ -146,6 +148,8 @@ function App() {
 					carritoCantidad={carritoCantidad}
 					onIrATienda={() => navigate("/catalogo")}
 					onIrAInicio={() => navigate("/")}
+					onIrAContacto={() => navigate("/contacto")}
+					onIrAPreguntasFrecuentes={() => navigate("/preguntas-frecuentes")}
 					onIrAAdmin={() => navigate("/admin")}
 					onIrALogin={() => navigate("/login")}
 					onVerPerfil={() => navigate("/mi-perfil")}
@@ -166,6 +170,8 @@ function App() {
 			<main className="flex flex-1 min-h-0 flex-col">
 				<Routes>
 					<Route path="/" element={<Landing onIrATienda={() => navigate("/catalogo")} onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
+					<Route path="/contacto" element={<Contacto />} />
+					<Route path="/preguntas-frecuentes" element={<PreguntasFrecuentes />} />
 					<Route path="/catalogo" element={<Catalogo onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
 					<Route
 						path="/celulares/:id"
@@ -192,7 +198,7 @@ function App() {
 									setEsAdmin(admin);
 									setEsInterno(interno);
 									setRolUsuario(rol);
-									navigate(interno ? "/admin" : "/carrito");
+									navigate(interno ? "/admin" : "/");
 								}}
 							/>
 						}

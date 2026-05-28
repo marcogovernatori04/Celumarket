@@ -1,12 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
 import { pedidoService, type AdminEnvioItem } from "../../services/pedidoService";
 import { twAdmin, twBase } from "../../styles/tw";
+import { formatDateTimeAr } from "../../utils/dateTime";
 
 const formatearFecha = (raw?: string) => {
-	if (!raw) return "—";
-	const d = new Date(raw);
-	if (Number.isNaN(d.getTime())) return "—";
-	return d.toLocaleString("es-AR");
+	return formatDateTimeAr(raw);
 };
 
 const formatearMonto = (monto?: number) =>

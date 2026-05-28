@@ -5,9 +5,8 @@ export const passwordService = {
 		await api.post("/Clientes/cambiar-clave", { claveActual, claveNueva });
 	},
 
-	async solicitarRecuperacion(email: string): Promise<string> {
-		const { data } = await api.post<{ tokenRecuperacion: string }>("/Clientes/recuperar-clave/solicitar", { email });
-		return data.tokenRecuperacion;
+	async solicitarRecuperacion(email: string): Promise<void> {
+		await api.post("/Clientes/recuperar-clave/solicitar", { email });
 	},
 
 	async confirmarRecuperacion(tokenRecuperacion: string, claveNueva: string): Promise<void> {

@@ -26,6 +26,8 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 	const [codigoPostal, setCodigoPostal] = useState("");
 	const [tokenRecuperacion, setTokenRecuperacion] = useState("");
 	const [nuevaClave, setNuevaClave] = useState("");
+	const [confirmarNuevaClave, setConfirmarNuevaClave] = useState("");
+	const [tokenSolicitado, setTokenSolicitado] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [cargando, setCargando] = useState(false);
 
@@ -93,8 +95,8 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 		setError(null);
 		setCargando(true);
 		try {
-			const token = await passwordService.solicitarRecuperacion(email);
-			setTokenRecuperacion(token ?? "");
+			await passwordService.solicitarRecuperacion(email);
+			setTokenSolicitado(true);
 		} catch (err) {
 			setError(obtenerMensajeError(err, "No se pudo solicitar recuperación."));
 		} finally {
@@ -104,12 +106,22 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 
 	const confirmarRecuperacion = async () => {
 		setError(null);
+		if (nuevaClave.trim().length < 8) {
+			setError("La nueva clave debe tener al menos 8 caracteres.");
+			return;
+		}
+		if (nuevaClave !== confirmarNuevaClave) {
+			setError("Las claves nuevas no coinciden.");
+			return;
+		}
 		setCargando(true);
 		try {
 			await passwordService.confirmarRecuperacion(tokenRecuperacion, nuevaClave);
 			setModoRecuperar(false);
+			setTokenSolicitado(false);
 			setTokenRecuperacion("");
 			setNuevaClave("");
+			setConfirmarNuevaClave("");
 		} catch (err) {
 			setError(obtenerMensajeError(err, "No se pudo restablecer la clave."));
 		} finally {
@@ -171,7 +183,18 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 									{cargando ? "Iniciando..." : "Iniciar sesión"}
 								</button>
 								<div className="mt-4 flex items-center justify-between">
-									<button type="button" onClick={() => setModoRecuperar(true)} className="text-base text-[#001524] underline">
+									<button
+										type="button"
+										onClick={() => {
+											setModoRecuperar(true);
+											setError(null);
+											setTokenSolicitado(false);
+											setTokenRecuperacion("");
+											setNuevaClave("");
+											setConfirmarNuevaClave("");
+										}}
+										className="text-base text-[#001524] underline"
+									>
 										Olvidé mi contraseña
 									</button>
 									<button type="button" onClick={() => setModoRegistro(true)} className="text-base text-[#001524] underline">
@@ -182,17 +205,38 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 						) : (
 							<>
 								<div className="mb-3">
-									<button type="button" onClick={solicitarRecuperacion} className={`${twAuth.authPrimaryBtn} h-10`}>
-										Solicitar token de recuperación
+									<button type="button" onClick={solicitarRecuperacion} disabled={cargando} className={`${twAuth.authPrimaryBtn} h-10`}>
+										{cargando ? "Enviando..." : "Enviar token por email"}
 									</button>
 								</div>
-								<input value={tokenRecuperacion} onChange={(e) => setTokenRecuperacion(e.target.value)} placeholder="Token de recuperación" className={`mb-3 ${twAuth.authInput}`} />
-								<input value={nuevaClave} onChange={(e) => setNuevaClave(e.target.value)} type="password" placeholder="Nueva clave (mín. 8)" className={`mb-3 ${twAuth.authInput}`} />
-								<button type="button" onClick={confirmarRecuperacion} className={`${twAuth.authPrimaryBtn} h-10`}>
-									Restablecer clave
-								</button>
+								{tokenSolicitado && (
+									<p className="mb-3 text-sm text-[#334155]">
+										Si el email existe, te enviamos un token de recuperación.
+									</p>
+								)}
+								{tokenSolicitado && (
+									<>
+										<input value={tokenRecuperacion} onChange={(e) => setTokenRecuperacion(e.target.value)} placeholder="Token de recuperación" className={`mb-3 ${twAuth.authInput}`} />
+										<input value={nuevaClave} onChange={(e) => setNuevaClave(e.target.value)} type="password" placeholder="Nueva clave (mín. 8)" className={`mb-3 ${twAuth.authInput}`} />
+										<input value={confirmarNuevaClave} onChange={(e) => setConfirmarNuevaClave(e.target.value)} type="password" placeholder="Confirmar nueva clave" className={`mb-3 ${twAuth.authInput}`} />
+										<button type="button" disabled={cargando} onClick={confirmarRecuperacion} className={`${twAuth.authPrimaryBtn} h-10`}>
+											{cargando ? "Restableciendo..." : "Restablecer clave"}
+										</button>
+									</>
+								)}
 								<div className="mt-4">
-									<button type="button" onClick={() => setModoRecuperar(false)} className="text-base text-[#001524] underline">
+									<button
+										type="button"
+										onClick={() => {
+											setModoRecuperar(false);
+											setError(null);
+											setTokenSolicitado(false);
+											setTokenRecuperacion("");
+											setNuevaClave("");
+											setConfirmarNuevaClave("");
+										}}
+										className="text-base text-[#001524] underline"
+									>
 										Volver al login
 									</button>
 								</div>

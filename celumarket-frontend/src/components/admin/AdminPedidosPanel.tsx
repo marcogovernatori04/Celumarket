@@ -49,8 +49,11 @@ export const AdminPedidosPanel = ({
 
 	const estaPagado = (estado?: string | null) =>
 		(estado ?? "").trim().toLowerCase() === "pagado";
-	const estaCancelado = (estado?: string | null) =>
-		(estado ?? "").trim().toLowerCase() === "cancelado";
+const estaCancelado = (estado?: string | null) =>
+	(estado ?? "").trim().toLowerCase() === "cancelado";
+
+const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
+	(detalle?.envioEstado ?? "").trim().toLowerCase().includes("despach");
 
 	const busquedaNormalizada = busqueda.trim().toLowerCase();
 
@@ -167,6 +170,8 @@ export const AdminPedidosPanel = ({
 			}
 			await pedidoService.despacharEnvioAdmin(envioPedido.envioId, codigo);
 			setCodigoSeguimientoPorPedido((prev) => ({ ...prev, [pedidoId]: "" }));
+			await cargarPedidos();
+			await refrescarDetalle(pedidoId);
 		} catch {
 			setError("No se pudo despachar el envío.");
 		} finally {
@@ -181,7 +186,7 @@ export const AdminPedidosPanel = ({
 		return esTransferencia && !estaPagado(detalle.estado) && !estaCancelado(detalle.estado) && !vencido;
 	};
 
-	const puedeDespacharPedido = (detalle: AdminPedidoDetalle) => estaPagado(detalle.estado);
+	const puedeDespacharPedido = (detalle: AdminPedidoDetalle) => estaPagado(detalle.estado) && !envioYaDespachado(detalle);
 
 	if (loading) {
 		return (
@@ -281,6 +286,13 @@ export const AdminPedidosPanel = ({
 																<p><span className="font-semibold">Método de pago:</span> {detallePorId[pedido.id].metodoPago ?? "—"}</p>
 																<p><span className="font-semibold">Estado pago:</span> {detallePorId[pedido.id].estadoPago ?? "—"}</p>
 																<p><span className="font-semibold">Costo envío:</span> {(detallePorId[pedido.id].costoEnvio ?? 0) === 0 ? "Gratis" : `$${(detallePorId[pedido.id].costoEnvio ?? 0).toLocaleString("es-AR")}`}</p>
+																<p><span className="font-semibold">Estado envío:</span> {detallePorId[pedido.id].envioEstado ?? "—"}</p>
+																{envioYaDespachado(detallePorId[pedido.id]) && (
+																	<>
+																		<p><span className="font-semibold">Fecha despacho:</span> {formatearFecha(detallePorId[pedido.id].envioFechaDespacho ?? undefined)}</p>
+																		<p><span className="font-semibold">Tracking:</span> {detallePorId[pedido.id].envioCodigoSeguimiento ?? "—"}</p>
+																	</>
+																)}
 																{!estaPagado(detallePorId[pedido.id].estado) && (
 																	<p>
 																		<span className="font-semibold">Vence:</span>{" "}
@@ -320,30 +332,38 @@ export const AdminPedidosPanel = ({
 																>
 																	Cancelar
 																</button>
-																<input
-																	value={codigoSeguimientoPorPedido[pedido.id] ?? ""}
-																	onChange={(e) =>
-																		setCodigoSeguimientoPorPedido((prev) => ({ ...prev, [pedido.id]: e.target.value }))
-																	}
-																	placeholder="Código seguimiento"
-																	className={twBase.miniInput}
-																/>
-																<button
-																	disabled={
-																		!puedeDespachar ||
-																		procesandoPedidoId === pedido.id ||
-																		!detallePorId[pedido.id] ||
-																		!puedeDespacharPedido(detallePorId[pedido.id])
-																	}
-																	onClick={() => void despacharPedido(pedido.id)}
-																	className={twBase.actionBtnPrimary}
-																>
-																	Despachar
-																</button>
-																{detallePorId[pedido.id] && !puedeDespacharPedido(detallePorId[pedido.id]) && (
+																{detallePorId[pedido.id] && envioYaDespachado(detallePorId[pedido.id]) ? (
 																	<p className={twAdmin.adminHintText}>
-																		Despachar: solo disponible cuando el pedido está pagado.
+																		Este pedido ya fue despachado y no puede volver a despacharse.
 																	</p>
+																) : (
+																	<>
+																		<input
+																			value={codigoSeguimientoPorPedido[pedido.id] ?? ""}
+																			onChange={(e) =>
+																				setCodigoSeguimientoPorPedido((prev) => ({ ...prev, [pedido.id]: e.target.value }))
+																			}
+																			placeholder="Código seguimiento"
+																			className={twBase.miniInput}
+																		/>
+																		<button
+																			disabled={
+																				!puedeDespachar ||
+																				procesandoPedidoId === pedido.id ||
+																				!detallePorId[pedido.id] ||
+																				!puedeDespacharPedido(detallePorId[pedido.id])
+																			}
+																			onClick={() => void despacharPedido(pedido.id)}
+																			className={twBase.actionBtnPrimary}
+																		>
+																			Despachar
+																		</button>
+																		{detallePorId[pedido.id] && !puedeDespacharPedido(detallePorId[pedido.id]) && (
+																			<p className={twAdmin.adminHintText}>
+																				Despachar: solo disponible cuando el pedido está pagado.
+																			</p>
+																		)}
+																	</>
 																)}
 															</div>
 															<div className="overflow-x-auto rounded-lg border border-[#dbe4ef] bg-white">
