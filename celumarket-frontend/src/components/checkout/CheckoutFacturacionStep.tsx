@@ -41,13 +41,13 @@ export const CheckoutFacturacionStep = ({ initialData, resumenEnvio, onVolver, o
 					<summary className={twCheckout.checkoutSummaryTitle}>Envío seleccionado</summary>
 					<p className={twCheckout.checkoutSummaryText}>{resumenEnvio}</p>
 				</details>
-				<div className={`${twCheckout.checkoutCard} p-5`}>
-					<h2 className="text-2xl font-bold text-[#001830]">2. Datos de facturación</h2>
-					<div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-						<input value={data.nombreCompleto} onChange={(e) => setData((s) => ({ ...s, nombreCompleto: e.target.value }))} className={`${twCheckout.checkoutInput} md:col-span-2`} placeholder="Nombre y apellido" />
+				<div className={`${twCheckout.checkoutCard} p-4 sm:p-5`}>
+					<h2 className="text-xl font-bold text-[#001830] sm:text-2xl">2. Datos de facturación</h2>
+					<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+						<input value={data.nombreCompleto} onChange={(e) => setData((s) => ({ ...s, nombreCompleto: e.target.value }))} className={`${twCheckout.checkoutInput} sm:col-span-2`} placeholder="Nombre y apellido" />
 						<input value={data.dni} onChange={(e) => setData((s) => ({ ...s, dni: e.target.value }))} className={twCheckout.checkoutInput} placeholder="DNI" />
 						<input value={data.telefono} onChange={(e) => setData((s) => ({ ...s, telefono: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Teléfono" />
-						<input value={data.email} onChange={(e) => setData((s) => ({ ...s, email: e.target.value }))} className={`${twCheckout.checkoutInput} md:col-span-2`} placeholder="Email" />
+						<input value={data.email} onChange={(e) => setData((s) => ({ ...s, email: e.target.value }))} className={`${twCheckout.checkoutInput} sm:col-span-2`} placeholder="Email" />
 					</div>
 				</div>
 			</div>

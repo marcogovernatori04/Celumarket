@@ -13,14 +13,22 @@ namespace Celumarket.Application.Services
         private readonly IUsuarioRepository _usuarioRepo;
         private readonly IRolRepository _rolRepo;
         private readonly IServicioSeguridad _servicioSeguridad;
+        private readonly IServicioEmail _servicioEmail;
         private readonly IUnitOfWork _unitOfWork;
 
-        public GestorCliente(IClienteRepository clienteRepo, IUsuarioRepository usuarioRepo, IRolRepository rolRepo, IServicioSeguridad servicioSeguridad, IUnitOfWork unitOfWork)
+        public GestorCliente(
+            IClienteRepository clienteRepo,
+            IUsuarioRepository usuarioRepo,
+            IRolRepository rolRepo,
+            IServicioSeguridad servicioSeguridad,
+            IServicioEmail servicioEmail,
+            IUnitOfWork unitOfWork)
         {
             _clienteRepo = clienteRepo;
             _usuarioRepo = usuarioRepo;
             _rolRepo = rolRepo;
             _servicioSeguridad = servicioSeguridad;
+            _servicioEmail = servicioEmail;
             _unitOfWork = unitOfWork;
         }
 
@@ -114,14 +122,22 @@ namespace Celumarket.Application.Services
             await _unitOfWork.GuardarAsync();
         }
 
-        public async Task<string> SolicitarRecuperacionClaveAsync(ClienteDTOs.SolicitarRecuperacionClaveDTO dto)
+        public async Task SolicitarRecuperacionClaveAsync(ClienteDTOs.SolicitarRecuperacionClaveDTO dto)
         {
             var usuario = await _usuarioRepo.ObtenerPorEmailAsync(dto.Email);
-            if (usuario == null) return "Si el email existe, se envió un enlace de recuperación.";
+            if (usuario == null) return;
 
             var token = Guid.NewGuid().ToString("N");
             _tokensRecuperacion[token] = (usuario.Id, DateTime.UtcNow.AddMinutes(30));
-            return token;
+
+            var nombreDestino = dto.Email;
+            var cliente = await _clienteRepo.ObtenerPorUsuarioIdAsync(usuario.Id);
+            if (cliente != null)
+            {
+                nombreDestino = $"{cliente.Nombre} {cliente.Apellido}";
+            }
+
+            await _servicioEmail.EnviarTokenRecuperacionClaveAsync(dto.Email, nombreDestino, token);
         }
 
         public async Task ConfirmarRecuperacionClaveAsync(ClienteDTOs.ConfirmarRecuperacionClaveDTO dto)

@@ -133,7 +133,7 @@ export const DetalleCelular = ({
 
 	return (
 		<div className={twBase.pageLayout}>
-			<div className="mx-auto max-w-6xl px-9 py-7">
+			<div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-7 lg:px-9">
 				<div className="mb-6 flex justify-center">
 					<div className="relative w-full max-w-[420px]">
 						<input
@@ -145,7 +145,7 @@ export const DetalleCelular = ({
 						</span>
 					</div>
 				</div>
-				<div className={`${twBase.cardWhite} p-6`}>
+				<div className={`${twBase.cardWhite} p-4 sm:p-6`}>
 					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 						<DetalleGaleria
 							imagenesActivas={imagenesActivas}
@@ -181,14 +181,14 @@ export const DetalleCelular = ({
 							mostrarAccionCompra={!esInterno}
 						/>
 					</div>
-					<div className="mt-6 rounded-xl border border-[#e6ebf2] bg-[#f8fafc] p-5">
+					<div className="mt-6 rounded-xl border border-[#e6ebf2] bg-[#f8fafc] p-4 sm:p-5">
 						<h2 className="text-[18px] font-semibold text-[#1e1e1e]">
 							Descripción y especificaciones
 						</h2>
 						<p className="mt-2 text-[14px] leading-relaxed text-[#4b5563]">
 							{detalle.descripcion}
 						</p>
-						<div className="mt-3 grid grid-cols-1 gap-2 text-[14px] text-[#5f6670] sm:grid-cols-2">
+						<div className="mt-3 grid grid-cols-1 gap-2 text-[14px] text-[#5f6670] md:grid-cols-2">
 							{detalle.especificaciones.map((esp, idx) => (
 								<p key={idx}>
 									<span className="font-medium text-[#374151]">{esp.nombre}:</span>{" "}

@@ -148,8 +148,84 @@ export const AdminEnviosPanel = ({ puedeGestionar = false }: AdminEnviosPanelPro
 
 			{error && <p className="mt-3 text-red-600">{error}</p>}
 
-			<div className={twBase.tableShell}>
-				<div>
+			<div className="mt-4 space-y-3 lg:hidden">
+				{enviosFiltrados.length === 0 ? (
+					<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+						No hay envíos para el filtro seleccionado.
+					</div>
+				) : (
+					enviosFiltrados.map((envio) => {
+						const despachado = estaDespachado(envio.estado);
+						const expandido = expandidoId === envio.envioId;
+						return (
+							<div key={envio.envioId} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+								<div className="flex items-start justify-between gap-3">
+									<div className="min-w-0">
+										<p className="text-base font-semibold text-[#001830]">Envío #{envio.envioId}</p>
+										<p className="mt-1 text-sm text-[#334155]">Pedido #{envio.pedidoId}</p>
+										<div className="mt-2 grid grid-cols-2 gap-2 text-xs text-[#475569]">
+											<p><span className="font-semibold text-[#001830]">Estado:</span> {envio.estado || "—"}</p>
+											<p><span className="font-semibold text-[#001830]">Tipo:</span> {envio.tipo || "—"}</p>
+											<p><span className="font-semibold text-[#001830]">Costo:</span> {(envio.costo ?? 0) === 0 ? "Gratis" : formatearMonto(envio.costo)}</p>
+											<p><span className="font-semibold text-[#001830]">Tracking:</span> {envio.codigoSeguimiento || "—"}</p>
+										</div>
+									</div>
+									<button
+										onClick={() => setExpandidoId((prev) => (prev === envio.envioId ? null : envio.envioId))}
+										className={twBase.iconButton}
+									>
+										{expandido ? "−" : "+"}
+									</button>
+								</div>
+								{expandido && (
+									<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+										<div className="grid grid-cols-1 gap-2 text-sm text-[#1e1e1e]">
+											<p><span className="font-semibold">Dirección de entrega:</span> {envio.direccionEntrega || "—"}</p>
+											<p><span className="font-semibold">Fecha estimada:</span> {formatearFecha(envio.fechaEstimada)}</p>
+											<p><span className="font-semibold">Código seguimiento:</span> {envio.codigoSeguimiento || "—"}</p>
+											<p><span className="font-semibold">Fecha de despacho:</span> {formatearFecha(envio.fechaDespacho)}</p>
+										</div>
+										<div className="mt-3 border-t border-[#dbe4ef] pt-3">
+											{despachado ? (
+												<span className="text-xs font-semibold text-[#0f766e]">Ya despachado</span>
+											) : (
+												<>
+													{!puedeGestionar && (
+														<p className={twAdmin.adminHintText}>Modo lectura: este rol no puede despachar envíos.</p>
+													)}
+													<div className="mt-2 flex flex-col gap-2">
+														<input
+															value={codigoSeguimientoPorEnvio[envio.envioId] ?? ""}
+															onChange={(e) =>
+																setCodigoSeguimientoPorEnvio((prev) => ({
+																	...prev,
+																	[envio.envioId]: e.target.value,
+																}))
+															}
+															placeholder="Código seguimiento"
+															className={`${twBase.miniInput} h-9 w-full`}
+														/>
+														<button
+															disabled={!puedeGestionar || procesandoEnvioId === envio.envioId}
+															onClick={() => void despacharEnvio(envio)}
+															className={twBase.actionBtnPrimary}
+														>
+															Despachar
+														</button>
+													</div>
+												</>
+											)}
+										</div>
+									</div>
+								)}
+							</div>
+						);
+					})
+				)}
+			</div>
+
+			<div className={`${twBase.tableShell} hidden lg:block`}>
+				<div className="min-w-[880px]">
 					<table className="w-full table-fixed text-left">
 						<thead className={twBase.tableHead}>
 							<tr>
@@ -228,7 +304,7 @@ export const AdminEnviosPanel = ({ puedeGestionar = false }: AdminEnviosPanelPro
 																			Modo lectura: este rol no puede despachar envíos.
 																		</p>
 																	)}
-																	<div className="flex max-w-[420px] items-center gap-2">
+																	<div className="flex max-w-[420px] flex-col gap-2 sm:flex-row sm:items-center">
 																		<input
 																			value={codigoSeguimientoPorEnvio[envio.envioId] ?? ""}
 																			onChange={(e) =>

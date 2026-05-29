@@ -38,9 +38,9 @@ export const PreguntasFrecuentes = () => {
 	const [abierta, setAbierta] = useState<number | null>(0);
 
 	return (
-		<div className="h-[calc(100dvh-72px)] bg-[#f5f5f5] flex flex-col overflow-hidden">
-			<section className="mx-auto w-full max-w-5xl flex-1 min-h-0 px-6 py-6 overflow-y-auto">
-				<h1 className="text-3xl font-bold text-[#001830]">Preguntas frecuentes</h1>
+		<div className="min-h-[calc(100dvh-64px)] bg-[#f5f5f5] flex flex-col">
+			<section className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+				<h1 className="text-2xl font-bold text-[#001830] sm:text-3xl">Preguntas frecuentes</h1>
 				<p className="mt-2 text-[#475569]">
 					Respuestas rápidas sobre pagos, envíos, pedidos y facturación.
 				</p>
@@ -54,7 +54,7 @@ export const PreguntasFrecuentes = () => {
 									onClick={() => setAbierta(isOpen ? null : idx)}
 									className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
 								>
-									<span className="font-semibold text-[#001830]">{item.pregunta}</span>
+									<span className="font-semibold leading-snug text-[#001830]">{item.pregunta}</span>
 									<span className="text-[#334155]">{isOpen ? "−" : "+"}</span>
 								</button>
 								{isOpen && (
@@ -71,4 +71,3 @@ export const PreguntasFrecuentes = () => {
 		</div>
 	);
 };
-

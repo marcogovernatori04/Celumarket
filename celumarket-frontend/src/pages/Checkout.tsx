@@ -138,9 +138,9 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 	return (
 		<div className={twCheckout.checkoutShell}>
 			<section className={twCheckout.checkoutSection}>
-				<h1 className="text-[30px] font-extrabold leading-none text-[#001830]">Checkout</h1>
+				<h1 className="text-[26px] font-extrabold leading-none text-[#001830] sm:text-[30px]">Checkout</h1>
 				<div className={twCheckout.checkoutTopCard}>
-					<div className="flex items-center gap-2.5 text-[13px]">
+					<div className="flex flex-wrap items-center gap-2 text-[12px] sm:gap-2.5 sm:text-[13px]">
 						<span className={`${twCheckout.checkoutStepPillBase} ${step >= 1 ? twCheckout.checkoutStepPillActive : twCheckout.checkoutStepPillIdle}`}>1 Envío</span>
 						<span className="text-[#9ca3af]">•</span>
 						<span className={`${twCheckout.checkoutStepPillBase} ${step >= 2 ? twCheckout.checkoutStepPillActive : twCheckout.checkoutStepPillIdle}`}>2 Facturación</span>
@@ -158,7 +158,7 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 				{loading ? (
 					<p className="mt-8 text-gray-600">Cargando checkout...</p>
 				) : (
-					<div className="mt-4 h-[calc(100%-108px)] min-h-0 overflow-hidden rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-4">
+					<div className="mt-4 min-h-0 rounded-xl border border-[#dfe5eb] bg-[#f8fafc] p-3 sm:p-4 lg:h-[calc(100%-108px)] lg:overflow-hidden">
 						{step === 1 && (
 							<CheckoutEnvioStep
 								direccionInicial={direccionInicial}
@@ -205,7 +205,9 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 					</div>
 				)}
 			</section>
-			<CheckoutFooter />
+			<div className="hidden lg:block">
+				<CheckoutFooter />
+			</div>
 		</div>
 	);
 };

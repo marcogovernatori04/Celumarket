@@ -88,12 +88,12 @@ export const MiPerfil = () => {
 	return (
 		<div className={twLayout.pageShell}>
 			<section className={twLayout.pageSection}>
-				<h1 className="mb-6 text-3xl font-bold text-[#001830]">Mi perfil</h1>
+				<h1 className="mb-6 text-2xl font-bold text-[#001830] sm:text-3xl">Mi perfil</h1>
 				{error && <p className="text-red-600">{error}</p>}
 				{mensajeOk && <p className="text-[#1E8E5A]">{mensajeOk}</p>}
 				{!error && !perfil && <p className="text-gray-600">Cargando perfil...</p>}
 				{perfil && (
-					<div className="space-y-5 rounded-lg bg-white p-6 shadow-sm">
+					<div className="space-y-5 rounded-lg bg-white p-4 shadow-sm sm:p-6">
 						<div>
 							<p className="text-sm text-[#6b7280]">Nombre</p>
 							<p className="text-lg font-semibold text-[#1e1e1e]">{perfil.nombreCompleto}</p>
@@ -111,25 +111,29 @@ export const MiPerfil = () => {
 							<p className="text-lg text-[#1e1e1e]">{perfil.dni ?? "—"}</p>
 						</div>
 						<div>
-							<div className="flex items-center justify-between gap-3">
-								<p className="text-sm text-[#6b7280]">Dirección de envío</p>
-								{!editandoDireccion && (
-									<button onClick={() => setEditandoDireccion(true)} className="rounded-md bg-[#015cb9] px-3 py-1.5 text-sm text-white transition-colors hover:bg-[#017AF4]">
-										Editar dirección
-									</button>
-								)}
-							</div>
 							{!editandoDireccion ? (
-								<p className="text-lg text-[#1e1e1e]">{perfil.direccionCompleta ?? "No tienes una dirección guardada todavía."}</p>
+								<div className="rounded-lg border border-[#dfe5eb] bg-[#f8fafc] p-4">
+									<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+										<div className="min-w-0">
+											<p className="text-sm font-medium text-[#6b7280]">Dirección de envío</p>
+											<p className="mt-1 break-words text-[17px] leading-snug text-[#1e1e1e]">
+												{perfil.direccionCompleta ?? "No tienes una dirección guardada todavía."}
+											</p>
+										</div>
+										<button onClick={() => setEditandoDireccion(true)} className="h-9 shrink-0 rounded-md border border-[#015cb9] bg-white px-3 text-sm font-medium text-[#015cb9] transition-colors hover:bg-[#eef5fd]">
+											Editar
+										</button>
+									</div>
+								</div>
 							) : (
-								<div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+								<div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={direccionForm.calle} onChange={(e) => setDireccionForm((s) => ({ ...s, calle: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Calle" />
 									<input value={direccionForm.numero} onChange={(e) => setDireccionForm((s) => ({ ...s, numero: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Número" />
 									<input value={direccionForm.pisoDepto} onChange={(e) => setDireccionForm((s) => ({ ...s, pisoDepto: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Piso/Depto (opcional)" />
 									<input value={direccionForm.localidad} onChange={(e) => setDireccionForm((s) => ({ ...s, localidad: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Localidad" />
 									<input value={direccionForm.provincia} onChange={(e) => setDireccionForm((s) => ({ ...s, provincia: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Provincia" />
 									<input value={direccionForm.codigoPostal} onChange={(e) => setDireccionForm((s) => ({ ...s, codigoPostal: e.target.value }))} className={twCheckout.checkoutInput} placeholder="Código postal" />
-									<div className="md:col-span-2 flex gap-2">
+									<div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row">
 										<button disabled={guardando} onClick={guardarDireccion} className={`${twBase.actionBtnPrimary} h-10 px-4 text-sm ${guardando ? "bg-[#94a3b8] hover:bg-[#94a3b8]" : ""}`}>
 											{guardando ? "Guardando..." : "Guardar dirección"}
 										</button>

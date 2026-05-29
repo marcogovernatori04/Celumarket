@@ -21,6 +21,7 @@ namespace Celumarket.API.Controllers
         private readonly IClienteRepository _clienteRepo;
         private readonly IPagoRepository _pagoRepo;
         private readonly IMetodoPagoRepository _metodoPagoRepo;
+        private readonly IEnvioRepository _envioRepo;
         private readonly IGestorPedido _gestorPedido;
         private readonly IGestorConsultaPedido _gestorConsultaPedido;
         private readonly IGestorDocumentoFactura _gestorDocumentoFactura;
@@ -28,12 +29,13 @@ namespace Celumarket.API.Controllers
 
         public PedidosController(
             IGestorPago gestorPago,
-            IPedidoRepository pedidoRepo, IClienteRepository clienteRepo, IPagoRepository pagoRepo, IMetodoPagoRepository metodoPagoRepo, IGestorPedido gestorPedido, IGestorConsultaPedido gestorConsultaPedido, IGestorDocumentoFactura gestorDocumentoFactura, IGestorPedidoCliente gestorPedidoCliente)
+            IPedidoRepository pedidoRepo, IClienteRepository clienteRepo, IPagoRepository pagoRepo, IMetodoPagoRepository metodoPagoRepo, IEnvioRepository envioRepo, IGestorPedido gestorPedido, IGestorConsultaPedido gestorConsultaPedido, IGestorDocumentoFactura gestorDocumentoFactura, IGestorPedidoCliente gestorPedidoCliente)
         {
             _gestorPago = gestorPago;
             _pedidoRepo = pedidoRepo; _clienteRepo = clienteRepo;
             _pagoRepo = pagoRepo;
             _metodoPagoRepo = metodoPagoRepo;
+            _envioRepo = envioRepo;
             _gestorPedido = gestorPedido;
             _gestorConsultaPedido = gestorConsultaPedido;
             _gestorDocumentoFactura = gestorDocumentoFactura;
@@ -191,6 +193,8 @@ namespace Celumarket.API.Controllers
                 metodoPago = metodo?.Nombre;
             }
 
+            var envio = await _envioRepo.ObtenerPorPedidoIdAsync(pedidoId);
+
             return Ok(new
             {
                 pedido.Id,
@@ -203,6 +207,9 @@ namespace Celumarket.API.Controllers
                 pedido.CostoEnvio,
                 MetodoPago = metodoPago,
                 EstadoPago = pago?.Estado,
+                EnvioEstado = envio?.Estado.ToString(),
+                EnvioFechaDespacho = envio?.FechaDespacho,
+                EnvioCodigoSeguimiento = envio?.CodigoSeguimiento,
                 Lineas = pedido.Lineas.Select(l => new
                 {
                     l.Id,

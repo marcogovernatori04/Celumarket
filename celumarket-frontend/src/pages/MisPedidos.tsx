@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { pedidoService, type MisPedidosItem } from "../services/pedidoService";
-import { twCheckout, twLayout } from "../styles/tw";
+import { twLayout } from "../styles/tw";
 import { parseApiDate } from "../utils/dateTime";
 
 type MisPedidosProps = {
@@ -39,9 +39,9 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 	};
 
 	return (
-		<div className={twCheckout.checkoutShell}>
-			<section className="mx-auto flex w-full max-w-5xl flex-1 min-h-0 flex-col px-6 py-6 overflow-hidden">
-				<h1 className="mb-4 text-3xl font-bold text-[#001830]">Mis pedidos</h1>
+		<div className={twLayout.pageShell}>
+			<section className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6">
+				<h1 className="mb-4 text-2xl font-bold text-[#001830] sm:text-3xl">Mis pedidos</h1>
 				{loading && <p className="text-gray-600">Cargando pedidos...</p>}
 				{error && <p className="text-red-600">{error}</p>}
 				{!loading && !error && pedidos.length === 0 && (
@@ -50,7 +50,7 @@ export const MisPedidos = ({ onVerDetalle }: MisPedidosProps) => {
 					</div>
 				)}
 				{!loading && !error && pedidos.length > 0 && (
-					<div className="flex-1 min-h-0 space-y-3 overflow-y-auto pr-1">
+					<div className="space-y-3">
 						{pedidos.map((pedido) => (
 							<div key={pedido.id} className={twLayout.cardSoft}>
 								<div className="flex flex-wrap items-center justify-between gap-3">

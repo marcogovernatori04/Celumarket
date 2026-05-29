@@ -68,8 +68,8 @@ export const AdminUsuariosPanel = () => {
 	}
 
 	return (
-		<div>
-			<div className="flex items-center justify-between gap-3">
+		<div className="min-w-0">
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<h2 className={twAdmin.adminSectionTitle}>Clientes</h2>
 				<button
 					onClick={() => void cargarUsuarios(true)}
@@ -91,7 +91,45 @@ export const AdminUsuariosPanel = () => {
 				/>
 			</div>
 
-			<div className="mt-6 overflow-hidden rounded-xl border border-black/10">
+			<div className="mt-4 space-y-3 lg:hidden">
+				{usuariosFiltrados.length === 0 ? (
+					<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+						No hay clientes para el filtro seleccionado.
+					</div>
+				) : (
+					usuariosFiltrados.map((u) => (
+						<div key={u.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+							<div className="flex items-start justify-between gap-3">
+								<div className="min-w-0">
+									<p className="break-words text-base font-semibold leading-snug text-[#001830]">{u.nombreCompleto}</p>
+									<p className="mt-1 break-words text-sm text-[#1e293b]">{u.email || "-"}</p>
+									<p className="mt-1 text-xs font-semibold uppercase tracking-[0.06em] text-[#64748b]">{u.rol || "-"}</p>
+								</div>
+								<button
+									onClick={() => setExpandidoId((prev) => (prev === u.id ? null : u.id))}
+									className={twBase.iconButton}
+								>
+									{expandidoId === u.id ? "−" : "+"}
+								</button>
+							</div>
+
+							{expandidoId === u.id && (
+								<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+									<div className="grid grid-cols-1 gap-2 text-sm text-[#334155]">
+										<p><span className="font-semibold text-[#001830]">Teléfono:</span> {u.telefono || "-"}</p>
+										<p><span className="font-semibold text-[#001830]">Total comprado:</span> ${u.totalComprado.toLocaleString("es-AR")}</p>
+										<p><span className="font-semibold text-[#001830]">Cantidad de pedidos:</span> {u.cantidadPedidos}</p>
+										<p><span className="font-semibold text-[#001830]">Dirección de envío:</span> {formatearDireccion(u)}</p>
+									</div>
+								</div>
+							)}
+						</div>
+					))
+				)}
+			</div>
+
+			<div className="mt-6 hidden overflow-auto rounded-xl border border-black/10 lg:block">
+				<div className="min-w-[720px]">
 				<div className={`grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3 ${twBase.tableHead}`}>
 					<span>Nombre</span>
 					<span>Email</span>
@@ -145,6 +183,7 @@ export const AdminUsuariosPanel = () => {
 							</div>
 						))
 					)}
+				</div>
 				</div>
 			</div>
 		</div>

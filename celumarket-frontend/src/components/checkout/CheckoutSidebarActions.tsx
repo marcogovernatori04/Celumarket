@@ -33,6 +33,9 @@ export const CheckoutSidebarActions = ({
 	onVolverCarrito,
 }: CheckoutSidebarActionsProps) => {
 	const valorEnvioTexto = costoEnvio === 0 ? "Gratis" : `$${costoEnvio.toLocaleString("es-AR")}`;
+	const actionsClass = secondaryLabel && onSecondary
+		? "mt-2 grid grid-cols-2 gap-2 lg:mt-3 lg:flex lg:flex-col"
+		: "mt-2 flex flex-col gap-2 lg:mt-3";
 
 	return (
 		<aside className={twCheckout.checkoutSidebarAside}>
@@ -48,13 +51,15 @@ export const CheckoutSidebarActions = ({
 					))}
 				</div>
 				<div className={twCheckout.checkoutSidebarPriceBox}>
-					<p>Subtotal: <span className="font-semibold">${subtotal.toLocaleString("es-AR")}</span></p>
-					<p>Envío: <span className={costoEnvio === 0 ? "font-semibold text-[#1E8E5A]" : "font-semibold"}>{valorEnvioTexto}</span></p>
+					<div className="grid grid-cols-2 gap-1 lg:block">
+						<p>Subtotal: <span className="font-semibold">${subtotal.toLocaleString("es-AR")}</span></p>
+						<p>Envío: <span className={costoEnvio === 0 ? "font-semibold text-[#1E8E5A]" : "font-semibold"}>{valorEnvioTexto}</span></p>
+					</div>
 					<p className={twCheckout.checkoutSidebarTotal}>Total: ${total.toLocaleString("es-AR")}</p>
 				</div>
-				<div className="mt-3 flex flex-col gap-2">
+				<div className={actionsClass}>
 					{secondaryLabel && onSecondary && (
-						<button onClick={onSecondary} className={twBase.secondaryBtnSm}>
+						<button onClick={onSecondary} className={`${twBase.secondaryBtnSm} mt-0 w-full px-3`}>
 							{secondaryLabel}
 						</button>
 					)}
@@ -66,7 +71,7 @@ export const CheckoutSidebarActions = ({
 						{primaryLabel}
 					</button>
 					{onVolverCarrito && (
-						<button onClick={onVolverCarrito} className={twCheckout.checkoutBackLink}>
+						<button onClick={onVolverCarrito} className={`${twCheckout.checkoutBackLink} hidden lg:inline-flex`}>
 							{carritoLabel}
 						</button>
 					)}

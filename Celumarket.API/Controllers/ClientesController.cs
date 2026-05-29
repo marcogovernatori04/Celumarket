@@ -86,8 +86,8 @@ namespace Celumarket.API.Controllers
         [HttpPost("recuperar-clave/solicitar")]
         public async Task<IActionResult> SolicitarRecuperacionClave([FromBody] ClienteDTOs.SolicitarRecuperacionClaveDTO dto)
         {
-            var token = await _gestorCliente.SolicitarRecuperacionClaveAsync(dto);
-            return Ok(new { Mensaje = "Solicitud procesada.", TokenRecuperacion = token });
+            await _gestorCliente.SolicitarRecuperacionClaveAsync(dto);
+            return Ok(new { Mensaje = "Si el email existe, se envió un token de recuperación." });
         }
 
         [AllowAnonymous]

@@ -163,13 +163,13 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 
 	return (
 		<div className={twCheckout.checkoutEnvioGrid}>
-			<div className="h-full min-h-0 space-y-3">
+			<div className="min-h-0 space-y-3 lg:h-full">
 				<div className={`${twCheckout.checkoutCard} ${twCheckout.checkoutEnvioPanel}`}>
-					<h2 className="text-2xl font-bold text-[#001830]">1. Elegí tu envío</h2>
+					<h2 className="text-xl font-bold text-[#001830] sm:text-2xl">1. Elegí tu envío</h2>
 					<p className={twCheckout.checkoutEnvioLabel}>Ingresá tu código postal:</p>
-					<div className="mt-2 flex items-center gap-2">
+					<div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
 						<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} className={twCheckout.checkoutEnvioSearchInput} />
-						<button onClick={buscarTarifa} className={twBase.actionBtnPrimary}>Buscar</button>
+						<button onClick={buscarTarifa} className={`${twBase.actionBtnPrimary} h-11 sm:w-auto`}>Buscar</button>
 					</div>
 					{errorTarifa && <p className="mt-2 text-sm text-red-600">{errorTarifa}</p>}
 					<div className={twCheckout.checkoutEnvioScrollable}>
@@ -221,7 +221,7 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 													</div>
 												)}
 												{(!tieneDireccionGuardada || modoDireccion === "nueva") && (
-													<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
+													<div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
 													<input className={twCheckout.checkoutInput} placeholder="Calle" value={direccion.calle} onChange={(e) => setDireccion((s) => ({ ...s, calle: e.target.value }))} />
 													<input className={twCheckout.checkoutInput} placeholder="Número" value={direccion.numero} onChange={(e) => setDireccion((s) => ({ ...s, numero: e.target.value }))} />
 													<input className={twCheckout.checkoutInput} placeholder="Piso/Depto (opcional)" value={direccion.pisoDepto} onChange={(e) => setDireccion((s) => ({ ...s, pisoDepto: e.target.value }))} />

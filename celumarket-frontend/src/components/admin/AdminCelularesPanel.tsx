@@ -360,7 +360,7 @@ export const AdminCelularesPanel = () => {
 
 	return (
 		<div className="flex h-full min-h-0 flex-col">
-			<div className="flex items-center justify-between gap-3">
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<h2 className={twAdmin.adminSectionTitle}>Celulares</h2>
 				<button
 					onClick={() => setCreando((v) => !v)}
@@ -381,7 +381,7 @@ export const AdminCelularesPanel = () => {
 			{creando && (
 				<div className={`mt-4 ${twAdmin.adminCard}`}>
 					<p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#64748b]">Alta de celular</p>
-					<div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-3">
+					<div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						<input placeholder="Marca" value={nuevoCelular.marca} onChange={(e) => setNuevoCelular((p) => ({ ...p, marca: e.target.value }))} className={twAdmin.adminInput} />
 						<input placeholder="Modelo" value={nuevoCelular.modelo} onChange={(e) => setNuevoCelular((p) => ({ ...p, modelo: e.target.value }))} className={twAdmin.adminInput} />
 					</div>
@@ -410,7 +410,7 @@ export const AdminCelularesPanel = () => {
 											</button>
 										)}
 									</div>
-									<div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+									<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
 										<ColorSelector
 											value={v.colorId}
 											colores={colores}
@@ -420,7 +420,7 @@ export const AdminCelularesPanel = () => {
 										<input placeholder="Almacenamiento" value={v.almacenamiento} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, almacenamiento: e.target.value } : it))} className={twAdmin.adminInput} />
 										<input placeholder="Precio" type="number" value={v.precio} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, precio: e.target.value } : it))} className={twAdmin.adminInput} />
 									</div>
-									<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
+									<div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
 										<input placeholder="Stock inicial" type="number" value={v.stockInicial} onChange={(e) => setNuevasVariaciones((prev) => prev.map((it, i) => i === idx ? { ...it, stockInicial: e.target.value } : it))} className={twAdmin.adminInput} />
 										<div>
 											<input
@@ -460,7 +460,7 @@ export const AdminCelularesPanel = () => {
 						<p className="text-xs font-semibold uppercase tracking-[0.06em] text-[#64748b]">Especificaciones</p>
 						<div className="mt-2 space-y-2">
 							{nuevasEspecificaciones.map((s, idx) => (
-								<div key={`nueva-spec-${idx}`} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+								<div key={`nueva-spec-${idx}`} className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_1fr_auto]">
 									<input placeholder="Nombre" value={s.nombre} onChange={(e) => setNuevasEspecificaciones((prev) => prev.map((it, i) => i === idx ? { ...it, nombre: e.target.value } : it))} className={twAdmin.adminInput} />
 									<input placeholder="Valor" value={s.valor} onChange={(e) => setNuevasEspecificaciones((prev) => prev.map((it, i) => i === idx ? { ...it, valor: e.target.value } : it))} className={twAdmin.adminInput} />
 									<button onClick={() => setNuevasEspecificaciones((prev) => prev.filter((_, i) => i !== idx))} className={twAdmin.adminDangerBtnSm}>Quitar</button>
@@ -482,7 +482,72 @@ export const AdminCelularesPanel = () => {
 			{error && <p className="mt-6 text-red-600">{error}</p>}
 
 			{!error && (
-				<div className={twBase.tableShell}>
+				<>
+				<div className="mt-4 space-y-3 lg:hidden">
+					{celularesFiltrados.map((c) => {
+						const detalle = detallePorId[c.id];
+						const expandido = expandidoId === c.id;
+						return (
+							<div key={c.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+								<div className="grid grid-cols-[82px_minmax(0,1fr)] gap-3">
+									<div className="h-[82px] w-[82px] overflow-hidden rounded-lg bg-[#ececec]">
+										<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className="h-full w-full object-contain" />
+									</div>
+									<div className="min-w-0">
+										<p className="break-words text-base font-semibold leading-snug text-[#001830]">{c.marca} {c.modelo}</p>
+										<p className="mt-1 text-sm font-semibold text-[#1e293b]">${c.precioMinimo.toLocaleString("es-AR")}</p>
+										<div className="mt-2 grid grid-cols-2 gap-2 text-xs text-[#475569]">
+											<p><span className="font-semibold text-[#001830]">Colores:</span> {c.cantidadColores}</p>
+											<p><span className="font-semibold text-[#001830]">Stock:</span> {c.stockTotal}</p>
+										</div>
+									</div>
+								</div>
+								<div className="mt-3 grid grid-cols-2 gap-2">
+									<button
+										onClick={() => void toggleDetalle(c.id)}
+										className={twBase.actionBtnNeutral}
+									>
+										{expandido ? "Ocultar detalle" : "Ver detalle"}
+									</button>
+									<button
+										onClick={() => setMostrarModalEliminarCelularId(c.id)}
+										className={twBase.actionBtnDanger}
+									>
+										Eliminar
+									</button>
+								</div>
+								{expandido && (
+									<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+										{cargandoDetalleId === c.id && <p className="text-sm text-[#5b6673]">Cargando detalle...</p>}
+										{!cargandoDetalleId && detalle && (
+											<CelularDetalleExpandido
+												detalle={detalle}
+												onGuardarDescripcion={guardarDescripcion}
+												onGuardarEspecificaciones={guardarEspecificaciones}
+												onGuardarVariacion={guardarVariacion}
+												onAjustarStock={ajustarStock}
+												onSubirImagen={subirImagen}
+												onEliminarImagen={eliminarImagen}
+												onEliminarVariacion={eliminarVariacion}
+												colores={colores}
+												onCrearColor={crearColor}
+												onAgregarVariacion={agregarVariacion}
+											/>
+										)}
+									</div>
+								)}
+							</div>
+						);
+					})}
+					{celularesFiltrados.length === 0 && (
+						<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+							No hay celulares para esa búsqueda.
+						</div>
+					)}
+				</div>
+
+				<div className={`${twBase.tableShell} hidden lg:block`}>
+					<div className="min-w-[900px]">
 					<div className={`grid grid-cols-[110px_1.2fr_1fr_1fr_1fr_90px_100px] items-center px-4 py-3 ${twBase.tableHead}`}>
 						<span>Imagen</span>
 						<span>Modelo</span>
@@ -560,7 +625,9 @@ export const AdminCelularesPanel = () => {
 							</div>
 						)}
 					</div>
+					</div>
 				</div>
+				</>
 			)}
 
 			{mostrarModalEliminarCelularId !== null && (

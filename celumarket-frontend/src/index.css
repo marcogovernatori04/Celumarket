@@ -37,6 +37,17 @@
   }
 }
 
+@keyframes mobileMenuDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
 button,
 a,
 [role="button"] {

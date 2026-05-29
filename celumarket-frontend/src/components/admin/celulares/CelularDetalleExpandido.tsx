@@ -105,7 +105,7 @@ export const CelularDetalleExpandido = ({
 			/>
 
 			<div>
-				<div className="mb-2 flex items-center justify-between">
+				<div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 					<p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#64748b]">Variaciones</p>
 					<button
 						onClick={() => setCreandoVariacion((v) => !v)}
@@ -116,7 +116,7 @@ export const CelularDetalleExpandido = ({
 				</div>
 				{creandoVariacion && (
 					<div className={`mb-3 ${twAdmin.adminSubCard}`}>
-						<div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+						<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
 							<ColorSelector
 								value={nuevaVariacion.colorId}
 								colores={colores}
@@ -126,7 +126,7 @@ export const CelularDetalleExpandido = ({
 							<input placeholder="Almacenamiento" value={nuevaVariacion.almacenamiento} onChange={(e) => setNuevaVariacion((p) => ({ ...p, almacenamiento: e.target.value }))} className={twAdmin.adminInput} />
 							<input placeholder="Precio" type="number" value={nuevaVariacion.precio} onChange={(e) => setNuevaVariacion((p) => ({ ...p, precio: e.target.value }))} className={twAdmin.adminInput} />
 						</div>
-						<div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
+						<div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
 							<input placeholder="Stock inicial" type="number" value={nuevaVariacion.stockInicial} onChange={(e) => setNuevaVariacion((p) => ({ ...p, stockInicial: e.target.value }))} className={twAdmin.adminInput} />
 							<div>
 								<input
@@ -156,7 +156,8 @@ export const CelularDetalleExpandido = ({
 						</button>
 					</div>
 				)}
-				<div className="mt-2 overflow-hidden rounded-md border border-[#dbe4ef] bg-white">
+				<div className="mt-2 overflow-auto rounded-md border border-[#dbe4ef] bg-white">
+					<div className="min-w-[760px]">
 					<div className="grid grid-cols-[1fr_1fr_1fr_1fr] bg-[#eef3f8] px-3 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-[#475569]">
 						<span>Color</span>
 						<span>Almacenamiento</span>
@@ -177,6 +178,7 @@ export const CelularDetalleExpandido = ({
 								onCrearColor={onCrearColor}
 							/>
 						))}
+					</div>
 					</div>
 				</div>
 			</div>

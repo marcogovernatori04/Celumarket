@@ -125,7 +125,7 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 
 				{!cargando && !error && (
 					<div className="mx-auto w-full max-w-[1240px]">
-						<div className="mx-auto grid w-full max-w-[980px] grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2 sm:gap-4">
+						<div className="mx-auto grid w-full max-w-[420px] grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2 md:hidden">
 							<button
 								type="button"
 								aria-label="Destacado anterior"
@@ -157,6 +157,17 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 							>
 								›
 							</button>
+						</div>
+						<div className="hidden grid-cols-2 gap-5 md:grid lg:grid-cols-4 lg:gap-6">
+							{productos.map((producto) => (
+								<TarjetaCelular
+									key={producto.id}
+									producto={producto}
+									umbralEnvioGratis={config.umbralEnvioGratis}
+									descuentoTransferencia={config.descuentoTransferencia}
+									onClick={() => onVerDetalle?.(producto.id)}
+								/>
+							))}
 						</div>
 					</div>
 				)}

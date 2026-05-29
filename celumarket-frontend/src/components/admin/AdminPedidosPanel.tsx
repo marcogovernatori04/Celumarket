@@ -234,9 +234,136 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 			{error && <p className="text-red-600">{error}</p>}
 
 			{!error && (
-				<div className={twBase.tableShell}>
+				<>
+				<div className="mt-4 space-y-3 lg:hidden">
+					{pedidosFiltrados.length === 0 ? (
+						<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+							No hay pedidos para el filtro seleccionado.
+						</div>
+					) : (
+						pedidosFiltrados.map((pedido) => {
+							const detalle = detallePorId[pedido.id];
+							const expandido = expandidoId === pedido.id;
+							return (
+								<div key={pedido.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+									<div className="flex items-start justify-between gap-3">
+										<div className="min-w-0">
+											<p className="text-base font-semibold text-[#001830]">Pedido #{pedido.id}</p>
+											<p className="mt-1 break-words text-sm text-[#334155]">{pedido.clienteNombre ?? (pedido.clienteId ? `Cliente #${pedido.clienteId}` : "—")}</p>
+											<div className="mt-2 grid grid-cols-2 gap-2 text-xs text-[#475569]">
+												<p><span className="font-semibold text-[#001830]">Estado:</span> {pedido.estado ?? "—"}</p>
+												<p><span className="font-semibold text-[#001830]">Fecha:</span> {formatearFecha(pedido.fecha)}</p>
+												<p><span className="font-semibold text-[#001830]">Envío:</span> {formatearTipoEnvio(pedido.tipoEnvio)}</p>
+												<p><span className="font-semibold text-[#001830]">Total:</span> ${(pedido.montoTotal ?? 0).toLocaleString("es-AR")}</p>
+											</div>
+										</div>
+										<button
+											onClick={() => void toggleDetalle(pedido.id)}
+											className={twBase.iconButton}
+										>
+											{expandido ? "−" : "+"}
+										</button>
+									</div>
+									{expandido && (
+										<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+											{cargandoDetalleId === pedido.id && <p className="text-sm text-[#5b6673]">Cargando detalle...</p>}
+											{!cargandoDetalleId && detalle && (
+												<div className={twAdmin.adminExpandWrap}>
+													<div className="grid grid-cols-1 gap-2 text-sm text-[#1e1e1e]">
+														<p><span className="font-semibold">Método de pago:</span> {detalle.metodoPago ?? "—"}</p>
+														<p><span className="font-semibold">Estado pago:</span> {detalle.estadoPago ?? "—"}</p>
+														<p><span className="font-semibold">Costo envío:</span> {(detalle.costoEnvio ?? 0) === 0 ? "Gratis" : `$${(detalle.costoEnvio ?? 0).toLocaleString("es-AR")}`}</p>
+														<p><span className="font-semibold">Estado envío:</span> {detalle.envioEstado ?? "—"}</p>
+														{envioYaDespachado(detalle) && (
+															<>
+																<p><span className="font-semibold">Fecha despacho:</span> {formatearFecha(detalle.envioFechaDespacho ?? undefined)}</p>
+																<p><span className="font-semibold">Tracking:</span> {detalle.envioCodigoSeguimiento ?? "—"}</p>
+															</>
+														)}
+														{!estaPagado(detalle.estado) && (
+															<p>
+																<span className="font-semibold">Vence:</span>{" "}
+																{estaFechaVencida(detalle.fechaVencimiento) ? (
+																	<>
+																		<span className="line-through">{formatearFecha(detalle.fechaVencimiento)}</span>
+																		<span className="ml-2 font-semibold text-[#B42318]">Vencido</span>
+																	</>
+																) : (
+																	formatearFecha(detalle.fechaVencimiento)
+																)}
+															</p>
+														)}
+													</div>
+													<div className="grid grid-cols-1 gap-2 border-t border-[#dbe4ef] pt-3">
+														{!puedeMarcarPagado && !puedeCancelar && !puedeDespachar && (
+															<p className={twAdmin.adminHintText}>Modo lectura: este rol no puede modificar pedidos.</p>
+														)}
+														{!puedeMarcarPagadoPedido(detalle) && (
+															<p className={twAdmin.adminHintText}>Marcar pagado: solo transferencia pendiente y dentro de plazo.</p>
+														)}
+														<div className="grid grid-cols-2 gap-2">
+															<button
+																disabled={!puedeMarcarPagado || procesandoPedidoId === pedido.id || !puedeMarcarPagadoPedido(detalle)}
+																onClick={() => void marcarPagado(pedido.id)}
+																className={twBase.actionBtnNeutral}
+															>
+																Marcar pagado
+															</button>
+															<button
+																disabled={!puedeCancelar || procesandoPedidoId === pedido.id || estaPagado(detalle.estado)}
+																onClick={() => void cancelarPedido(pedido.id)}
+																className={twBase.actionBtnDanger}
+															>
+																Cancelar
+															</button>
+														</div>
+														{envioYaDespachado(detalle) ? (
+															<p className={twAdmin.adminHintText}>Este pedido ya fue despachado y no puede volver a despacharse.</p>
+														) : (
+															<div className="grid grid-cols-1 gap-2">
+																<input
+																	value={codigoSeguimientoPorPedido[pedido.id] ?? ""}
+																	onChange={(e) =>
+																		setCodigoSeguimientoPorPedido((prev) => ({ ...prev, [pedido.id]: e.target.value }))
+																	}
+																	placeholder="Código seguimiento"
+																	className={`${twBase.miniInput} h-9 w-full`}
+																/>
+																<button
+																	disabled={!puedeDespachar || procesandoPedidoId === pedido.id || !puedeDespacharPedido(detalle)}
+																	onClick={() => void despacharPedido(pedido.id)}
+																	className={twBase.actionBtnPrimary}
+																>
+																	Despachar
+																</button>
+																{!puedeDespacharPedido(detalle) && (
+																	<p className={twAdmin.adminHintText}>Despachar: solo disponible cuando el pedido está pagado.</p>
+																)}
+															</div>
+														)}
+													</div>
+													<div className="space-y-2">
+														{detalle.lineas.map((linea) => (
+															<div key={linea.id} className="rounded-lg border border-[#dbe4ef] bg-white p-2 text-sm text-[#1e1e1e]">
+																<p className="font-semibold text-[#001830]">{linea.marca} {linea.modelo}</p>
+																<p className="text-[#475569]">{linea.color ?? "—"} · x{linea.cantidad}</p>
+																<p className="mt-1 font-semibold">${linea.subtotal.toLocaleString("es-AR")}</p>
+															</div>
+														))}
+													</div>
+												</div>
+											)}
+										</div>
+									)}
+								</div>
+							);
+						})
+					)}
+				</div>
+
+				<div className={`${twBase.tableShell} hidden lg:block`}>
 					<div className="overflow-x-auto">
-					<table className="min-w-full text-left">
+					<table className="w-full min-w-[980px] text-left">
 						<thead className={twBase.tableHead}>
 							<tr>
 								<th className="px-4 py-3">ID</th>
@@ -344,7 +471,7 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 																				setCodigoSeguimientoPorPedido((prev) => ({ ...prev, [pedido.id]: e.target.value }))
 																			}
 																			placeholder="Código seguimiento"
-																			className={twBase.miniInput}
+																			className={`${twBase.miniInput} min-w-[180px] flex-1 sm:flex-none`}
 																		/>
 																		<button
 																			disabled={
@@ -402,6 +529,7 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 					</table>
 					</div>
 				</div>
+				</>
 			)}
 		</div>
 	);

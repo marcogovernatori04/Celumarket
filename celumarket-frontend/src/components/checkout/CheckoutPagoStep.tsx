@@ -84,8 +84,8 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 					<summary className={twCheckout.checkoutSummaryTitle}>Datos de facturación</summary>
 					<p className={twCheckout.checkoutSummaryText}>{resumenFacturacion}</p>
 				</details>
-				<div className={`${twCheckout.checkoutCard} p-5`}>
-					<h2 className="text-2xl font-bold text-[#001830]">3. Elegí cómo pagar</h2>
+				<div className={`${twCheckout.checkoutCard} p-4 sm:p-5`}>
+					<h2 className="text-xl font-bold text-[#001830] sm:text-2xl">3. Elegí cómo pagar</h2>
 					<div className="mt-4 space-y-3">
 						<button type="button" onClick={() => {
 							const m = metodos.find((x) => x.nombre.toLowerCase().includes("transferencia"));
@@ -130,7 +130,7 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 								<div className="mt-1.5 space-y-2">
 									{carritoItems.map((item) => (
 										<div key={item.variacionId} className={twCheckout.checkoutModalItemRow}>
-											<p>
+											<p className="min-w-0">
 												{item.marca} {item.modelo} · {item.color} · x{item.cantidad}
 											</p>
 											<p className={twCheckout.checkoutModalItemAmount}>
@@ -166,7 +166,7 @@ export const CheckoutPagoStep = ({ metodos, resumenEnvio, resumenFacturacion, se
 							</div>
 						</div>
 						{error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-						<div className="mt-6 flex justify-end gap-3">
+						<div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 							<button onClick={() => setMostrarModalConfirmacion(false)} className={twBase.secondaryBtnSm}>Volver</button>
 							<button
 								disabled={reservaExpirada || enviando || !metodoPagoId}

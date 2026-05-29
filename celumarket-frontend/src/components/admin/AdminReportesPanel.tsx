@@ -30,6 +30,8 @@ const formatearFecha = (raw: string) => {
 	if (Number.isNaN(d.getTime())) return "—";
 	return d.toLocaleDateString("es-AR");
 };
+const formatearCantidadPedidos = (cantidad: number) =>
+	`${cantidad} pedido${cantidad === 1 ? "" : "s"}`;
 const hoy = new Date();
 
 type AdminReportesPanelProps = {
@@ -128,7 +130,7 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 
 	return (
 		<div className="flex h-full min-h-0 flex-col overflow-x-hidden">
-			<div className="flex items-center justify-between gap-3">
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h2 className={twAdmin.adminSectionTitle}>Reportes</h2>
 					<p className={twAdmin.adminSectionSubtitle}>Resumen general con métricas clave del sistema.</p>
@@ -171,7 +173,7 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 									<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Facturación por mes</h3>
 									<p className="text-xs text-[#5b6673]">Pedidos: {resumenMes.totalPedidos} · Productos: {formatearMonto(resumenMes.totalProductos)} · Envío: {formatearMonto(resumenMes.totalEnvio)} · Total: {formatearMonto(resumenMes.totalFacturado)}</p>
 								</div>
-								<div className="flex items-center gap-2">
+								<div className="flex flex-wrap items-center gap-2">
 									<input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} className={`${twBase.miniInput} w-24`} />
 									<input type="number" min={1} max={12} value={mes} onChange={(e) => setMes(Number(e.target.value))} className={`${twBase.miniInput} w-16`} />
 									<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
@@ -184,7 +186,7 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 									facturacionMes.map((item, idx) => (
 										<div key={`${item.fecha}-${idx}`} className={twBase.listRow3}>
 											<p className="font-semibold text-[#001830]">{formatearFecha(item.fecha)}</p>
-											<p className="text-[#334155]">{item.cantidadPedidos} pedidos</p>
+											<p className="text-[#334155]">{formatearCantidadPedidos(item.cantidadPedidos)}</p>
 											<p className="justify-self-end font-semibold text-[#001830]">{formatearMonto(item.totalFacturado)}</p>
 										</div>
 									))
@@ -201,8 +203,8 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 								<p className="px-4 py-8 text-center text-[#64748b]">Sin ventas pagadas todavía.</p>
 							) : (
 								topVendidos.map((item, idx) => (
-									<div key={`${item.marca}-${item.modelo}-${idx}`} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-3 text-sm">
-										<p className="font-semibold text-[#001830]">{item.marca} {item.modelo}</p>
+									<div key={`${item.marca}-${item.modelo}-${idx}`} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 px-4 py-3 text-sm">
+										<p className="min-w-0 break-words font-semibold text-[#001830]">{item.marca} {item.modelo}</p>
 										<p className="text-[#334155]">{item.cantidadVendida} u.</p>
 										<p className="font-semibold text-[#001830]">{formatearMonto(item.totalRecaudado)}</p>
 									</div>
@@ -212,9 +214,9 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 						</section>
 
 						<section className={twBase.panel}>
-						<div className="flex items-center justify-between gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3">
+						<div className="flex flex-col gap-3 border-b border-black/10 bg-[#eef3f8] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 							<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">Stock crítico</h3>
-							<div className="flex items-center gap-2">
+							<div className="flex flex-wrap items-center gap-2">
 								<label className="text-xs font-medium text-[#334155]">Umbral</label>
 								<input type="number" min={0} value={umbralStock} onChange={(e) => setUmbralStock(Number(e.target.value))} className={`${twBase.miniInput} w-20`} />
 								<button onClick={() => void aplicarFiltros()} disabled={recargando} className={twBase.applyBtn}>Aplicar</button>
@@ -225,8 +227,8 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 								<p className="px-4 py-8 text-center text-[#64748b]">No hay variaciones bajo el umbral.</p>
 							) : (
 								stockCritico.map((item) => (
-									<div key={item.variacionId} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-3 text-sm">
-										<p className="font-semibold text-[#001830]">{item.marcaModelo}</p>
+									<div key={item.variacionId} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 px-4 py-3 text-sm">
+										<p className="min-w-0 break-words font-semibold text-[#001830]">{item.marcaModelo}</p>
 										<p className="text-[#334155]">Stock: {item.stockActual}</p>
 										<p className="font-semibold text-[#001830]">{formatearMonto(item.precio)}</p>
 									</div>
@@ -276,8 +278,8 @@ const FacturacionCard = ({
 			<h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#334155]">{titulo}</h3>
 			<p className="text-xs text-[#5b6673]">{resumen}</p>
 		</div>
-		<div className="h-[240px] border-b border-black/10 bg-white px-2 py-1.5 xl:h-[320px]">
-			<ResponsiveContainer width="100%" height="100%">
+		<div className="border-b border-black/10 bg-white px-2 py-1.5">
+			<ResponsiveContainer width="100%" height={280} minWidth={280} minHeight={220}>
 				<LineChart data={serie} margin={{ top: 6, right: 6, left: 2, bottom: 0 }}>
 					<CartesianGrid strokeDasharray="3 3" stroke="#e6edf5" />
 					<XAxis dataKey="fecha" tick={{ fill: "#5b6673", fontSize: 9 }} />
@@ -300,7 +302,7 @@ const FacturacionCard = ({
 				items.map((item, idx) => (
 					<div key={`${item.fecha}-${idx}`} className={twBase.listRow3}>
 						<p className="font-semibold text-[#001830]">{formatearFecha(item.fecha)}</p>
-						<p className="text-[#334155]">{item.cantidadPedidos} pedidos</p>
+						<p className="text-[#334155]">{formatearCantidadPedidos(item.cantidadPedidos)}</p>
 						<p className="justify-self-end font-semibold text-[#001830]">{formatearMonto(item.totalFacturado)}</p>
 					</div>
 				))

@@ -19,6 +19,44 @@ namespace Celumarket.Application.Services
             _configuration = configuration;
         }
 
+        public async Task EnviarTokenRecuperacionClaveAsync(string emailDestino, string nombreDestino, string tokenRecuperacion)
+        {
+            var email = new MimeMessage();
+            var senderEmailRecuperacion = _configuration["Smtp:RecoverySenderEmail"];
+            var senderNombreRecuperacion = _configuration["Smtp:RecoverySenderName"];
+            var senderEmail = string.IsNullOrWhiteSpace(senderEmailRecuperacion) ? _settings.SenderEmail : senderEmailRecuperacion;
+            var senderNombre = string.IsNullOrWhiteSpace(senderNombreRecuperacion) ? _settings.SenderName : senderNombreRecuperacion;
+            email.From.Add(new MailboxAddress(senderNombre, senderEmail));
+            email.To.Add(new MailboxAddress(nombreDestino, emailDestino));
+            email.Subject = "Recuperación de contraseña - Celumarket";
+
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 560px; margin: auto; border: 1px solid #eee; padding: 20px;'>
+                    <h2 style='color: #001830; margin-top: 0;'>Recuperación de contraseña</h2>
+                    <p>Hola <strong>{nombreDestino}</strong>,</p>
+                    <p>Recibimos una solicitud para restablecer tu clave en Celumarket.</p>
+                    <p>Tu token de recuperación es:</p>
+                    <div style='margin: 16px 0; padding: 12px; border-radius: 8px; background: #f3f7fb; border: 1px solid #dbe4ef; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #001830;'>
+                        {tokenRecuperacion}
+                    </div>
+                    <p style='margin-bottom: 4px;'>Este token vence en <strong>30 minutos</strong>.</p>
+                    <p style='margin-top: 0; color: #64748b; font-size: 13px;'>
+                        Si no solicitaste este cambio, podés ignorar este email.
+                    </p>
+                </div>"
+            };
+
+            email.Body = bodyBuilder.ToMessageBody();
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_settings.Server, _settings.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_settings.Username, _settings.Password);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+
         public async Task EnviarEmailPedidoAsync(Pedido pedido, Cliente cliente, string metodoPago, string nroFactura = null)
         { 
             var email = new MimeMessage();

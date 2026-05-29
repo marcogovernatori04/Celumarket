@@ -131,7 +131,7 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 
 	return (
 		<div className={twAuth.authBg}>
-			<div className="mx-auto flex w-full max-w-[1440px] justify-center px-4 pt-16">
+			<div className="mx-auto flex w-full max-w-[1440px] justify-center px-4 py-10 sm:pt-16">
 				<div className="w-full max-w-[477px]">
 					<form onSubmit={modoRegistro ? registrar : enviar} className={twAuth.authCard}>
 						<div className="mb-5">
@@ -140,23 +140,23 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 						</div>
 						{!modoRecuperar && modoRegistro ? (
 							<>
-								<div className="mb-3 grid grid-cols-2 gap-3">
+								<div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" className={twAuth.authInput} required />
 									<input value={apellido} onChange={(e) => setApellido(e.target.value)} placeholder="Apellido" className={twAuth.authInput} required />
 								</div>
-								<div className="mb-3 grid grid-cols-2 gap-3">
+								<div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={dni} onChange={(e) => setDni(e.target.value)} placeholder="DNI" className={twAuth.authInput} required />
 									<input value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Teléfono" className={twAuth.authInput} required />
 								</div>
-								<div className="mb-3 grid grid-cols-2 gap-3">
+								<div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={calle} onChange={(e) => setCalle(e.target.value)} placeholder="Calle" className={twAuth.authInput} required />
 									<input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Número" className={twAuth.authInput} required />
 								</div>
-								<div className="mb-3 grid grid-cols-2 gap-3">
+								<div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={pisoDepto} onChange={(e) => setPisoDepto(e.target.value)} placeholder="Piso/Depto (opcional)" className={twAuth.authInput} />
 									<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} placeholder="Código postal" className={twAuth.authInput} required />
 								</div>
-								<div className="mb-5 grid grid-cols-2 gap-3">
+								<div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={localidad} onChange={(e) => setLocalidad(e.target.value)} placeholder="Localidad" className={twAuth.authInput} required />
 									<input value={provincia} onChange={(e) => setProvincia(e.target.value)} placeholder="Provincia" className={twAuth.authInput} required />
 								</div>
@@ -182,7 +182,7 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 								<button disabled={cargando} className={`${twAuth.authPrimaryBtn} text-xl font-medium leading-none`}>
 									{cargando ? "Iniciando..." : "Iniciar sesión"}
 								</button>
-								<div className="mt-4 flex items-center justify-between">
+								<div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 									<button
 										type="button"
 										onClick={() => {

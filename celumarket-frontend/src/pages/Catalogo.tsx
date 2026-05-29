@@ -62,7 +62,7 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 
 	return (
 		<div className={`${twBase.pageLayout} flex flex-col`}>
-			<section className="flex-1 px-10 py-8">
+			<section className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
 				<div className="mx-auto mb-8 max-w-6xl flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 					<div className="relative w-full lg:max-w-[420px]">
 						<input
@@ -73,7 +73,7 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 						/>
 						<span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">⌕</span>
 					</div>
-					<div className="flex flex-wrap items-center gap-2">
+					<div className="grid w-full grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center lg:w-auto">
 						<button onClick={() => setFiltro("nuevo")} className={`rounded px-3 py-2 text-sm transition-colors ${filtro === "nuevo" ? "bg-[#001830] text-white hover:bg-[#012a55]" : "bg-[#f0f0f0] text-[#757575] hover:bg-[#e5e5e5] hover:text-[#1e1e1e]"}`}>Nuevo</button>
 						<button onClick={() => setFiltro("precio-asc")} className={`rounded px-3 py-2 text-sm transition-colors ${filtro === "precio-asc" ? "bg-[#001830] text-white hover:bg-[#012a55]" : "bg-[#f0f0f0] text-[#757575] hover:bg-[#e5e5e5] hover:text-[#1e1e1e]"}`}>Precio ascendente</button>
 						<button onClick={() => setFiltro("precio-desc")} className={`rounded px-3 py-2 text-sm transition-colors ${filtro === "precio-desc" ? "bg-[#001830] text-white hover:bg-[#012a55]" : "bg-[#f0f0f0] text-[#757575] hover:bg-[#e5e5e5] hover:text-[#1e1e1e]"}`}>Precio descendente</button>
@@ -82,7 +82,7 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 				{cargando ? (
 					<p className="text-center text-gray-500">Cargando catálogo...</p>
 				) : (
-					<div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+					<div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
 						{productosFiltrados.map((prod) => (
 							<TarjetaCelular
 								key={prod.id}
@@ -94,10 +94,10 @@ export const Catalogo = ({ onVerDetalle }: CatalogoProps) => {
 						))}
 					</div>
 				)}
-				<div className="mx-auto mt-8 flex max-w-6xl items-center justify-center gap-3">
-					<button disabled={pagina === 1} onClick={() => setPagina((p) => p - 1)} className="rounded bg-[#001830] px-3 py-2 text-white disabled:opacity-40">Anterior</button>
+				<div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-3">
+					<button disabled={pagina === 1} onClick={() => setPagina((p) => p - 1)} className="min-w-[110px] rounded bg-[#001830] px-3 py-2 text-white disabled:opacity-40">Anterior</button>
 					<span className="text-sm text-gray-700">Página {pagina} de {totalPaginas}</span>
-					<button disabled={pagina >= totalPaginas} onClick={() => setPagina((p) => p + 1)} className="rounded bg-[#001830] px-3 py-2 text-white disabled:opacity-40">Siguiente</button>
+					<button disabled={pagina >= totalPaginas} onClick={() => setPagina((p) => p + 1)} className="min-w-[110px] rounded bg-[#001830] px-3 py-2 text-white disabled:opacity-40">Siguiente</button>
 				</div>
 			</section>
 			<Footer />

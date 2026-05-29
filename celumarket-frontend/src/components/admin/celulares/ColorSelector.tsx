@@ -31,14 +31,14 @@ export const ColorSelector = ({ value, colores, onChange, onCrearColor }: ColorS
 	};
 
 	return (
-		<div>
+		<div className="min-w-0">
 			<div className="flex flex-wrap items-center gap-2">
-				<div className="inline-flex items-center gap-2 rounded-md border border-[#cdd6e1] bg-white px-2 py-1.5">
+				<div className="inline-flex min-w-0 items-center gap-2 rounded-md border border-[#cdd6e1] bg-white px-2 py-1.5">
 					<span className="h-4 w-4 rounded-full border border-black/20" style={{ backgroundColor: colorActual?.hex ?? "#d1d5db" }} />
 					<select
 						value={value ?? ""}
 						onChange={(e) => onChange(Number(e.target.value))}
-						className="min-w-[170px] bg-transparent text-sm text-[#334155] outline-none"
+						className="min-w-[150px] max-w-full bg-transparent text-sm text-[#334155] outline-none"
 					>
 						<option value="" disabled>Seleccionar color</option>
 						{colores.map((c) => (
