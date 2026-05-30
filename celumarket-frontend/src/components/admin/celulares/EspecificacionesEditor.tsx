@@ -42,22 +42,22 @@ export const EspecificacionesEditor = ({ celularId, especificaciones, onGuardar 
 			{editandoCelularId === celularId ? (
 				<div className="mt-2 space-y-2">
 					{draft.map((esp, index) => (
-						<div key={`esp-edit-${index}`} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+						<div key={`esp-edit-${index}`} className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
 							<input
 								value={esp.nombre}
 								onChange={(e) => setDraft((prev) => prev.map((x, i) => i === index ? { ...x, nombre: e.target.value } : x))}
 								placeholder="Nombre"
-								className="h-9 rounded border border-[#cdd6e1] bg-white px-2 text-sm"
+								className="h-9 min-w-0 rounded border border-[#cdd6e1] bg-white px-2 text-sm"
 							/>
 							<input
 								value={esp.valor}
 								onChange={(e) => setDraft((prev) => prev.map((x, i) => i === index ? { ...x, valor: e.target.value } : x))}
 								placeholder="Valor"
-								className="h-9 rounded border border-[#cdd6e1] bg-white px-2 text-sm"
+								className="h-9 min-w-0 rounded border border-[#cdd6e1] bg-white px-2 text-sm"
 							/>
 							<button
 								onClick={() => setDraft((prev) => prev.filter((_, i) => i !== index))}
-								className={twBase.actionBtnDanger}
+								className={`${twBase.actionBtnDanger} w-full sm:w-auto`}
 							>
 								Quitar
 							</button>
@@ -65,21 +65,21 @@ export const EspecificacionesEditor = ({ celularId, especificaciones, onGuardar 
 					))}
 					<button
 						onClick={() => setDraft((prev) => [...prev, { nombre: "", valor: "" }])}
-						className={twBase.actionBtnNeutral}
+						className={`${twBase.actionBtnNeutral} w-full sm:w-auto`}
 					>
 						+ Añadir especificación
 					</button>
-					<div className="flex gap-2">
+					<div className="flex flex-col gap-2 sm:flex-row">
 						<button
 							onClick={() => void guardar()}
 							disabled={guardandoCelularId === celularId}
-							className={twBase.actionBtnPrimary}
+							className={`${twBase.actionBtnPrimary} w-full sm:w-auto`}
 						>
 							Guardar especificaciones
 						</button>
 						<button
 							onClick={cancelar}
-							className={twBase.actionBtnNeutral}
+							className={`${twBase.actionBtnCancel} w-full sm:w-auto`}
 						>
 							Cancelar
 						</button>

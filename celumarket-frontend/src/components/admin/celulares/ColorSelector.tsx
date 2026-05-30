@@ -50,7 +50,7 @@ export const ColorSelector = ({ value, colores, onChange, onCrearColor }: ColorS
 				</div>
 				<button
 					onClick={() => setCreando((v) => !v)}
-					className={twBase.actionBtnNeutral}
+					className={creando ? twBase.actionBtnCancel : twBase.actionBtnNeutral}
 				>
 					{creando ? "Cancelar" : "Nuevo color"}
 				</button>

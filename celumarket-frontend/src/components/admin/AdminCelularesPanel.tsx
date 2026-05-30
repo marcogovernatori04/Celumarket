@@ -364,7 +364,7 @@ export const AdminCelularesPanel = () => {
 				<h2 className={twAdmin.adminSectionTitle}>Celulares</h2>
 				<button
 					onClick={() => setCreando((v) => !v)}
-					className={twBase.actionBtnPrimary}
+					className={creando ? twBase.actionBtnCancel : twBase.actionBtnPrimary}
 				>
 					{creando ? "Cancelar alta" : "Nuevo celular"}
 				</button>

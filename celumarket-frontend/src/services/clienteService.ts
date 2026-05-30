@@ -55,6 +55,20 @@ export type RegistrarClientePayload = {
 	password: string;
 };
 
+export type RegistrarUsuarioInternoPayload = {
+	email: string;
+	password: string;
+	rol: "Ventas" | "Soporte";
+};
+
+export type RolUsuarioInterno = "Ventas" | "Soporte";
+
+export type UsuarioInternoListado = {
+	id: number;
+	email: string;
+	rol: string;
+};
+
 export const clienteService = {
 	async obtenerMiPerfil(): Promise<MiPerfil> {
 		const { data } = await api.get<MiPerfil>("/Clientes/mi-perfil");
@@ -72,5 +86,18 @@ export const clienteService = {
 
 	async registrar(payload: RegistrarClientePayload): Promise<void> {
 		await api.post("/Clientes/registrar", payload);
+	},
+
+	async registrarUsuarioInterno(payload: RegistrarUsuarioInternoPayload): Promise<void> {
+		await api.post("/Clientes/usuarios-internos", payload);
+	},
+
+	async obtenerUsuariosInternos(): Promise<UsuarioInternoListado[]> {
+		const { data } = await api.get<UsuarioInternoListado[]>("/Clientes/usuarios-internos");
+		return data;
+	},
+
+	async actualizarRolUsuarioInterno(usuarioId: number, rol: RolUsuarioInterno): Promise<void> {
+		await api.put(`/Clientes/usuarios-internos/${usuarioId}/rol`, { rol });
 	},
 };

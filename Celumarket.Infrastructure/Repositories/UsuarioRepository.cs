@@ -1,11 +1,7 @@
-﻿using Celumarket.Application.Interfaces.Repositories;
+using Celumarket.Application.DTOs;
+using Celumarket.Application.Interfaces.Repositories;
 using Celumarket.Domain;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celumarket.Infrastructure.Repositories
 {
@@ -30,6 +26,21 @@ namespace Celumarket.Infrastructure.Repositories
             return await _context.Usuarios
                 .Include(u => u.Rol)
                 .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<IEnumerable<ClienteDTOs.UsuarioInternoListadoDTO>> ObtenerInternosAsync()
+        {
+            return await _context.Usuarios
+                .Where(u => u.Rol.Nombre != "Cliente")
+                .Select(u => new ClienteDTOs.UsuarioInternoListadoDTO
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Rol = u.Rol.Nombre
+                })
+                .OrderBy(u => u.Rol)
+                .ThenBy(u => u.Email)
+                .ToListAsync();
         }
 
         public async Task AgregarAsync(Usuario usuario)

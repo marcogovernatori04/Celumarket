@@ -68,6 +68,25 @@
             public string ClaveNueva { get; set; }
         }
 
+        public class RegistrarUsuarioInternoDTO
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+            public string Rol { get; set; }
+        }
+
+        public class UsuarioInternoListadoDTO
+        {
+            public int Id { get; set; }
+            public string Email { get; set; }
+            public string Rol { get; set; }
+        }
+
+        public class ActualizarRolUsuarioInternoDTO
+        {
+            public string Rol { get; set; }
+        }
+
         public class ClienteListadoDTO
         {
             public int Id {  get; set; }

@@ -105,5 +105,29 @@ namespace Celumarket.API.Controllers
             var lista = await _clienteRepo.ObtenerTodosAsync();
             return Ok(lista);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("usuarios-internos")]
+        public async Task<IActionResult> RegistrarUsuarioInterno([FromBody] ClienteDTOs.RegistrarUsuarioInternoDTO dto)
+        {
+            int nuevoUsuarioId = await _gestorCliente.RegistrarUsuarioInternoAsync(dto);
+            return Ok(new { Mensaje = "Usuario interno creado con éxito.", UsuarioId = nuevoUsuarioId });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("usuarios-internos")]
+        public async Task<IActionResult> ListarUsuariosInternos()
+        {
+            var usuarios = await _gestorCliente.ListarUsuariosInternosAsync();
+            return Ok(usuarios);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("usuarios-internos/{usuarioId}/rol")]
+        public async Task<IActionResult> ActualizarRolUsuarioInterno(int usuarioId, [FromBody] ClienteDTOs.ActualizarRolUsuarioInternoDTO dto)
+        {
+            await _gestorCliente.ActualizarRolUsuarioInternoAsync(usuarioId, dto);
+            return Ok(new { Mensaje = "Rol de usuario interno actualizado." });
+        }
     }
 }

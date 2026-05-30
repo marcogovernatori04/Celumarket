@@ -25,6 +25,13 @@ export const celularService = {
 		return respuesta.data;
 	},
 
+	configurarDestacado: async (
+		celularId: number,
+		payload: { esDestacado: boolean; textoPromocion?: string | null },
+	): Promise<void> => {
+		await api.put(`/Celulares/${celularId}/destacado`, payload);
+	},
+
 	obtenerDetalle: async (celularId: number): Promise<CelularDetalle> => {
 		const respuesta = await api.get<CelularDetalle>(`/Celulares/${celularId}`);
 		return respuesta.data;

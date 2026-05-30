@@ -28,6 +28,7 @@ type AdminPedidosPanelProps = {
 	puedeCancelar?: boolean;
 	puedeDespachar?: boolean;
 	filtroInicial?: "todos" | "pendiente" | "pagado" | "cancelado";
+	onVerEnvioPedido?: (pedidoId: number) => void;
 };
 
 export const AdminPedidosPanel = ({
@@ -35,6 +36,7 @@ export const AdminPedidosPanel = ({
 	puedeCancelar = false,
 	puedeDespachar = false,
 	filtroInicial = "todos",
+	onVerEnvioPedido,
 }: AdminPedidosPanelProps) => {
 	const [pedidos, setPedidos] = useState<AdminPedidoItem[]>([]);
 	const [filtroEstado, setFiltroEstado] = useState<"todos" | "pendiente" | "pagado" | "cancelado">(filtroInicial);
@@ -273,13 +275,16 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 														<p><span className="font-semibold">Método de pago:</span> {detalle.metodoPago ?? "—"}</p>
 														<p><span className="font-semibold">Estado pago:</span> {detalle.estadoPago ?? "—"}</p>
 														<p><span className="font-semibold">Costo envío:</span> {(detalle.costoEnvio ?? 0) === 0 ? "Gratis" : `$${(detalle.costoEnvio ?? 0).toLocaleString("es-AR")}`}</p>
-														<p><span className="font-semibold">Estado envío:</span> {detalle.envioEstado ?? "—"}</p>
-														{envioYaDespachado(detalle) && (
-															<>
-																<p><span className="font-semibold">Fecha despacho:</span> {formatearFecha(detalle.envioFechaDespacho ?? undefined)}</p>
-																<p><span className="font-semibold">Tracking:</span> {detalle.envioCodigoSeguimiento ?? "—"}</p>
-															</>
-														)}
+														<p className="flex flex-wrap items-center gap-2">
+															<span><span className="font-semibold">Estado envío:</span> {detalle.envioEstado ?? "—"}</span>
+															<button
+																type="button"
+																onClick={() => onVerEnvioPedido?.(pedido.id)}
+																className="rounded border border-[#cdd6e1] bg-white px-2 py-1 text-xs font-semibold text-[#015cb9] hover:bg-[#eef5fd]"
+															>
+																Ver en envíos
+															</button>
+														</p>
 														{!estaPagado(detalle.estado) && (
 															<p>
 																<span className="font-semibold">Vence:</span>{" "}
@@ -413,13 +418,16 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 																<p><span className="font-semibold">Método de pago:</span> {detallePorId[pedido.id].metodoPago ?? "—"}</p>
 																<p><span className="font-semibold">Estado pago:</span> {detallePorId[pedido.id].estadoPago ?? "—"}</p>
 																<p><span className="font-semibold">Costo envío:</span> {(detallePorId[pedido.id].costoEnvio ?? 0) === 0 ? "Gratis" : `$${(detallePorId[pedido.id].costoEnvio ?? 0).toLocaleString("es-AR")}`}</p>
-																<p><span className="font-semibold">Estado envío:</span> {detallePorId[pedido.id].envioEstado ?? "—"}</p>
-																{envioYaDespachado(detallePorId[pedido.id]) && (
-																	<>
-																		<p><span className="font-semibold">Fecha despacho:</span> {formatearFecha(detallePorId[pedido.id].envioFechaDespacho ?? undefined)}</p>
-																		<p><span className="font-semibold">Tracking:</span> {detallePorId[pedido.id].envioCodigoSeguimiento ?? "—"}</p>
-																	</>
-																)}
+																<p className="flex flex-wrap items-center gap-2">
+																	<span><span className="font-semibold">Estado envío:</span> {detallePorId[pedido.id].envioEstado ?? "—"}</span>
+																	<button
+																		type="button"
+																		onClick={() => onVerEnvioPedido?.(pedido.id)}
+																		className="rounded border border-[#cdd6e1] bg-white px-2 py-1 text-xs font-semibold text-[#015cb9] hover:bg-[#eef5fd]"
+																	>
+																		Ver en envíos
+																	</button>
+																</p>
 																{!estaPagado(detallePorId[pedido.id].estado) && (
 																	<p>
 																		<span className="font-semibold">Vence:</span>{" "}

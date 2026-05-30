@@ -154,7 +154,7 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 					<KpiCard titulo="Clientes" valor={dashboard?.totalClientes ?? 0} onClick={() => onIrASeccion?.("usuarios")} />
 					<KpiCard titulo="Pedidos pendientes" valor={dashboard?.pedidosPendientes ?? 0} onClick={() => onIrAPedidosConFiltro?.("pendiente")} />
 					<KpiCard titulo="Productos sin stock" valor={dashboard?.productosSinStock ?? 0} onClick={() => onIrASeccion?.("celulares")} />
-					<KpiCard titulo="Total pedidos" valor={dashboard?.totalPedidos ?? 0} onClick={() => onIrASeccion?.("pedidos")} />
+					<KpiCard titulo="Total pedidos" valor={dashboard?.totalPedidos ?? 0} onClick={() => onIrAPedidosConFiltro?.("todos")} />
 				</div>
 
 				<div className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-2">
@@ -250,9 +250,20 @@ const KpiCard = ({ titulo, valor, onClick }: { titulo: string; valor: number | s
 		tabIndex={onClick ? 0 : undefined}
 		onClick={onClick}
 		onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(); } : undefined}
-		className={`min-w-0 rounded-xl border border-black/10 bg-white px-3 py-2 ${onClick ? "cursor-pointer transition-colors hover:bg-[#f8fbff]" : ""}`}
+		className={`min-w-0 rounded-xl border px-3 py-2 ${
+			onClick
+				? "cursor-pointer border-[#9fc5ef] bg-[#f3f8ff] shadow-sm ring-1 ring-[#dbeafe] transition-colors hover:border-[#015cb9] hover:bg-[#eaf4ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#015cb9]"
+				: "border-black/10 bg-white"
+		}`}
 	>
-		<p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#64748b]">{titulo}</p>
+		<div className="flex items-start justify-between gap-2">
+			<p className={`text-[11px] font-semibold uppercase tracking-[0.08em] ${onClick ? "text-[#015cb9]" : "text-[#64748b]"}`}>{titulo}</p>
+			{onClick && (
+				<span aria-hidden="true" className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#015cb9] text-sm font-bold leading-none text-white">
+					›
+				</span>
+			)}
+		</div>
 		<p className="mt-0.5 break-words text-[clamp(0.95rem,1.4vw,1.25rem)] font-bold leading-tight text-[#001830]">{valor}</p>
 	</div>
 );

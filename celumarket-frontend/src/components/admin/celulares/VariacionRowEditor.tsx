@@ -146,7 +146,7 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 								</button>
 								<button
 									onClick={() => setEditando(false)}
-									className={twBase.actionBtnNeutral}
+									className={twBase.actionBtnCancel}
 								>
 									Cancelar
 								</button>

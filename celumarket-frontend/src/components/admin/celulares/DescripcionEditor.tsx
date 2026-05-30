@@ -11,6 +11,8 @@ export const DescripcionEditor = ({ celularId, descripcion, onGuardar }: Descrip
 	const [editandoCelularId, setEditandoCelularId] = useState<number | null>(null);
 	const [draftDescripcion, setDraftDescripcion] = useState("");
 	const [guardandoCelularId, setGuardandoCelularId] = useState<number | null>(null);
+	const [descripcionExpandida, setDescripcionExpandida] = useState(false);
+	const descripcionLarga = (descripcion ?? "").length > 180;
 
 	const comenzarEdicion = () => {
 		setEditandoCelularId(celularId);
@@ -44,28 +46,41 @@ export const DescripcionEditor = ({ celularId, descripcion, onGuardar }: Descrip
 						rows={3}
 						className="w-full rounded-md border border-[#cdd6e1] bg-white px-3 py-2 text-sm text-[#334155]"
 					/>
-					<div className="mt-2 flex gap-2">
+					<div className="mt-2 flex flex-col gap-2 sm:flex-row">
 						<button
 							onClick={() => void guardar()}
 							disabled={guardandoCelularId === celularId}
-							className={twBase.actionBtnPrimary}
+							className={`${twBase.actionBtnPrimary} w-full sm:w-auto`}
 						>
 							Guardar descripción
 						</button>
 						<button
 							onClick={cancelar}
-							className={twBase.actionBtnNeutral}
+							className={`${twBase.actionBtnCancel} w-full sm:w-auto`}
 						>
 							Cancelar
 						</button>
 					</div>
 				</div>
 			) : (
-				<div className="mt-1 flex items-start justify-between gap-3">
-					<p className="text-sm text-[#334155]">{descripcion}</p>
+				<div className="mt-1 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+					<div className="min-w-0">
+						<p className={`text-sm leading-relaxed text-[#334155] ${!descripcionExpandida && descripcionLarga ? "line-clamp-4" : ""}`}>
+							{descripcion}
+						</p>
+						{descripcionLarga && (
+							<button
+								type="button"
+								onClick={() => setDescripcionExpandida((expandida) => !expandida)}
+								className="mt-1 text-xs font-semibold text-[#015cb9] hover:text-[#017AF4]"
+							>
+								{descripcionExpandida ? "Ver menos" : "Ver más"}
+							</button>
+						)}
+					</div>
 					<button
 						onClick={comenzarEdicion}
-						className={`${twBase.actionBtnNeutral} whitespace-nowrap`}
+						className={`${twBase.actionBtnNeutral} w-full whitespace-nowrap sm:w-auto`}
 					>
 						Editar descripción
 					</button>

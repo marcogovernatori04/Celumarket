@@ -30,5 +30,10 @@ namespace Celumarket.Domain
         {
             PasswordHash = nuevoPasswordHash;
         }
+
+        public void CambiarRol(int rolId)
+        {
+            RolId = rolId;
+        }
     }
 }

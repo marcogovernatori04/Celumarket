@@ -15,9 +15,10 @@ const estaDespachado = (estado?: string) =>
 
 type AdminEnviosPanelProps = {
 	puedeGestionar?: boolean;
+	pedidoIdEnFoco?: number | null;
 };
 
-export const AdminEnviosPanel = ({ puedeGestionar = false }: AdminEnviosPanelProps) => {
+export const AdminEnviosPanel = ({ puedeGestionar = false, pedidoIdEnFoco = null }: AdminEnviosPanelProps) => {
 	const [envios, setEnvios] = useState<AdminEnvioItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -43,6 +44,14 @@ export const AdminEnviosPanel = ({ puedeGestionar = false }: AdminEnviosPanelPro
 	useEffect(() => {
 		void cargarEnvios();
 	}, []);
+
+	useEffect(() => {
+		if (!pedidoIdEnFoco) return;
+		setFiltroEstado("todos");
+		setBusqueda(`#${pedidoIdEnFoco}`);
+		const envio = envios.find((item) => item.pedidoId === pedidoIdEnFoco);
+		if (envio) setExpandidoId(envio.envioId);
+	}, [pedidoIdEnFoco, envios]);
 
 	const busquedaNormalizada = busqueda.trim().toLowerCase();
 	const enviosFiltrados = envios

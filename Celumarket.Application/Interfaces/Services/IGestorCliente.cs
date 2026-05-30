@@ -17,5 +17,8 @@ namespace Celumarket.Application.Interfaces.Services
         Task CambiarClaveAsync(int usuarioId, ClienteDTOs.CambiarClaveDTO dto);
         Task SolicitarRecuperacionClaveAsync(ClienteDTOs.SolicitarRecuperacionClaveDTO dto);
         Task ConfirmarRecuperacionClaveAsync(ClienteDTOs.ConfirmarRecuperacionClaveDTO dto);
+        Task<int> RegistrarUsuarioInternoAsync(ClienteDTOs.RegistrarUsuarioInternoDTO dto);
+        Task<IEnumerable<ClienteDTOs.UsuarioInternoListadoDTO>> ListarUsuariosInternosAsync();
+        Task ActualizarRolUsuarioInternoAsync(int usuarioId, ClienteDTOs.ActualizarRolUsuarioInternoDTO dto);
     }
 }

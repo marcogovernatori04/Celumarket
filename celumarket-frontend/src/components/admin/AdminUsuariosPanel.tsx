@@ -6,13 +6,11 @@ export const AdminUsuariosPanel = () => {
 	const [usuarios, setUsuarios] = useState<UsuarioListado[]>([]);
 	const [cargando, setCargando] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [recargando, setRecargando] = useState(false);
 	const [expandidoId, setExpandidoId] = useState<number | null>(null);
 	const [busqueda, setBusqueda] = useState("");
 
-	const cargarUsuarios = async (esRecarga = false) => {
-		if (esRecarga) setRecargando(true);
-		else setCargando(true);
+	const cargarUsuarios = async () => {
+		setCargando(true);
 		setError(null);
 		try {
 			const data = await clienteService.obtenerUsuarios();
@@ -20,8 +18,7 @@ export const AdminUsuariosPanel = () => {
 		} catch {
 			setError("No se pudo cargar la lista de clientes.");
 		} finally {
-			if (esRecarga) setRecargando(false);
-			else setCargando(false);
+			setCargando(false);
 		}
 	};
 
@@ -69,16 +66,7 @@ export const AdminUsuariosPanel = () => {
 
 	return (
 		<div className="min-w-0">
-			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-				<h2 className={twAdmin.adminSectionTitle}>Clientes</h2>
-				<button
-					onClick={() => void cargarUsuarios(true)}
-					disabled={recargando}
-					className={`${twBase.actionBtnPrimary} disabled:opacity-60`}
-				>
-					{recargando ? "Recargando..." : "Recargar"}
-				</button>
-			</div>
+			<h2 className={twAdmin.adminSectionTitle}>Clientes</h2>
 			<p className="mt-1 text-sm text-[#5b6673]">
 				Listado general de clientes registrados. Total: {usuariosFiltrados.length}
 			</p>
@@ -109,7 +97,7 @@ export const AdminUsuariosPanel = () => {
 									onClick={() => setExpandidoId((prev) => (prev === u.id ? null : u.id))}
 									className={twBase.iconButton}
 								>
-									{expandidoId === u.id ? "−" : "+"}
+									{expandidoId === u.id ? "-" : "+"}
 								</button>
 							</div>
 
@@ -130,60 +118,60 @@ export const AdminUsuariosPanel = () => {
 
 			<div className="mt-6 hidden overflow-auto rounded-xl border border-black/10 lg:block">
 				<div className="min-w-[720px]">
-				<div className={`grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3 ${twBase.tableHead}`}>
-					<span>Nombre</span>
-					<span>Email</span>
-					<span>Rol</span>
-					<span className="text-center">Ver más</span>
-				</div>
-				<div className="divide-y divide-black/10 bg-white">
-					{usuariosFiltrados.length === 0 ? (
-						<div className="px-4 py-8 text-center text-[#64748b]">
-							No hay clientes para el filtro seleccionado.
-						</div>
-					) : (
-						usuariosFiltrados.map((u) => (
-							<div key={u.id}>
-								<div className="grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3">
-									<p className="text-base font-semibold text-[#001830]">{u.nombreCompleto}</p>
-									<p className="text-sm text-[#1e293b]">{u.email || "-"}</p>
-									<p className="text-sm text-[#1e293b]">{u.rol || "-"}</p>
-									<div className="flex justify-center">
-										<button
-											onClick={() => setExpandidoId((prev) => (prev === u.id ? null : u.id))}
-											className={twBase.iconButton}
-										>
-											{expandidoId === u.id ? "−" : "+"}
-										</button>
-									</div>
-								</div>
-
-								{expandidoId === u.id && (
-									<div className="border-t border-black/10 bg-[#f8fafc] px-5 py-4">
-										<div className="grid grid-cols-1 gap-3 text-sm text-[#334155] md:grid-cols-2">
-											<p>
-												<span className="font-semibold text-[#001830]">Teléfono:</span>{" "}
-												{u.telefono || "-"}
-											</p>
-											<p>
-												<span className="font-semibold text-[#001830]">Total comprado:</span>{" "}
-												${u.totalComprado.toLocaleString("es-AR")}
-											</p>
-											<p>
-												<span className="font-semibold text-[#001830]">Cantidad de pedidos:</span>{" "}
-												{u.cantidadPedidos}
-											</p>
-											<p>
-												<span className="font-semibold text-[#001830]">Dirección de envío:</span>{" "}
-												{formatearDireccion(u)}
-											</p>
+					<div className={`grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3 ${twBase.tableHead}`}>
+						<span>Nombre</span>
+						<span>Email</span>
+						<span>Rol</span>
+						<span className="text-center">Ver más</span>
+					</div>
+					<div className="divide-y divide-black/10 bg-white">
+						{usuariosFiltrados.length === 0 ? (
+							<div className="px-4 py-8 text-center text-[#64748b]">
+								No hay clientes para el filtro seleccionado.
+							</div>
+						) : (
+							usuariosFiltrados.map((u) => (
+								<div key={u.id}>
+									<div className="grid grid-cols-[1.3fr_1.4fr_0.9fr_90px] items-center px-4 py-3">
+										<p className="text-base font-semibold text-[#001830]">{u.nombreCompleto}</p>
+										<p className="text-sm text-[#1e293b]">{u.email || "-"}</p>
+										<p className="text-sm text-[#1e293b]">{u.rol || "-"}</p>
+										<div className="flex justify-center">
+											<button
+												onClick={() => setExpandidoId((prev) => (prev === u.id ? null : u.id))}
+												className={twBase.iconButton}
+											>
+												{expandidoId === u.id ? "-" : "+"}
+											</button>
 										</div>
 									</div>
-								)}
-							</div>
-						))
-					)}
-				</div>
+
+									{expandidoId === u.id && (
+										<div className="border-t border-black/10 bg-[#f8fafc] px-5 py-4">
+											<div className="grid grid-cols-1 gap-3 text-sm text-[#334155] md:grid-cols-2">
+												<p>
+													<span className="font-semibold text-[#001830]">Teléfono:</span>{" "}
+													{u.telefono || "-"}
+												</p>
+												<p>
+													<span className="font-semibold text-[#001830]">Total comprado:</span>{" "}
+													${u.totalComprado.toLocaleString("es-AR")}
+												</p>
+												<p>
+													<span className="font-semibold text-[#001830]">Cantidad de pedidos:</span>{" "}
+													{u.cantidadPedidos}
+												</p>
+												<p>
+													<span className="font-semibold text-[#001830]">Dirección de envío:</span>{" "}
+													{formatearDireccion(u)}
+												</p>
+											</div>
+										</div>
+									)}
+								</div>
+							))
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

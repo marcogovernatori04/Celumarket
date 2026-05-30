@@ -5,6 +5,7 @@ import { AdminConfiguracionPanel } from "../components/admin/AdminConfiguracionP
 import { AdminEnviosPanel } from "../components/admin/AdminEnviosPanel";
 import { AdminPedidosPanel } from "../components/admin/AdminPedidosPanel";
 import { AdminReportesPanel } from "../components/admin/AdminReportesPanel";
+import { AdminUsuariosInternosPanel } from "../components/admin/AdminUsuariosInternosPanel";
 import { AdminUsuariosPanel } from "../components/admin/AdminUsuariosPanel";
 import { twLayout } from "../styles/tw";
 
@@ -24,6 +25,7 @@ export const AdminPanel = ({ rol }: AdminPanelProps) => {
 		rol === "Soporte" ? "pedidos" : "reportes";
 	const [seccionActiva, setSeccionActiva] = useState<AdminSectionKey>(seccionInicial);
 	const [filtroPedidos, setFiltroPedidos] = useState<"todos" | "pendiente" | "pagado" | "cancelado">("todos");
+	const [pedidoEnvioEnFoco, setPedidoEnvioEnFoco] = useState<number | null>(null);
 
 	const setSeccionSegura = (seccion: AdminSectionKey) => {
 		if (esSeccionPermitida(seccion, rol)) setSeccionActiva(seccion);
@@ -33,6 +35,12 @@ export const AdminPanel = ({ rol }: AdminPanelProps) => {
 		if (!esSeccionPermitida("pedidos", rol)) return;
 		setFiltroPedidos(filtro);
 		setSeccionActiva("pedidos");
+	};
+
+	const irAEnvioDePedido = (pedidoId: number) => {
+		if (!esSeccionPermitida("envios", rol)) return;
+		setPedidoEnvioEnFoco(pedidoId);
+		setSeccionActiva("envios");
 	};
 
 	const puedeMarcarPagadoPedidos = rol === "Admin" || rol === "Soporte";
@@ -51,20 +59,23 @@ export const AdminPanel = ({ rol }: AdminPanelProps) => {
 			<div className="grid min-h-0 grid-cols-1 gap-4 lg:h-full lg:grid-cols-[196px_minmax(0,1fr)]">
 				<AdminSidebar rol={rol} seccionActiva={seccionActiva} onSelect={setSeccionSegura} />
 				<section className={twLayout.adminContentCard}>
-					<div className="min-h-0 lg:h-full lg:overflow-hidden">
+					<div className={`min-h-0 lg:h-full ${seccionActiva === "configuracion" ? "lg:overflow-y-auto lg:overflow-x-hidden lg:pr-1" : "lg:overflow-hidden"}`}>
 						{seccionActiva === "celulares" ? (
 							<AdminCelularesPanel />
 						) : seccionActiva === "envios" ? (
-							<AdminEnviosPanel puedeGestionar={puedeGestionarEnvios} />
+							<AdminEnviosPanel puedeGestionar={puedeGestionarEnvios} pedidoIdEnFoco={pedidoEnvioEnFoco} />
 						) : seccionActiva === "pedidos" ? (
 							<AdminPedidosPanel
 								puedeMarcarPagado={puedeMarcarPagadoPedidos}
 								puedeCancelar={puedeCancelarPedidos}
 								puedeDespachar={puedeDespacharDesdePedidos}
 								filtroInicial={filtroPedidos}
+								onVerEnvioPedido={irAEnvioDePedido}
 							/>
 						) : seccionActiva === "usuarios" ? (
 							<AdminUsuariosPanel />
+						) : seccionActiva === "usuarios-internos" ? (
+							<AdminUsuariosInternosPanel />
 						) : seccionActiva === "configuracion" ? (
 							<AdminConfiguracionPanel />
 						) : (

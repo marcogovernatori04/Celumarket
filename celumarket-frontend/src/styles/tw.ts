@@ -19,6 +19,7 @@ export const twBase = {
 	tableRow: "border-t border-black/10 text-sm text-[#1e1e1e]",
 	iconButton: "flex h-8 w-8 items-center justify-center rounded-md border border-[#cdd6e1] text-lg font-semibold text-[#015cb9] transition-colors hover:bg-[#eef5fd]",
 	actionBtnNeutral: "h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] disabled:opacity-60",
+	actionBtnCancel: "h-8 rounded border border-[#94a3b8] bg-[#e5e7eb] px-3 text-xs font-semibold text-[#1f2937] hover:bg-[#d1d5db] disabled:opacity-60",
 	actionBtnDanger: "h-8 rounded border border-[#f3c6c6] bg-white px-3 text-xs font-semibold text-[#b42318] hover:bg-[#fff1f0] disabled:opacity-60",
 	actionBtnPrimary: "h-8 rounded bg-[#015cb9] px-3 text-xs font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60",
 	pageLayout: "min-h-screen bg-[#f5f5f5]",

@@ -158,6 +158,63 @@ namespace Celumarket.Application.Services
             _tokensRecuperacion.Remove(dto.TokenRecuperacion);
             await _unitOfWork.GuardarAsync();
         }
+
+        public async Task<int> RegistrarUsuarioInternoAsync(ClienteDTOs.RegistrarUsuarioInternoDTO dto)
+        {
+            var email = dto.Email?.Trim();
+            var rolNombre = dto.Rol?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(email))
+                throw new Exception("El email es obligatorio.");
+            if (string.IsNullOrWhiteSpace(dto.Password) || dto.Password.Length < 8)
+                throw new Exception("La clave debe tener al menos 8 caracteres.");
+
+            var rolesPermitidos = new[] { "Ventas", "Soporte" };
+            if (!rolesPermitidos.Contains(rolNombre))
+                throw new Exception("Rol interno inválido.");
+
+            var existeEmail = await _usuarioRepo.ObtenerPorEmailAsync(email);
+            if (existeEmail != null)
+                throw new Exception("El email ya está registrado.");
+
+            var rol = await _rolRepo.ObtenerPorNombreAsync(rolNombre);
+            if (rol == null)
+                throw new Exception($"Rol '{rolNombre}' no encontrado.");
+
+            var usuario = new Usuario(email, _servicioSeguridad.EncriptarPassword(dto.Password), rol.Id);
+            await _usuarioRepo.AgregarAsync(usuario);
+            await _unitOfWork.GuardarAsync();
+
+            return usuario.Id;
+        }
+
+        public async Task<IEnumerable<ClienteDTOs.UsuarioInternoListadoDTO>> ListarUsuariosInternosAsync()
+        {
+            return await _usuarioRepo.ObtenerInternosAsync();
+        }
+
+        public async Task ActualizarRolUsuarioInternoAsync(int usuarioId, ClienteDTOs.ActualizarRolUsuarioInternoDTO dto)
+        {
+            var rolNombre = dto.Rol?.Trim() ?? "";
+            var rolesPermitidos = new[] { "Ventas", "Soporte" };
+            if (!rolesPermitidos.Contains(rolNombre))
+                throw new Exception("Rol interno inválido.");
+
+            var usuario = await _usuarioRepo.ObtenerPorIdAsync(usuarioId);
+            if (usuario == null)
+                throw new Exception("Usuario no encontrado.");
+            if (usuario.Rol?.Nombre == "Cliente")
+                throw new Exception("No se puede modificar el rol de un cliente desde usuarios internos.");
+            if (usuario.Rol?.Nombre == "Admin")
+                throw new Exception("No se puede modificar el rol Admin desde este panel.");
+
+            var rol = await _rolRepo.ObtenerPorNombreAsync(rolNombre);
+            if (rol == null)
+                throw new Exception($"Rol '{rolNombre}' no encontrado.");
+
+            usuario.CambiarRol(rol.Id);
+            await _unitOfWork.GuardarAsync();
+        }
     }
 }
 
