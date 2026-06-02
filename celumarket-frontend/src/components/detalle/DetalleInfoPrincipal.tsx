@@ -12,10 +12,13 @@ type DetalleInfoPrincipalProps = {
 	onSelectAlmacenamiento: (almacenamiento: string) => void;
 	onSelectColor: (colorId: number) => void;
 	onAgregarAlCarrito: () => void;
+	onIrACarrito?: () => void;
 	mostrarInfoTecnica?: boolean;
 	umbralEnvioGratis?: number;
 	descuentoTransferencia?: number;
 	mostrarAccionCompra?: boolean;
+	agregandoCarrito?: boolean;
+	feedbackCarrito?: boolean;
 };
 
 export const DetalleInfoPrincipal = ({
@@ -28,10 +31,13 @@ export const DetalleInfoPrincipal = ({
 	onSelectAlmacenamiento,
 	onSelectColor,
 	onAgregarAlCarrito,
+	onIrACarrito,
 	mostrarInfoTecnica = true,
 	umbralEnvioGratis = 499999,
 	descuentoTransferencia = 10,
 	mostrarAccionCompra = true,
+	agregandoCarrito = false,
+	feedbackCarrito = false,
 }: DetalleInfoPrincipalProps) => {
 	return (
 		<div>
@@ -83,12 +89,32 @@ export const DetalleInfoPrincipal = ({
 			/>
 
 			{mostrarAccionCompra && (
-				<button
-					onClick={onAgregarAlCarrito}
-					className={`${twBase.primaryBtnMd} mt-4 h-11 w-full text-sm`}
-				>
-					Agregar al carrito
-				</button>
+				<>
+					<button
+						onClick={onAgregarAlCarrito}
+						disabled={agregandoCarrito}
+						className={`${twBase.primaryBtnMd} mt-4 h-11 w-full text-sm disabled:cursor-not-allowed disabled:opacity-70`}
+					>
+						{agregandoCarrito ? "Agregando..." : "Agregar al carrito"}
+					</button>
+					{feedbackCarrito && (
+						<div className={twDetalleCelular.detailCartFeedback} role="status">
+							<p className={twDetalleCelular.detailCartFeedbackTitle}>
+								Producto agregado al carrito.
+							</p>
+							<p>Ya actualizamos tu carrito con esta variante.</p>
+							{onIrACarrito && (
+								<button
+									type="button"
+									onClick={onIrACarrito}
+									className={twDetalleCelular.detailCartFeedbackAction}
+								>
+									Ver carrito
+								</button>
+							)}
+						</div>
+					)}
+				</>
 			)}
 		</div>
 	);

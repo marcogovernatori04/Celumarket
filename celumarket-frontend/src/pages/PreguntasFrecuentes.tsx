@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Footer } from "../components/Footer";
+import { twLayout } from "../styles/tw";
 
 const faqs = [
 	{
@@ -38,8 +39,8 @@ export const PreguntasFrecuentes = () => {
 	const [abierta, setAbierta] = useState<number | null>(0);
 
 	return (
-		<div className="min-h-[calc(100dvh-64px)] bg-[#f5f5f5] flex flex-col">
-			<section className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+		<div className={twLayout.publicPageShell}>
+			<section className={twLayout.publicPageSection}>
 				<h1 className="text-2xl font-bold text-[#001830] sm:text-3xl">Preguntas frecuentes</h1>
 				<p className="mt-2 text-[#475569]">
 					Respuestas rápidas sobre pagos, envíos, pedidos y facturación.

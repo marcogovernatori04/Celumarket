@@ -1,26 +1,29 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { NavbarLogin } from "./components/NavbarLogin";
-import { Landing } from "./pages/Landing";
-import { Contacto } from "./pages/Contacto";
-import { PreguntasFrecuentes } from "./pages/PreguntasFrecuentes";
-import { Catalogo } from "./pages/Catalogo";
-import { DetalleCelular } from "./pages/DetalleCelular";
-import { Login } from "./pages/Login";
-import { Carrito } from "./pages/Carrito";
-import { Checkout } from "./pages/Checkout";
-import { CambiarClave } from "./pages/CambiarClave";
-import { MiPerfil } from "./pages/MiPerfil";
-import { MisPedidos } from "./pages/MisPedidos";
-import { DetallePedido } from "./pages/DetallePedido";
-import { CompraConfirmada } from "./pages/CompraConfirmada";
-import { ResultadoPago } from "./pages/ResultadoPago";
-import { AdminPanel } from "./pages/AdminPanel";
 import { authService } from "./services/authService";
 import { clienteService } from "./services/clienteService";
 import { carritoService } from "./services/carritoService";
 import { pedidoService, type DetallePedido as DetallePedidoResponse, type ReservaCheckout } from "./services/pedidoService";
+
+const Landing = lazy(() => import("./pages/Landing").then(({ Landing }) => ({ default: Landing })));
+const ComoComprar = lazy(() => import("./pages/ComoComprar").then(({ ComoComprar }) => ({ default: ComoComprar })));
+const Contacto = lazy(() => import("./pages/Contacto").then(({ Contacto }) => ({ default: Contacto })));
+const Nosotros = lazy(() => import("./pages/Nosotros").then(({ Nosotros }) => ({ default: Nosotros })));
+const PreguntasFrecuentes = lazy(() => import("./pages/PreguntasFrecuentes").then(({ PreguntasFrecuentes }) => ({ default: PreguntasFrecuentes })));
+const Catalogo = lazy(() => import("./pages/Catalogo").then(({ Catalogo }) => ({ default: Catalogo })));
+const DetalleCelular = lazy(() => import("./pages/DetalleCelular").then(({ DetalleCelular }) => ({ default: DetalleCelular })));
+const Login = lazy(() => import("./pages/Login").then(({ Login }) => ({ default: Login })));
+const Carrito = lazy(() => import("./pages/Carrito").then(({ Carrito }) => ({ default: Carrito })));
+const Checkout = lazy(() => import("./pages/Checkout").then(({ Checkout }) => ({ default: Checkout })));
+const CambiarClave = lazy(() => import("./pages/CambiarClave").then(({ CambiarClave }) => ({ default: CambiarClave })));
+const MiPerfil = lazy(() => import("./pages/MiPerfil").then(({ MiPerfil }) => ({ default: MiPerfil })));
+const MisPedidos = lazy(() => import("./pages/MisPedidos").then(({ MisPedidos }) => ({ default: MisPedidos })));
+const DetallePedido = lazy(() => import("./pages/DetallePedido").then(({ DetallePedido }) => ({ default: DetallePedido })));
+const CompraConfirmada = lazy(() => import("./pages/CompraConfirmada").then(({ CompraConfirmada }) => ({ default: CompraConfirmada })));
+const ResultadoPago = lazy(() => import("./pages/ResultadoPago").then(({ ResultadoPago }) => ({ default: ResultadoPago })));
+const AdminPanel = lazy(() => import("./pages/AdminPanel").then(({ AdminPanel }) => ({ default: AdminPanel })));
 
 type CheckoutLocationState = {
 	reservaSegundosRestantes?: number;
@@ -35,10 +38,9 @@ function App() {
 	const [rolUsuario, setRolUsuario] = useState<string | null>(authService.obtenerRolActual());
 	const [nombreCliente, setNombreCliente] = useState<string | null>(null);
 	const [carritoCantidad, setCarritoCantidad] = useState(0);
-	const [toastCarrito, setToastCarrito] = useState<string | null>(null);
 	const [pedidoConfirmadoId, setPedidoConfirmadoId] = useState<number | null>(null);
 
-	const recargarCarritoCantidad = async () => {
+	const recargarCarritoCantidad = useCallback(async () => {
 		if (!estaLogueado || !authService.esCliente()) {
 			setCarritoCantidad(0);
 			return;
@@ -50,7 +52,7 @@ function App() {
 		} catch {
 			setCarritoCantidad(0);
 		}
-	};
+	}, [estaLogueado]);
 
 	useEffect(() => {
 		const cargarPerfil = async () => {
@@ -103,7 +105,7 @@ function App() {
 
 	useEffect(() => {
 		void recargarCarritoCantidad();
-	}, [estaLogueado, esInterno, location.pathname]);
+	}, [recargarCarritoCantidad, esInterno, location.pathname]);
 
 	useEffect(() => {
 		if (location.pathname.startsWith("/celulares/")) {
@@ -129,12 +131,6 @@ function App() {
 
 	return (
 		<div className="bg-gray-50 min-h-screen font-sans flex flex-col">
-			{toastCarrito && (
-				<div className="fixed right-6 top-20 z-50 rounded-md bg-[#001830] px-4 py-2 text-sm text-white shadow-lg">
-					{toastCarrito}
-				</div>
-			)}
-
 			{esVistaLogin ? (
 				<NavbarLogin onIrAInicio={() => navigate("/")} />
 			) : (
@@ -168,9 +164,12 @@ function App() {
 			)}
 
 			<main className="flex flex-1 min-h-0 flex-col">
+				<Suspense fallback={<PageFallback />}>
 				<Routes>
 					<Route path="/" element={<Landing onIrATienda={() => navigate("/catalogo")} onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
+					<Route path="/como-comprar" element={<ComoComprar />} />
 					<Route path="/contacto" element={<Contacto />} />
+					<Route path="/nosotros" element={<Nosotros />} />
 					<Route path="/preguntas-frecuentes" element={<PreguntasFrecuentes />} />
 					<Route path="/catalogo" element={<Catalogo onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
 					<Route
@@ -178,11 +177,10 @@ function App() {
 						element={
 							<DetalleCelularRoute
 								onRequiereLogin={() => navigate("/login")}
-								onAgregadoCarrito={async (mensaje) => {
+								onAgregadoCarrito={async () => {
 									await recargarCarritoCantidad();
-									setToastCarrito(mensaje);
-									setTimeout(() => setToastCarrito(null), 1600);
 								}}
+								onIrACarrito={() => navigate("/carrito")}
 							/>
 						}
 					/>
@@ -242,7 +240,16 @@ function App() {
 					/>
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
+				</Suspense>
 			</main>
+		</div>
+	);
+}
+
+function PageFallback() {
+	return (
+		<div className="flex flex-1 items-center justify-center bg-[#f5f5f5] px-4 py-10 text-sm font-medium text-[#475569]">
+			Cargando...
 		</div>
 	);
 }
@@ -250,14 +257,16 @@ function App() {
 function DetalleCelularRoute({
 	onRequiereLogin,
 	onAgregadoCarrito,
+	onIrACarrito,
 }: {
 	onRequiereLogin: () => void;
-	onAgregadoCarrito: (mensaje: string) => void | Promise<void>;
+	onAgregadoCarrito: () => void | Promise<void>;
+	onIrACarrito: () => void;
 }) {
 	const { id } = useParams();
 	const celularId = id ? Number(id) : NaN;
 	if (!Number.isFinite(celularId)) return <Navigate to="/catalogo" replace />;
-	return <DetalleCelular celularId={celularId} onRequiereLogin={onRequiereLogin} onAgregadoCarrito={onAgregadoCarrito} />;
+	return <DetalleCelular celularId={celularId} onRequiereLogin={onRequiereLogin} onAgregadoCarrito={onAgregadoCarrito} onIrACarrito={onIrACarrito} />;
 }
 
 function CheckoutRoute({

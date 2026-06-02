@@ -20,7 +20,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
    (response) => response,
    (error) => {
-      if (error?.response?.status === 401) {
+      const url = String(error?.config?.url ?? "");
+      const esAuthPublica =
+         url.includes("/Clientes/login") ||
+         url.includes("/Clientes/registrar") ||
+         url.includes("/Clientes/recuperar-clave");
+
+      if (error?.response?.status === 401 && !esAuthPublica) {
          localStorage.removeItem("token");
          window.dispatchEvent(new Event("auth:unauthorized"));
       }

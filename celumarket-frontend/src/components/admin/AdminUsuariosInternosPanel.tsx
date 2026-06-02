@@ -39,6 +39,10 @@ export const AdminUsuariosInternosPanel = () => {
 	const [cargando, setCargando] = useState(true);
 	const [creando, setCreando] = useState(false);
 	const [actualizandoRolId, setActualizandoRolId] = useState<number | null>(null);
+	const [feedbackRol, setFeedbackRol] = useState<{
+		tipo: "ok" | "error";
+		mensaje: string;
+	} | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [ok, setOk] = useState<string | null>(null);
 	const [busqueda, setBusqueda] = useState("");
@@ -59,16 +63,21 @@ export const AdminUsuariosInternosPanel = () => {
 	const actualizarRol = async (usuario: UsuarioInternoListado, rol: RolUsuarioInterno) => {
 		if (usuario.rol === rol) return;
 		setActualizandoRolId(usuario.id);
-		setError(null);
-		setOk(null);
+		setFeedbackRol(null);
 		try {
 			await clienteService.actualizarRolUsuarioInterno(usuario.id, rol);
 			setUsuarios((prev) =>
 				prev.map((item) => (item.id === usuario.id ? { ...item, rol } : item)),
 			);
-			setOk("Rol actualizado.");
+			setFeedbackRol({
+				tipo: "ok",
+				mensaje: "Rol actualizado.",
+			});
 		} catch (err) {
-			setError(obtenerMensajeApi(err, "No se pudo actualizar el rol."));
+			setFeedbackRol({
+				tipo: "error",
+				mensaje: obtenerMensajeApi(err, "No se pudo actualizar el rol."),
+			});
 		} finally {
 			setActualizandoRolId(null);
 		}
@@ -94,6 +103,7 @@ export const AdminUsuariosInternosPanel = () => {
 		setCreando(true);
 		setError(null);
 		setOk(null);
+		setFeedbackRol(null);
 		try {
 			await clienteService.registrarUsuarioInterno({
 				email,
@@ -191,21 +201,21 @@ export const AdminUsuariosInternosPanel = () => {
 			</div>
 
 			{cargando ? (
-				<div className="mt-4 rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+				<div className={`${twAdmin.adminMobileEmptyCard} mt-4`}>
 					Cargando usuarios internos...
 				</div>
 			) : (
 				<>
 					<div className="mt-4 grid grid-cols-1 gap-3 lg:hidden">
 						{usuariosFiltrados.length === 0 ? (
-							<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+							<div className={twAdmin.adminMobileEmptyCard}>
 								No hay usuarios internos para el filtro seleccionado.
 							</div>
 						) : (
 							usuariosFiltrados.map((usuario) => (
-								<div key={usuario.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+								<div key={usuario.id} className={twAdmin.adminMobileCard}>
 									<p className="break-words text-base font-semibold text-[#001830]">{usuario.email}</p>
-									<div className="mt-2">
+									<div className="mt-2 flex flex-wrap items-center gap-2">
 										<RolControl
 											usuario={usuario}
 											disabled={actualizandoRolId === usuario.id}
@@ -219,7 +229,7 @@ export const AdminUsuariosInternosPanel = () => {
 
 					<div className="mt-6 hidden overflow-auto rounded-xl border border-black/10 lg:block">
 						<div className="min-w-[560px]">
-							<div className={`grid grid-cols-[1fr_180px] items-center px-4 py-3 ${twBase.tableHead}`}>
+							<div className={`grid grid-cols-[1fr_260px] items-center px-4 py-3 ${twBase.tableHead}`}>
 								<span>Email</span>
 								<span>Rol</span>
 							</div>
@@ -230,22 +240,39 @@ export const AdminUsuariosInternosPanel = () => {
 									</div>
 								) : (
 									usuariosFiltrados.map((usuario) => (
-										<div key={usuario.id} className="grid grid-cols-[1fr_180px] items-center px-4 py-3">
+										<div key={usuario.id} className="grid grid-cols-[1fr_260px] items-center px-4 py-3">
 											<p className="text-sm font-semibold text-[#001830]">{usuario.email}</p>
-											<RolControl
-												usuario={usuario}
-												disabled={actualizandoRolId === usuario.id}
-												onChange={(rol) => void actualizarRol(usuario, rol)}
-											/>
+											<div className="flex items-center gap-2">
+												<RolControl
+													usuario={usuario}
+													disabled={actualizandoRolId === usuario.id}
+													onChange={(rol) => void actualizarRol(usuario, rol)}
+												/>
+											</div>
 										</div>
 									))
 								)}
 							</div>
 						</div>
 					</div>
+					<FeedbackRol feedback={feedbackRol} />
 				</>
 			)}
 		</div>
+	);
+};
+
+const FeedbackRol = ({
+	feedback,
+}: {
+	feedback: { tipo: "ok" | "error"; mensaje: string } | null;
+}) => {
+	if (!feedback) return null;
+
+	return (
+		<p className={`mt-2 text-right text-sm font-semibold ${feedback.tipo === "ok" ? "text-[#1E8E5A]" : "text-[#b91c1c]"}`}>
+			{feedback.mensaje}
+		</p>
 	);
 };
 

@@ -72,6 +72,8 @@ export const twAuth = {
 export const twLayout = {
 	pageShell: "min-h-screen bg-[#f5f5f5] flex flex-col",
 	pageSection: "mx-auto w-full max-w-4xl flex-1 px-4 py-7 sm:px-6 sm:py-10",
+	publicPageShell: "min-h-[calc(100dvh-64px)] bg-[#f5f5f5] flex flex-col",
+	publicPageSection: "mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8",
 	cardSoft: "rounded-lg border border-[#dfe5eb] bg-white p-4 shadow-sm sm:p-5",
 	adminShell: "min-h-[calc(100dvh-64px)] w-full px-3 py-4 sm:px-5 sm:py-6 lg:h-[calc(100dvh-72px)] lg:overflow-hidden lg:px-7 lg:py-7",
 	adminContentCard: "min-h-0 rounded-xl border border-black/10 bg-white p-3 shadow-[0_4px_14px_rgba(0,0,0,0.06)] sm:p-5 lg:overflow-hidden lg:p-6",
@@ -135,6 +137,9 @@ export const twDetalleCelular = {
 	detailAuxTextTight: "mt-0.5 text-[14px] text-[#4b6b91]",
 	detailDescription: "mt-2.5 text-[14px] leading-relaxed text-[#4b5563]",
 	detailSpecs: "mt-3 space-y-1 text-[14px] leading-snug text-[#666]",
+	detailCartFeedback: "mt-3 rounded-lg border border-[#b7dfc7] bg-[#f0fbf5] px-3 py-2.5 text-sm text-[#14532d]",
+	detailCartFeedbackTitle: "font-semibold text-[#0f3d22]",
+	detailCartFeedbackAction: "mt-1 inline-flex text-sm font-semibold text-[#015cb9] hover:text-[#017AF4]",
 };
 
 export const twCheckout = {
@@ -200,6 +205,10 @@ export const twAdmin = {
 	adminInput: "h-9 rounded border border-[#cdd6e1] px-2 text-sm",
 	adminTextarea: "w-full rounded border border-[#cdd6e1] px-2 py-2 text-sm",
 	adminGhostBtn: "h-8 rounded border border-[#cdd6e1] bg-white px-3 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]",
+	adminConfigInput: "h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]",
+	adminMobileCard: "rounded-xl border border-black/10 bg-white p-3 shadow-sm",
+	adminMobileEmptyCard: "rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]",
+	adminMobileDetails: "mt-3 border-t border-black/10 bg-[#f8fafc] pt-3",
 	adminDangerBtnXs: "h-7 rounded border border-[#f3c6c6] px-2 text-xs font-semibold text-[#b42318]",
 	adminDangerBtnSm: "h-9 rounded border border-[#f3c6c6] px-3 text-xs font-semibold text-[#b42318]",
 	adminPrimaryBtnSm: "h-9 rounded-md bg-[#015cb9] px-4 text-sm font-semibold text-white hover:bg-[#017AF4] disabled:opacity-60",

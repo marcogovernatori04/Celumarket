@@ -33,6 +33,7 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 
 	const obtenerMensajeError = (err: unknown, fallback: string) => {
 		if (!isAxiosError(err)) return fallback;
+		if (err.response?.status === 401) return "Email o contraseña incorrectos.";
 
 		const data = err.response?.data as { error?: string; mensaje?: string; Mensaje?: string } | undefined;
 		return data?.error || data?.mensaje || data?.Mensaje || fallback;
@@ -179,6 +180,7 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 									<label className="mb-2 block text-base text-[#1e1e1e]">Contraseña</label>
 									<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className={twAuth.authInput} required />
 								</div>
+								{error && <p className="mb-3 text-sm font-semibold text-red-600">{error}</p>}
 								<button disabled={cargando} className={`${twAuth.authPrimaryBtn} text-xl font-medium leading-none`}>
 									{cargando ? "Iniciando..." : "Iniciar sesión"}
 								</button>
@@ -242,7 +244,7 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 								</div>
 							</>
 						)}
-						{error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+						{error && (modoRegistro || modoRecuperar) && <p className="mt-3 text-sm text-red-600">{error}</p>}
 					</form>
 				</div>
 			</div>

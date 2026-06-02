@@ -4,6 +4,7 @@ import type { CelularListado } from "../../models/Celular";
 import type { CelularDestacado } from "../../models/CelularDetalle";
 import { configuracionService } from "../../services/configuracionService";
 import type { ConfiguracionSistema } from "../../models/ConfiguracionSistema";
+import { twAdmin, twBase } from "../../styles/tw";
 
 const estadoInicial: ConfiguracionSistema = {
 	descuentoTransferencia: 10,
@@ -28,22 +29,7 @@ export const AdminConfiguracionPanel = () => {
 	const [ok, setOk] = useState<string | null>(null);
 	const [busquedaDestacados, setBusquedaDestacados] = useState("");
 
-	useEffect(() => {
-		const cargar = async () => {
-			try {
-				const config = await configuracionService.obtener();
-				setForm(config);
-			} catch {
-				setError("No se pudo cargar la configuración.");
-			} finally {
-				setCargando(false);
-			}
-		};
-		void cargar();
-		void cargarDestacados();
-	}, []);
-
-	const cargarDestacados = async () => {
+	async function cargarDestacados() {
 		try {
 			setCargandoDestacados(true);
 			const acumulados: CelularListado[] = [];
@@ -75,7 +61,22 @@ export const AdminConfiguracionPanel = () => {
 		} finally {
 			setCargandoDestacados(false);
 		}
-	};
+	}
+
+	useEffect(() => {
+		const cargar = async () => {
+			try {
+				const config = await configuracionService.obtener();
+				setForm(config);
+			} catch {
+				setError("No se pudo cargar la configuración.");
+			} finally {
+				setCargando(false);
+			}
+		};
+		void cargar();
+		void cargarDestacados();
+	}, []);
 
 	const guardar = async () => {
 		setGuardando(true);
@@ -155,14 +156,14 @@ export const AdminConfiguracionPanel = () => {
 
 	if (cargando) {
 		return (
-			<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+			<div className={twBase.loadingBox}>
 				<p className="text-[#5b6673]">Cargando configuración...</p>
 			</div>
 		);
 	}
 
 	return (
-		<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5">
+		<div className={twBase.loadingBox}>
 			<p className="text-[18px] font-semibold text-[#001830]">
 				Configuración general
 			</p>
@@ -178,7 +179,7 @@ export const AdminConfiguracionPanel = () => {
 						onChange={(e) =>
 							setForm((prev) => ({ ...prev, textoBannerHero: e.target.value }))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 
@@ -193,7 +194,7 @@ export const AdminConfiguracionPanel = () => {
 								umbralEnvioGratis: Number(e.target.value),
 							}))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 
@@ -209,7 +210,7 @@ export const AdminConfiguracionPanel = () => {
 								descuentoTransferencia: Number(e.target.value),
 							}))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 
@@ -220,7 +221,7 @@ export const AdminConfiguracionPanel = () => {
 						onChange={(e) =>
 							setForm((prev) => ({ ...prev, titularTransferencia: e.target.value }))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 
@@ -231,7 +232,7 @@ export const AdminConfiguracionPanel = () => {
 						onChange={(e) =>
 							setForm((prev) => ({ ...prev, aliasTransferencia: e.target.value }))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 
@@ -242,7 +243,7 @@ export const AdminConfiguracionPanel = () => {
 						onChange={(e) =>
 							setForm((prev) => ({ ...prev, cbuTransferencia: e.target.value }))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 
@@ -253,7 +254,7 @@ export const AdminConfiguracionPanel = () => {
 						onChange={(e) =>
 							setForm((prev) => ({ ...prev, bancoTransferencia: e.target.value }))
 						}
-						className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 outline-none focus:border-[#015cb9]"
+						className={twAdmin.adminConfigInput}
 					/>
 				</label>
 			</div>
@@ -275,7 +276,7 @@ export const AdminConfiguracionPanel = () => {
 					value={busquedaDestacados}
 					onChange={(e) => setBusquedaDestacados(e.target.value)}
 					placeholder="Buscar por marca o modelo..."
-					className="mt-4 h-10 w-full rounded-md border border-[#cfd8e3] bg-white px-3 text-sm outline-none focus:border-[#015cb9]"
+					className={`${twAdmin.adminConfigInput} mt-4 w-full text-sm`}
 				/>
 
 				{cargandoDestacados ? (
@@ -359,7 +360,7 @@ export const AdminConfiguracionPanel = () => {
 															setTextosPromocion((prev) => ({ ...prev, [celular.id]: e.target.value }))
 														}
 														placeholder="Texto promocional opcional"
-														className="h-10 rounded-md border border-[#cfd8e3] bg-white px-3 text-sm outline-none focus:border-[#015cb9] disabled:bg-[#f1f5f9] disabled:text-[#94a3b8]"
+														className={`${twAdmin.adminConfigInput} text-sm disabled:bg-[#f1f5f9] disabled:text-[#94a3b8]`}
 													/>
 													<button
 														type="button"

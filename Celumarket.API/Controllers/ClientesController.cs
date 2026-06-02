@@ -33,8 +33,15 @@ namespace Celumarket.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] ClienteDTOs.LoginDTO dto)
         {
-            string token = await _gestorCliente.LoginAsync(dto);
-            return Ok(new { Mensaje = "Login exitoso.", Token = token });
+            try
+            {
+                string token = await _gestorCliente.LoginAsync(dto);
+                return Ok(new { Mensaje = "Login exitoso.", Token = token });
+            }
+            catch (Exception ex) when (ex.Message == "Credenciales inválidas")
+            {
+                return Unauthorized(new { error = "Email o contraseña incorrectos." });
+            }
         }
 
         [Authorize(Roles = "Cliente")]

@@ -1,6 +1,6 @@
 const TZ_AR = "America/Argentina/Buenos_Aires";
 
-const hasTimezoneInfo = (value: string) => /([zZ]|[+\-]\d{2}:\d{2})$/.test(value);
+const hasTimezoneInfo = (value: string) => /([zZ]|[+-]\d{2}:\d{2})$/.test(value);
 
 export const parseApiDate = (raw?: string): Date | null => {
 	if (!raw) return null;

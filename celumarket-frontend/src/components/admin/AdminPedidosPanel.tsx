@@ -239,7 +239,7 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 				<>
 				<div className="mt-4 space-y-3 lg:hidden">
 					{pedidosFiltrados.length === 0 ? (
-						<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+						<div className={twAdmin.adminMobileEmptyCard}>
 							No hay pedidos para el filtro seleccionado.
 						</div>
 					) : (
@@ -247,7 +247,7 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 							const detalle = detallePorId[pedido.id];
 							const expandido = expandidoId === pedido.id;
 							return (
-								<div key={pedido.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+								<div key={pedido.id} className={twAdmin.adminMobileCard}>
 									<div className="flex items-start justify-between gap-3">
 										<div className="min-w-0">
 											<p className="text-base font-semibold text-[#001830]">Pedido #{pedido.id}</p>
@@ -267,7 +267,7 @@ const envioYaDespachado = (detalle?: AdminPedidoDetalle | null) =>
 										</button>
 									</div>
 									{expandido && (
-										<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+										<div className={twAdmin.adminMobileDetails}>
 											{cargandoDetalleId === pedido.id && <p className="text-sm text-[#5b6673]">Cargando detalle...</p>}
 											{!cargandoDetalleId && detalle && (
 												<div className={twAdmin.adminExpandWrap}>

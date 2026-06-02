@@ -37,7 +37,6 @@ export const Navbar = ({
 	onVerPerfil,
 	onVerMisPedidos,
 	carritoCantidad = 0,
-	esAdmin = false,
 	esInterno = false,
 	rolUsuario,
 	onIrAAdmin,
@@ -76,8 +75,8 @@ export const Navbar = ({
 
 				<div className="hidden items-center gap-8 lg:flex">
 					<ul className={twNav.navLinks}>
-						<li className={twNav.navLinkItem} onClick={esAdmin ? onIrAAdmin : accionNavegacionPrincipal}>
-							{esAdmin ? "Panel admin" : textoNavegacionPrincipal}
+						<li className={twNav.navLinkItem} onClick={accionNavegacionPrincipal}>
+							{textoNavegacionPrincipal}
 						</li>
 						<li className={twNav.navLinkItem} onClick={onIrAContacto}>
 							Contacto
@@ -92,37 +91,38 @@ export const Navbar = ({
 					<div className="flex items-center gap-4">
 						{estaLogueado && (
 							<div ref={menuRef} className="relative">
-								<button onClick={() => setMenuAbierto((v) => !v)} aria-expanded={menuAbierto} className={twNav.navPillButton}>
-									<span>Hola, {nombreCliente ?? "Cliente"}</span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="14"
-										height="14"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										strokeWidth="2"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										className={`transition-transform duration-200 ${menuAbierto ? "rotate-180" : "rotate-0"}`}
-									>
-										<path d="m6 9 6 6 6-6"></path>
-									</svg>
-								</button>
+								<div className="flex items-center gap-2">
+									<button onClick={() => setMenuAbierto((v) => !v)} aria-expanded={menuAbierto} className={twNav.navPillButton}>
+										<span>Hola, {nombreCliente ?? "Cliente"}</span>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="14"
+											height="14"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											className={`transition-transform duration-200 ${menuAbierto ? "rotate-180" : "rotate-0"}`}
+										>
+											<path d="m6 9 6 6 6-6"></path>
+										</svg>
+									</button>
+									{esInterno && (
+										<button
+											type="button"
+											onClick={onIrAAdmin}
+											className="h-9 rounded-md bg-[#015cb9] px-3 text-sm font-semibold text-white transition-colors hover:bg-[#017AF4]"
+										>
+											Panel admin
+										</button>
+									)}
+								</div>
 								<div
 									className={`${twNav.dropdownMenu} ${menuAbierto ? "pointer-events-auto translate-y-0 scale-y-100 opacity-100" : "pointer-events-none -translate-y-1 scale-y-95 opacity-0"}`}
 								>
-									{esInterno ? (
-										<button
-											onClick={() => {
-												setMenuAbierto(false);
-												onIrAAdmin?.();
-											}}
-											className={twNav.dropdownItem}
-										>
-											Panel admin{rolUsuario ? ` (${rolUsuario})` : ""}
-										</button>
-									) : (
+									{!esInterno && (
 										<>
 											<button
 												onClick={() => {
@@ -238,10 +238,10 @@ export const Navbar = ({
 									className={twNav.navMobileItemBtn}
 									onClick={() => {
 										cerrarMenus();
-										(esAdmin ? onIrAAdmin : accionNavegacionPrincipal)?.();
+										accionNavegacionPrincipal?.();
 									}}
 								>
-									{esAdmin ? "Panel admin" : textoNavegacionPrincipal}
+									{textoNavegacionPrincipal}
 								</button>
 							</li>
 							<li>

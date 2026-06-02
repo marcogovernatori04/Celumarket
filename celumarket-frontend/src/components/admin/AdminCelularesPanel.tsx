@@ -488,7 +488,7 @@ export const AdminCelularesPanel = () => {
 						const detalle = detallePorId[c.id];
 						const expandido = expandidoId === c.id;
 						return (
-							<div key={c.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+							<div key={c.id} className={twAdmin.adminMobileCard}>
 								<div className="grid grid-cols-[82px_minmax(0,1fr)] gap-3">
 									<div className="h-[82px] w-[82px] overflow-hidden rounded-lg bg-[#ececec]">
 										<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className="h-full w-full object-contain" />
@@ -517,7 +517,7 @@ export const AdminCelularesPanel = () => {
 									</button>
 								</div>
 								{expandido && (
-									<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+									<div className={twAdmin.adminMobileDetails}>
 										{cargandoDetalleId === c.id && <p className="text-sm text-[#5b6673]">Cargando detalle...</p>}
 										{!cargandoDetalleId && detalle && (
 											<CelularDetalleExpandido
@@ -540,7 +540,7 @@ export const AdminCelularesPanel = () => {
 						);
 					})}
 					{celularesFiltrados.length === 0 && (
-						<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+						<div className={twAdmin.adminMobileEmptyCard}>
 							No hay celulares para esa búsqueda.
 						</div>
 					)}

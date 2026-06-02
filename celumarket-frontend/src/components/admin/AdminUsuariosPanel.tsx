@@ -81,12 +81,12 @@ export const AdminUsuariosPanel = () => {
 
 			<div className="mt-4 space-y-3 lg:hidden">
 				{usuariosFiltrados.length === 0 ? (
-					<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+					<div className={twAdmin.adminMobileEmptyCard}>
 						No hay clientes para el filtro seleccionado.
 					</div>
 				) : (
 					usuariosFiltrados.map((u) => (
-						<div key={u.id} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+						<div key={u.id} className={twAdmin.adminMobileCard}>
 							<div className="flex items-start justify-between gap-3">
 								<div className="min-w-0">
 									<p className="break-words text-base font-semibold leading-snug text-[#001830]">{u.nombreCompleto}</p>
@@ -102,7 +102,7 @@ export const AdminUsuariosPanel = () => {
 							</div>
 
 							{expandidoId === u.id && (
-								<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+								<div className={twAdmin.adminMobileDetails}>
 									<div className="grid grid-cols-1 gap-2 text-sm text-[#334155]">
 										<p><span className="font-semibold text-[#001830]">Teléfono:</span> {u.telefono || "-"}</p>
 										<p><span className="font-semibold text-[#001830]">Total comprado:</span> ${u.totalComprado.toLocaleString("es-AR")}</p>

@@ -1,7 +1,9 @@
 import { twFooter } from "../styles/tw";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Footer = () => {
+	const navigate = useNavigate();
 	const [newsletterAbierto, setNewsletterAbierto] = useState(false);
 	const [ayudaAbierta, setAyudaAbierta] = useState(false);
 	const [institucionalAbierta, setInstitucionalAbierta] = useState(false);
@@ -27,8 +29,7 @@ export const Footer = () => {
 					</button>
 					<p className={`${twFooter.footerTitle} hidden sm:block`}>Ayuda</p>
 					<ul className={`${ayudaAbierta ? "block animate-[mobileMenuDrop_180ms_ease-out]" : "hidden"} mt-2 space-y-2 text-sm text-gray-700 sm:mt-0 sm:block`}>
-						<li><button className={twFooter.footerLink}>Políticas de devolución</button></li>
-						<li><button className={twFooter.footerLink}>Tiempos y costos de envío</button></li>
+						<li><button className={twFooter.footerLink} onClick={() => navigate("/como-comprar")}>Cómo comprar</button></li>
 						<li><button className={twFooter.footerLink}>Botón de arrepentimiento</button></li>
 					</ul>
 				</div>
@@ -47,8 +48,8 @@ export const Footer = () => {
 					</button>
 					<p className={`${twFooter.footerTitle} hidden sm:block`}>Institucional</p>
 					<ul className={`${institucionalAbierta ? "block animate-[mobileMenuDrop_180ms_ease-out]" : "hidden"} mt-2 space-y-2 text-sm text-gray-700 sm:mt-0 sm:block`}>
-						<li><button className={twFooter.footerLink}>Nosotros</button></li>
-						<li><button className={twFooter.footerLink}>Contacto</button></li>
+						<li><button className={twFooter.footerLink} onClick={() => navigate("/nosotros")}>Nosotros</button></li>
+						<li><button className={twFooter.footerLink} onClick={() => navigate("/contacto")}>Contacto</button></li>
 					</ul>
 				</div>
 

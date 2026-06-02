@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	reportesService,
 	type DashboardReporte,
@@ -52,7 +52,7 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 	const [recargando, setRecargando] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const cargarTodo = async (esRecarga = false) => {
+	const cargarTodo = useCallback(async (esRecarga = false) => {
 		if (esRecarga) setRecargando(true);
 		else setLoading(true);
 		setError(null);
@@ -74,11 +74,11 @@ export const AdminReportesPanel = ({ onIrASeccion, onIrAPedidosConFiltro }: Admi
 
 		if (esRecarga) setRecargando(false);
 		else setLoading(false);
-	};
+	}, [anio, mes, umbralStock]);
 
 	useEffect(() => {
 		void cargarTodo();
-	}, []);
+	}, [cargarTodo]);
 
 	const aplicarFiltros = async () => {
 		try {

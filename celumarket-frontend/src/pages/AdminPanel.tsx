@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { AdminSidebar, type AdminSectionKey } from "../components/admin/AdminSidebar";
-import { AdminCelularesPanel } from "../components/admin/AdminCelularesPanel";
-import { AdminConfiguracionPanel } from "../components/admin/AdminConfiguracionPanel";
-import { AdminEnviosPanel } from "../components/admin/AdminEnviosPanel";
-import { AdminPedidosPanel } from "../components/admin/AdminPedidosPanel";
-import { AdminReportesPanel } from "../components/admin/AdminReportesPanel";
-import { AdminUsuariosInternosPanel } from "../components/admin/AdminUsuariosInternosPanel";
-import { AdminUsuariosPanel } from "../components/admin/AdminUsuariosPanel";
 import { twLayout } from "../styles/tw";
+
+const AdminCelularesPanel = lazy(() => import("../components/admin/AdminCelularesPanel").then(({ AdminCelularesPanel }) => ({ default: AdminCelularesPanel })));
+const AdminConfiguracionPanel = lazy(() => import("../components/admin/AdminConfiguracionPanel").then(({ AdminConfiguracionPanel }) => ({ default: AdminConfiguracionPanel })));
+const AdminEnviosPanel = lazy(() => import("../components/admin/AdminEnviosPanel").then(({ AdminEnviosPanel }) => ({ default: AdminEnviosPanel })));
+const AdminPedidosPanel = lazy(() => import("../components/admin/AdminPedidosPanel").then(({ AdminPedidosPanel }) => ({ default: AdminPedidosPanel })));
+const AdminReportesPanel = lazy(() => import("../components/admin/AdminReportesPanel").then(({ AdminReportesPanel }) => ({ default: AdminReportesPanel })));
+const AdminUsuariosInternosPanel = lazy(() => import("../components/admin/AdminUsuariosInternosPanel").then(({ AdminUsuariosInternosPanel }) => ({ default: AdminUsuariosInternosPanel })));
+const AdminUsuariosPanel = lazy(() => import("../components/admin/AdminUsuariosPanel").then(({ AdminUsuariosPanel }) => ({ default: AdminUsuariosPanel })));
 
 type AdminPanelProps = {
 	rol?: string | null;
@@ -60,6 +61,7 @@ export const AdminPanel = ({ rol }: AdminPanelProps) => {
 				<AdminSidebar rol={rol} seccionActiva={seccionActiva} onSelect={setSeccionSegura} />
 				<section className={twLayout.adminContentCard}>
 					<div className={`min-h-0 lg:h-full ${seccionActiva === "configuracion" ? "lg:overflow-y-auto lg:overflow-x-hidden lg:pr-1" : "lg:overflow-hidden"}`}>
+						<Suspense fallback={<AdminPanelFallback />}>
 						{seccionActiva === "celulares" ? (
 							<AdminCelularesPanel />
 						) : seccionActiva === "envios" ? (
@@ -81,9 +83,18 @@ export const AdminPanel = ({ rol }: AdminPanelProps) => {
 						) : (
 							<AdminReportesPanel onIrASeccion={setSeccionSegura} onIrAPedidosConFiltro={irAPedidosConFiltro} />
 						)}
+						</Suspense>
 					</div>
 				</section>
 			</div>
 		</div>
 	);
 };
+
+function AdminPanelFallback() {
+	return (
+		<div className="rounded-lg border border-[#dbe4ef] bg-[#f6f9fc] p-5 text-sm font-medium text-[#475569]">
+			Cargando panel...
+		</div>
+	);
+}

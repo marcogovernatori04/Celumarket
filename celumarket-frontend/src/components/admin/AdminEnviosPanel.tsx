@@ -159,7 +159,7 @@ export const AdminEnviosPanel = ({ puedeGestionar = false, pedidoIdEnFoco = null
 
 			<div className="mt-4 space-y-3 lg:hidden">
 				{enviosFiltrados.length === 0 ? (
-					<div className="rounded-xl border border-black/10 bg-white px-4 py-8 text-center text-[#64748b]">
+					<div className={twAdmin.adminMobileEmptyCard}>
 						No hay envíos para el filtro seleccionado.
 					</div>
 				) : (
@@ -167,7 +167,7 @@ export const AdminEnviosPanel = ({ puedeGestionar = false, pedidoIdEnFoco = null
 						const despachado = estaDespachado(envio.estado);
 						const expandido = expandidoId === envio.envioId;
 						return (
-							<div key={envio.envioId} className="rounded-xl border border-black/10 bg-white p-3 shadow-sm">
+							<div key={envio.envioId} className={twAdmin.adminMobileCard}>
 								<div className="flex items-start justify-between gap-3">
 									<div className="min-w-0">
 										<p className="text-base font-semibold text-[#001830]">Envío #{envio.envioId}</p>
@@ -187,7 +187,7 @@ export const AdminEnviosPanel = ({ puedeGestionar = false, pedidoIdEnFoco = null
 									</button>
 								</div>
 								{expandido && (
-									<div className="mt-3 border-t border-black/10 bg-[#f8fafc] pt-3">
+									<div className={twAdmin.adminMobileDetails}>
 										<div className="grid grid-cols-1 gap-2 text-sm text-[#1e1e1e]">
 											<p><span className="font-semibold">Dirección de entrega:</span> {envio.direccionEntrega || "—"}</p>
 											<p><span className="font-semibold">Fecha estimada:</span> {formatearFecha(envio.fechaEstimada)}</p>

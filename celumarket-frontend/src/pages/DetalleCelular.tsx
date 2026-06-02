@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Footer } from "../components/Footer";
 import { PorqueElegirnos } from "../components/PorqueElegirnos";
 import { celularService } from "../services/celularService";
@@ -14,13 +14,15 @@ import { twBase } from "../styles/tw";
 type DetalleProps = {
 	celularId: number;
 	onRequiereLogin?: () => void;
-	onAgregadoCarrito?: (mensaje: string) => Promise<void> | void;
+	onAgregadoCarrito?: () => Promise<void> | void;
+	onIrACarrito?: () => void;
 };
 
 export const DetalleCelular = ({
 	celularId,
 	onRequiereLogin,
 	onAgregadoCarrito,
+	onIrACarrito,
 }: DetalleProps) => {
 	const [detalle, setDetalle] = useState<CelularDetalle | null>(null);
 	const [almacenamientoSeleccionado, setAlmacenamientoSeleccionado] =
@@ -38,7 +40,18 @@ export const DetalleCelular = ({
 		titularTransferencia: "Celumarket S.A.",
 		bancoTransferencia: "Banco Nación",
 	});
+	const [agregandoCarrito, setAgregandoCarrito] = useState(false);
+	const [feedbackCarrito, setFeedbackCarrito] = useState(false);
+	const feedbackTimeoutRef = useRef<number | null>(null);
 	const esInterno = authService.esInterno();
+
+	useEffect(() => {
+		return () => {
+			if (feedbackTimeoutRef.current !== null) {
+				window.clearTimeout(feedbackTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	useEffect(() => {
 		const cargar = async () => {
@@ -114,12 +127,24 @@ export const DetalleCelular = ({
 	};
 
 	const agregarAlCarrito = async () => {
-		if (!variacionActiva) return;
+		if (!variacionActiva || agregandoCarrito) return;
 		try {
+			setAgregandoCarrito(true);
+			setFeedbackCarrito(false);
 			await carritoService.agregarItem(variacionActiva.id, 1);
-			await onAgregadoCarrito?.("Producto agregado al carrito");
+			await onAgregadoCarrito?.();
+			setFeedbackCarrito(true);
+			if (feedbackTimeoutRef.current !== null) {
+				window.clearTimeout(feedbackTimeoutRef.current);
+			}
+			feedbackTimeoutRef.current = window.setTimeout(() => {
+				setFeedbackCarrito(false);
+				feedbackTimeoutRef.current = null;
+			}, 3200);
 		} catch {
 			onRequiereLogin?.();
+		} finally {
+			setAgregandoCarrito(false);
 		}
 	};
 
@@ -169,16 +194,21 @@ export const DetalleCelular = ({
 								);
 								setColorSeleccionadoId(primeraVariacion?.colorId ?? null);
 								setImagenActiva(0);
+								setFeedbackCarrito(false);
 							}}
 							onSelectColor={(colorId) => {
 								setColorSeleccionadoId(colorId);
 								setImagenActiva(0);
+								setFeedbackCarrito(false);
 							}}
 							onAgregarAlCarrito={agregarAlCarrito}
+							onIrACarrito={onIrACarrito}
 							mostrarInfoTecnica={false}
 							umbralEnvioGratis={config.umbralEnvioGratis}
 							descuentoTransferencia={config.descuentoTransferencia}
 							mostrarAccionCompra={!esInterno}
+							agregandoCarrito={agregandoCarrito}
+							feedbackCarrito={feedbackCarrito}
 						/>
 					</div>
 					<div className="mt-6 rounded-xl border border-[#e6ebf2] bg-[#f8fafc] p-4 sm:p-5">
