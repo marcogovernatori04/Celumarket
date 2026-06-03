@@ -4,7 +4,7 @@ import { pedidoService, type DetallePedido as DetallePedidoData } from "../servi
 import { configuracionService } from "../services/configuracionService";
 import type { ConfiguracionSistema } from "../models/ConfiguracionSistema";
 import { getMetodoPagoLabel, getTipoPagoLabel } from "../utils/mercadoPagoDisplay";
-import { twDetallePedido } from "../styles/tw";
+import { twBase, twDetallePedido } from "../styles/tw";
 
 type DetallePedidoProps = {
 	pedidoId: number;
@@ -124,8 +124,8 @@ export const DetallePedido = ({ pedidoId, onVolver }: DetallePedidoProps) => {
 							<div className="mt-3 space-y-2 border-t border-[#e5ebf2] pt-3">
 								{detalle.lineas.map((linea) => (
 									<div key={linea.id} className={twDetallePedido.productRow}>
-										<div className="h-[108px] w-[108px] overflow-hidden rounded-md bg-[#ececec]">
-											<img src={linea.urlImagen} alt={`${linea.marca} ${linea.modelo}`} className="h-[108px] w-[108px] scale-[1.22] object-contain" />
+										<div className={`h-[108px] w-[108px] p-2 ${twBase.productImageFrame}`}>
+											<img src={linea.urlImagen} alt={`${linea.marca} ${linea.modelo}`} className="h-full w-full scale-[1.22] object-contain" />
 										</div>
 										<p>{linea.marca} {linea.modelo} · {linea.color} · x{linea.cantidad}</p>
 										<p className="font-semibold">${linea.subtotal.toLocaleString("es-AR")}</p>

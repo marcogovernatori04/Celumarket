@@ -172,14 +172,9 @@ export const AdminCelularesPanel = () => {
 	};
 
 	const subirImagen = async (variacionId: number, archivo: File) => {
-		try {
-			setError(null);
-			await celularService.subirImagenVariacion(variacionId, archivo);
-			if (expandidoId) await refrescarDetalle(expandidoId);
-		} catch (err) {
-			setError(obtenerMensajeApi(err, "No se pudo subir la imagen."));
-			throw err;
-		}
+		setError(null);
+		await celularService.subirImagenVariacion(variacionId, archivo);
+		if (expandidoId) await refrescarDetalle(expandidoId);
 	};
 
 	const eliminarImagen = async (variacionId: number, url: string) => {
@@ -374,7 +369,7 @@ export const AdminCelularesPanel = () => {
 				<input
 					value={busqueda}
 					onChange={(e) => setBusqueda(e.target.value)}
-					placeholder="Buscar por #id, marca o modelo..."
+					placeholder="Buscar por marca o modelo..."
 					className={`${twBase.searchInput} w-full max-w-[360px]`}
 				/>
 			</div>
@@ -490,8 +485,8 @@ export const AdminCelularesPanel = () => {
 						return (
 							<div key={c.id} className={twAdmin.adminMobileCard}>
 								<div className="grid grid-cols-[82px_minmax(0,1fr)] gap-3">
-									<div className="h-[82px] w-[82px] overflow-hidden rounded-lg bg-[#ececec]">
-										<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className="h-full w-full object-contain" />
+									<div className={`h-[82px] w-[82px] p-1.5 ${twBase.productImageFrame}`}>
+										<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className={twBase.productImageContain} />
 									</div>
 									<div className="min-w-0">
 										<p className="break-words text-base font-semibold leading-snug text-[#001830]">{c.marca} {c.modelo}</p>
@@ -548,7 +543,7 @@ export const AdminCelularesPanel = () => {
 
 				<div className={`${twBase.tableShell} hidden lg:block`}>
 					<div className="min-w-[900px]">
-					<div className={`grid grid-cols-[110px_1.2fr_1fr_1fr_1fr_90px_100px] items-center px-4 py-3 ${twBase.tableHead}`}>
+					<div className={`grid grid-cols-[110px_minmax(0,1fr)_minmax(120px,0.7fr)_minmax(80px,0.45fr)_minmax(100px,0.6fr)_minmax(80px,0.45fr)_minmax(90px,0.5fr)] items-center px-4 py-3 ${twBase.tableHead}`}>
 						<span>Imagen</span>
 						<span>Modelo</span>
 						<span>Precio base</span>
@@ -563,19 +558,19 @@ export const AdminCelularesPanel = () => {
 							const expandido = expandidoId === c.id;
 							return (
 								<div key={c.id}>
-									<div className="grid grid-cols-[110px_1.2fr_1fr_1fr_1fr_90px_100px] items-center px-4 py-3">
-										<div className="h-20 w-20 overflow-hidden rounded-md bg-[#ececec]">
-											<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className="h-20 w-20 object-contain" />
+									<div className="grid grid-cols-[110px_minmax(0,1fr)_minmax(120px,0.7fr)_minmax(80px,0.45fr)_minmax(100px,0.6fr)_minmax(80px,0.45fr)_minmax(90px,0.5fr)] items-center px-4 py-3">
+										<div className={`h-20 w-20 p-1.5 ${twBase.productImageFrame}`}>
+											<img src={c.urlImagenPrincipal} alt={`${c.marca} ${c.modelo}`} className={twBase.productImageContain} />
 										</div>
-										<div>
+										<div className="min-w-0 pr-3">
 											<p className="text-base font-semibold text-[#001830]">{c.marca} {c.modelo}</p>
 											{expandido && detalle?.descripcion && (
-												<p className="mt-1 line-clamp-2 text-xs text-[#64748b]">
+												<p className="mt-1 max-w-[330px] truncate text-xs text-[#64748b]">
 													{detalle.descripcion}
 												</p>
 											)}
 										</div>
-										<p className="text-sm text-[#1e293b]">${c.precioMinimo.toLocaleString("es-AR")}</p>
+										<p className="whitespace-nowrap text-sm text-[#1e293b]">${c.precioMinimo.toLocaleString("es-AR")}</p>
 										<p className="text-sm text-[#1e293b]">{c.cantidadColores}</p>
 										<p className="text-sm font-semibold text-[#1e293b]">{c.stockTotal}</p>
 										<div className="flex justify-center">

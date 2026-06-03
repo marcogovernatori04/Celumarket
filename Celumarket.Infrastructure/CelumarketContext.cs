@@ -234,6 +234,7 @@ namespace Celumarket.Infrastructure
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.CbuTransferencia).HasMaxLength(30);
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.TitularTransferencia).HasMaxLength(120);
             modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.BancoTransferencia).HasMaxLength(120);
+            modelBuilder.Entity<ConfiguracionSistema>().Property(c => c.UrlImagenHero).HasMaxLength(500);
         }
     }
 }

@@ -19,5 +19,15 @@ export const configuracionService = {
 		);
 		return data;
 	},
+
+	subirImagenHero: async (archivo: File): Promise<ConfiguracionSistema> => {
+		const formData = new FormData();
+		formData.append("archivo", archivo);
+		const { data } = await api.post<ConfiguracionSistema>(
+			"/Configuracion/hero-imagen",
+			formData,
+		);
+		return data;
+	},
 };
 

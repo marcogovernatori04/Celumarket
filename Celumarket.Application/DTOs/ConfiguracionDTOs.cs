@@ -11,6 +11,7 @@ namespace Celumarket.Application.DTOs
             public string CbuTransferencia { get; set; } = "0000003100000000000000";
             public string TitularTransferencia { get; set; } = "Celumarket S.A.";
             public string BancoTransferencia { get; set; } = "Banco Nación";
+            public string? UrlImagenHero { get; set; }
         }
 
         public class ActualizarConfiguracionSistemaDTO
@@ -22,6 +23,7 @@ namespace Celumarket.Application.DTOs
             public string CbuTransferencia { get; set; } = "0000003100000000000000";
             public string TitularTransferencia { get; set; } = "Celumarket S.A.";
             public string BancoTransferencia { get; set; } = "Banco Nación";
+            public string? UrlImagenHero { get; set; }
         }
     }
 }

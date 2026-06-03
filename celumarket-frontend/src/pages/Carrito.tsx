@@ -111,7 +111,7 @@ export const Carrito = ({ onCambioCarrito, onIrACheckout, onIrATienda }: Carrito
 								{carrito.items.map((item) => (
 									<div key={item.variacionId} className={twCarrito.itemCard}>
 										<div className="grid grid-cols-[92px_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[132px_minmax(0,1fr)_48px]">
-											<div className="h-[92px] w-[92px] overflow-hidden rounded-md bg-[#ececec] sm:h-[132px] sm:w-[132px]">
+											<div className={`h-[92px] w-[92px] p-2 sm:h-[132px] sm:w-[132px] ${twBase.productImageFrame}`}>
 												<img src={item.urlImagen} alt={`${item.marca} ${item.modelo}`} className="h-full w-full scale-125 object-contain" />
 											</div>
 											<div className="min-w-0">

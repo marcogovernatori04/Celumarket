@@ -6,5 +6,6 @@ namespace Celumarket.Application.Interfaces.Services
     {
         Task<ConfiguracionDTOs.ConfiguracionSistemaDTO> ObtenerAsync();
         Task<ConfiguracionDTOs.ConfiguracionSistemaDTO> ActualizarAsync(ConfiguracionDTOs.ActualizarConfiguracionSistemaDTO dto);
+        Task<ConfiguracionDTOs.ConfiguracionSistemaDTO> ActualizarImagenHeroAsync(string? urlImagenHero);
     }
 }

@@ -75,9 +75,7 @@ export const celularService = {
 		const formData = new FormData();
 		formData.append("archivo", archivo);
 		formData.append("esPrincipal", String(esPrincipal));
-		await api.post(`/Celulares/variaciones/${variacionId}/imagenes`, formData, {
-			headers: { "Content-Type": "multipart/form-data" },
-		});
+		await api.post(`/Celulares/variaciones/${variacionId}/imagenes`, formData);
 	},
 
 	eliminarImagenVariacion: async (variacionId: number, url: string): Promise<void> => {

@@ -109,9 +109,13 @@ export const CelularDetalleExpandido = ({
 					<p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#64748b]">Variaciones</p>
 					<button
 						onClick={() => setCreandoVariacion((v) => !v)}
-						className={creandoVariacion ? twBase.actionBtnCancel : twBase.actionBtnNeutral}
+						className={
+							creandoVariacion
+								? twBase.actionBtnCancel
+								: "h-9 rounded-md border border-[#015cb9] bg-[#eaf4ff] px-3 text-xs font-semibold text-[#015cb9] transition-colors hover:bg-[#d8ecff] disabled:opacity-60"
+						}
 					>
-						{creandoVariacion ? "Cancelar" : "Añadir variación"}
+						{creandoVariacion ? "Cancelar" : "+ Añadir variación"}
 					</button>
 				</div>
 				{creandoVariacion && (

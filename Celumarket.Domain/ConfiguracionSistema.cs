@@ -16,6 +16,7 @@ namespace Celumarket.Domain
         public string CbuTransferencia { get; private set; } = "0000003100000000000000";
         public string TitularTransferencia { get; private set; } = "Celumarket S.A.";
         public string BancoTransferencia { get; private set; } = "Banco Nación";
+        public string? UrlImagenHero { get; private set; }
 
         protected ConfiguracionSistema() { }
 
@@ -26,7 +27,8 @@ namespace Celumarket.Domain
             string? aliasTransferencia = null,
             string? cbuTransferencia = null,
             string? titularTransferencia = null,
-            string? bancoTransferencia = null)
+            string? bancoTransferencia = null,
+            string? urlImagenHero = null)
         {
             DescuentoTransferencia = descuentoTransferencia;
             UmbralEnvioGratis = umbralEnvioGratis;
@@ -45,6 +47,9 @@ namespace Celumarket.Domain
             BancoTransferencia = string.IsNullOrWhiteSpace(bancoTransferencia)
                 ? "Banco Nación"
                 : bancoTransferencia.Trim();
+            UrlImagenHero = string.IsNullOrWhiteSpace(urlImagenHero)
+                ? null
+                : urlImagenHero.Trim();
         }
 
         public void Actualizar(decimal nuevoDescuento, decimal nuevoUmbral)
@@ -78,6 +83,13 @@ namespace Celumarket.Domain
             BancoTransferencia = string.IsNullOrWhiteSpace(bancoTransferencia)
                 ? "Banco Nación"
                 : bancoTransferencia.Trim();
+        }
+
+        public void ActualizarImagenHero(string? urlImagenHero)
+        {
+            UrlImagenHero = string.IsNullOrWhiteSpace(urlImagenHero)
+                ? null
+                : urlImagenHero.Trim();
         }
 
     }

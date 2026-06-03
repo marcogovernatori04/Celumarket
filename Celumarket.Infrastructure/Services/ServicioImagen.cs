@@ -14,10 +14,12 @@ namespace Celumarket.Infrastructure.Services
     public class ServicioImagen : IServicioImagen
     {
         private readonly Cloudinary _cloudinary;
+        private readonly CloudinarySettings _settings;
 
         public ServicioImagen(IOptions<CloudinarySettings> config)
         {
-            var account = new Account(config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
+            _settings = config.Value;
+            var account = new Account(_settings.CloudName, _settings.ApiKey, _settings.ApiSecret);
             _cloudinary = new Cloudinary(account);
         }
 
@@ -25,6 +27,16 @@ namespace Celumarket.Infrastructure.Services
         {
             if (fileStream == null || fileStream.Length == 0) 
                 throw new ArgumentNullException(nameof(fileStream));
+
+            if (string.IsNullOrWhiteSpace(_settings.CloudName) ||
+                string.IsNullOrWhiteSpace(_settings.ApiKey) ||
+                string.IsNullOrWhiteSpace(_settings.ApiSecret) ||
+                _settings.CloudName.StartsWith("MY_", StringComparison.OrdinalIgnoreCase) ||
+                _settings.ApiKey.StartsWith("MY_", StringComparison.OrdinalIgnoreCase) ||
+                _settings.ApiSecret.StartsWith("MY_", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Cloudinary no está configurado. Revisá CloudinarySettings en user-secrets, variables de entorno o appsettings.Development.json.");
+            }
 
             var uploadParams = new ImageUploadParams()
             {
@@ -35,7 +47,10 @@ namespace Celumarket.Infrastructure.Services
             var result = await _cloudinary.UploadAsync(uploadParams);
 
             if (result.Error != null)
-                throw new Exception($"Error en Cloudinary: {result.Error.Message}");
+                throw new InvalidOperationException($"Cloudinary rechazó la imagen: {result.Error.Message}");
+
+            if (result.SecureUrl == null)
+                throw new InvalidOperationException("Cloudinary no devolvió una URL para la imagen.");
 
             return result.SecureUrl.ToString();
         }

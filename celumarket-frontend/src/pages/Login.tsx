@@ -4,6 +4,7 @@ import { passwordService } from "../services/passwordService";
 import { clienteService } from "../services/clienteService";
 import { twAuth } from "../styles/tw";
 import { isAxiosError } from "axios";
+import { esEnteroPositivo, esTextoUbicacionValido } from "../utils/validation";
 
 type LoginProps = {
 	onLoginExitoso: () => void;
@@ -61,8 +62,23 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 			return;
 		}
 
+		if (!esEnteroPositivo(numero)) {
+			setError("El número de dirección debe ser un número válido.");
+			return;
+		}
+
+		if (!esTextoUbicacionValido(localidad)) {
+			setError("La localidad no debe contener números.");
+			return;
+		}
+
+		if (!esTextoUbicacionValido(provincia)) {
+			setError("La provincia no debe contener números.");
+			return;
+		}
+
 		const cp = Number(codigoPostal);
-		if (!Number.isInteger(cp) || cp <= 0) {
+		if (!esEnteroPositivo(codigoPostal)) {
 			setError("El código postal debe ser un número válido.");
 			return;
 		}
@@ -151,11 +167,11 @@ export const Login = ({ onLoginExitoso }: LoginProps) => {
 								</div>
 								<div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={calle} onChange={(e) => setCalle(e.target.value)} placeholder="Calle" className={twAuth.authInput} required />
-									<input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Número" className={twAuth.authInput} required />
+									<input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Número" className={twAuth.authInput} inputMode="numeric" required />
 								</div>
 								<div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={pisoDepto} onChange={(e) => setPisoDepto(e.target.value)} placeholder="Piso/Depto (opcional)" className={twAuth.authInput} />
-									<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} placeholder="Código postal" className={twAuth.authInput} required />
+									<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} placeholder="Código postal" className={twAuth.authInput} inputMode="numeric" required />
 								</div>
 								<div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
 									<input value={localidad} onChange={(e) => setLocalidad(e.target.value)} placeholder="Localidad" className={twAuth.authInput} required />

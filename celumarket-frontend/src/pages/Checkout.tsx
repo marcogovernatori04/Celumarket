@@ -11,10 +11,11 @@ import { twCheckout } from "../styles/tw";
 type CheckoutProps = {
 	reservaSegundosIniciales: number;
 	onVolverCarrito: () => void;
+	onVolverInicio: () => void;
 	onCompraConfirmada: (pedidoId: number) => void;
 };
 
-export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraConfirmada }: CheckoutProps) => {
+export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onVolverInicio, onCompraConfirmada }: CheckoutProps) => {
 	const UMBRAL_ENVIO_GRATIS = 499999;
 	const [loading, setLoading] = useState(true);
 	const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -22,7 +23,8 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 	const [carritoItems, setCarritoItems] = useState<ItemCarrito[]>([]);
 	const [subtotalCarrito, setSubtotalCarrito] = useState(0);
 	const [error, setError] = useState<string | null>(null);
-	const [segundosRestantes, setSegundosRestantes] = useState(0);
+	const [segundosRestantes, setSegundosRestantes] = useState(Math.max(0, reservaSegundosIniciales));
+	const [mostrarReservaExpirada, setMostrarReservaExpirada] = useState(false);
 	const [datosEnvio, setDatosEnvio] = useState<DatosEnvio | null>(null);
 	const [datosFacturacion, setDatosFacturacion] = useState<DatosFacturacion | null>(null);
 	const [facturacionInicial, setFacturacionInicial] = useState<DatosFacturacion>({
@@ -97,10 +99,14 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			setSegundosRestantes((prev) => Math.max(0, prev - 1));
+			setSegundosRestantes((prev) => (prev <= 0 ? 0 : prev - 1));
 		}, 1000);
 		return () => clearInterval(timer);
 	}, []);
+
+	useEffect(() => {
+		if (segundosRestantes <= 0) setMostrarReservaExpirada(true);
+	}, [segundosRestantes]);
 
 	const resumenEnvio = useMemo(() => {
 		if (!datosEnvio) return "";
@@ -208,6 +214,24 @@ export const Checkout = ({ reservaSegundosIniciales, onVolverCarrito, onCompraCo
 			<div className="hidden lg:block">
 				<CheckoutFooter />
 			</div>
+			{mostrarReservaExpirada && (
+				<div className={twCheckout.checkoutModalOverlay}>
+					<div className={`${twCheckout.checkoutModalCard} max-w-[520px]`}>
+						<h3 className={twCheckout.checkoutModalTitle}>Reserva vencida</h3>
+						<p className="mt-4 text-[15px] leading-relaxed text-[#334155]">
+							La reserva temporal de stock expiró. Para iniciar una nueva compra, volvé al inicio y agregá los productos nuevamente.
+						</p>
+						<div className="mt-6 flex justify-end">
+							<button
+								onClick={onVolverInicio}
+								className={`${twCheckout.checkoutPrimaryBtnSm} bg-[#015cb9] hover:bg-[#017AF4]`}
+							>
+								Volver a la landing
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

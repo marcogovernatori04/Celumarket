@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
+import axios from "axios";
 import type { VariacionDetalle } from "../../../models/CelularDetalle";
 import type { ColorItem } from "../../../services/colorService";
 import { ColorSelector } from "./ColorSelector";
@@ -21,6 +22,23 @@ type VariacionRowEditorProps = {
 	onCrearColor: (nombre: string, hex: string) => Promise<number>;
 };
 
+const obtenerMensajeApi = (err: unknown, fallback: string): string => {
+	if (!axios.isAxiosError(err)) return fallback;
+	const data = err.response?.data as
+		| { error?: string; mensaje?: string; message?: string; Message?: string }
+		| string
+		| undefined;
+	if (typeof data === "string" && data.trim().length > 0) return data;
+	const msg =
+		(typeof data === "object" && data?.error) ||
+		(typeof data === "object" && data?.mensaje) ||
+		(typeof data === "object" && data?.message) ||
+		(typeof data === "object" && data?.Message);
+	if (msg) return msg;
+	const status = err.response?.status;
+	return status ? `${fallback} (HTTP ${status})` : fallback;
+};
+
 export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarStock, onSubirImagen, onEliminarImagen, onEliminarVariacion, colores, onCrearColor }: VariacionRowEditorProps) => {
 	const [editando, setEditando] = useState(false);
 	const [guardando, setGuardando] = useState(false);
@@ -31,7 +49,10 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 	const [stockDelta, setStockDelta] = useState("");
 	const [archivo, setArchivo] = useState<File | null>(null);
 	const [gestionandoImagen, setGestionandoImagen] = useState(false);
-	const inputFileId = `imagen-variacion-${variacion.id}`;
+	const [errorImagen, setErrorImagen] = useState<string | null>(null);
+	const [okImagen, setOkImagen] = useState<string | null>(null);
+	const inputFileRef = useRef<HTMLInputElement | null>(null);
+	const inputFileId = `${useId()}-imagen-variacion-${variacion.id}`;
 
 	const guardar = async () => {
 		const precioNum = Number(precio);
@@ -174,8 +195,8 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 				<p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#64748b]">Imágenes de la variación</p>
 				<div className="flex flex-wrap gap-2">
 					{variacion.imagenes.map((img) => (
-						<div key={img} className="relative h-24 w-24 overflow-hidden rounded border border-[#dbe4ef] bg-white">
-							<img src={img} alt="Imagen variación" className="h-full w-full object-contain" />
+						<div key={img} className={`relative h-24 w-24 p-1.5 ${twBase.productImageFrame}`}>
+							<img src={img} alt="Imagen variación" className={twBase.productImageContain} />
 							<button
 								onClick={async () => {
 									try {
@@ -195,10 +216,22 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 				</div>
 				<div className="mt-2 flex flex-wrap items-center gap-2">
 					<input
+						ref={inputFileRef}
 						id={inputFileId}
 						type="file"
 						accept="image/*"
-						onChange={(e) => setArchivo(e.target.files?.[0] ?? null)}
+						onChange={(e) => {
+							const seleccionado = e.target.files?.[0] ?? null;
+							setErrorImagen(null);
+							setOkImagen(null);
+							if (seleccionado && !seleccionado.type.startsWith("image/")) {
+								setArchivo(null);
+								e.currentTarget.value = "";
+								setErrorImagen("Seleccioná un archivo de imagen válido.");
+								return;
+							}
+							setArchivo(seleccionado);
+						}}
 						className="hidden"
 					/>
 					<label
@@ -217,8 +250,14 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 							if (!archivo) return;
 							try {
 								setGestionandoImagen(true);
+								setErrorImagen(null);
+								setOkImagen(null);
 								await onSubirImagen(variacion.id, archivo);
 								setArchivo(null);
+								if (inputFileRef.current) inputFileRef.current.value = "";
+								setOkImagen("Imagen añadida.");
+							} catch (err) {
+								setErrorImagen(obtenerMensajeApi(err, "No se pudo subir la imagen. Verificá el archivo o intentá nuevamente."));
 							} finally {
 								setGestionandoImagen(false);
 							}
@@ -226,9 +265,11 @@ export const VariacionRowEditor = ({ variacion, onGuardarVariacion, onAjustarSto
 						disabled={!archivo || gestionandoImagen}
 						className={twBase.actionBtnNeutral}
 					>
-						Añadir imagen
+						{gestionandoImagen ? "Subiendo..." : "Añadir imagen"}
 					</button>
 				</div>
+				{okImagen && <p className="mt-2 text-xs font-semibold text-[#1E8E5A]">{okImagen}</p>}
+				{errorImagen && <p className="mt-2 text-xs font-semibold text-[#b91c1c]">{errorImagen}</p>}
 			</div>
 		</div>
 	);

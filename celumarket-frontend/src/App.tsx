@@ -123,6 +123,7 @@ function App() {
 	}, [location.pathname, location.search, navigate]);
 
 	const esVistaLogin = location.pathname === "/login";
+	const esVistaCheckout = location.pathname.startsWith("/checkout");
 	const enTienda =
 		location.pathname === "/catalogo" ||
 		location.pathname.startsWith("/celulares/") ||
@@ -130,7 +131,7 @@ function App() {
 		location.pathname.startsWith("/checkout");
 
 	return (
-		<div className="bg-gray-50 min-h-screen font-sans flex flex-col">
+		<div className={`bg-gray-50 font-sans flex flex-col ${esVistaCheckout ? "h-dvh overflow-hidden" : "min-h-screen"}`}>
 			{esVistaLogin ? (
 				<NavbarLogin onIrAInicio={() => navigate("/")} />
 			) : (
@@ -163,7 +164,7 @@ function App() {
 				/>
 			)}
 
-			<main className="flex flex-1 min-h-0 flex-col">
+			<main className={`flex flex-1 min-h-0 flex-col ${esVistaCheckout ? "overflow-hidden" : ""}`}>
 				<Suspense fallback={<PageFallback />}>
 				<Routes>
 					<Route path="/" element={<Landing onIrATienda={() => navigate("/catalogo")} onVerDetalle={(id) => navigate(`/celulares/${id}`)} />} />
@@ -223,7 +224,7 @@ function App() {
 							setPedidoConfirmadoId(pedidoId);
 							void recargarCarritoCantidad();
 							navigate("/compra-confirmada");
-						}} onVolverCarrito={() => navigate("/carrito")} />}
+						}} onVolverCarrito={() => navigate("/carrito")} onVolverInicio={() => navigate("/")} />}
 					/>
 					<Route path="/admin" element={esInterno ? <AdminPanel rol={rolUsuario} /> : <Navigate to="/login" replace />} />
 					<Route path="/cambiar-clave" element={authService.esCliente() ? <CambiarClave onVolver={() => navigate("/")} /> : <Navigate to="/admin" replace />} />
@@ -272,9 +273,11 @@ function DetalleCelularRoute({
 function CheckoutRoute({
 	onCompraConfirmada,
 	onVolverCarrito,
+	onVolverInicio,
 }: {
 	onCompraConfirmada: (pedidoId: number) => void;
 	onVolverCarrito: () => void;
+	onVolverInicio: () => void;
 }) {
 	const location = useLocation();
 	const state = (location.state ?? {}) as CheckoutLocationState;
@@ -285,6 +288,7 @@ function CheckoutRoute({
 		<Checkout
 			reservaSegundosIniciales={state.reservaSegundosRestantes}
 			onVolverCarrito={onVolverCarrito}
+			onVolverInicio={onVolverInicio}
 			onCompraConfirmada={onCompraConfirmada}
 		/>
 	);

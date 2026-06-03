@@ -29,6 +29,7 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 		cbuTransferencia: "0000003100000000000000",
 		titularTransferencia: "Celumarket S.A.",
 		bancoTransferencia: "Banco Nación",
+		urlImagenHero: null,
 	});
 
 	useEffect(() => {
@@ -90,10 +91,14 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 			productos.length === 0 ? 0 : (actual + 1) % productos.length,
 		);
 	};
+	const urlImagenHero = config.urlImagenHero?.trim();
 
 	return (
 		<div className={`${twBase.pageLayout} flex flex-col`}>
-			<section className="flex flex-col items-center justify-center bg-gradient-to-r from-[#001830] to-[#0a0a0a] px-4 py-14 text-white sm:px-6 sm:py-16 lg:py-20">
+			<section
+				className={`flex flex-col items-center justify-center px-4 py-14 text-white sm:px-6 sm:py-16 lg:py-20 ${urlImagenHero ? "bg-cover bg-center" : "bg-gradient-to-r from-[#001830] to-[#0a0a0a]"}`}
+				style={urlImagenHero ? { backgroundImage: `linear-gradient(rgba(0,24,48,0.62), rgba(10,10,10,0.58)), url(${urlImagenHero})` } : undefined}
+			>
 				<h1 className="mb-3 text-center text-[2.35rem] font-bold tracking-tight sm:mb-4 sm:text-5xl lg:text-6xl">
 					Celumarket
 				</h1>

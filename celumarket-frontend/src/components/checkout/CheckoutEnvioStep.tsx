@@ -3,6 +3,7 @@ import { tarifaService, type TarifaPorCodigoPostal } from "../../services/tarifa
 import type { ItemCarrito } from "../../services/carritoService";
 import { CheckoutSidebarActions } from "./CheckoutSidebarActions";
 import { twBase, twCheckout } from "../../styles/tw";
+import { esEnteroPositivo, esTextoUbicacionValido } from "../../utils/validation";
 
 export type DatosEnvio = {
 	tipoEnvio: "domicilio" | "sucursal-correo" | "retiro-local";
@@ -60,7 +61,7 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 		setTarifa(null);
 
 		const cp = Number(codigoPostal);
-		if (!Number.isInteger(cp) || cp <= 0) {
+		if (!esEnteroPositivo(codigoPostal)) {
 			setErrorTarifa("Ingresá un código postal válido.");
 			return;
 		}
@@ -107,6 +108,26 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 
 			if (!direccionAUsar.calle || !direccionAUsar.numero || !direccionAUsar.localidad || !direccionAUsar.provincia || !direccionAUsar.codigoPostal) {
 				setErrorTarifa("Completá la dirección de entrega para envío a domicilio.");
+				return;
+			}
+
+			if (!esEnteroPositivo(direccionAUsar.numero)) {
+				setErrorTarifa("El número de dirección debe ser un número válido.");
+				return;
+			}
+
+			if (!esTextoUbicacionValido(direccionAUsar.localidad)) {
+				setErrorTarifa("La localidad no debe contener números.");
+				return;
+			}
+
+			if (!esTextoUbicacionValido(direccionAUsar.provincia)) {
+				setErrorTarifa("La provincia no debe contener números.");
+				return;
+			}
+
+			if (!esEnteroPositivo(direccionAUsar.codigoPostal)) {
+				setErrorTarifa("El código postal de entrega debe ser válido.");
 				return;
 			}
 
@@ -168,7 +189,7 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 					<h2 className="text-xl font-bold text-[#001830] sm:text-2xl">1. Elegí tu envío</h2>
 					<p className={twCheckout.checkoutEnvioLabel}>Ingresá tu código postal:</p>
 					<div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
-						<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} className={twCheckout.checkoutEnvioSearchInput} />
+						<input value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} className={twCheckout.checkoutEnvioSearchInput} inputMode="numeric" />
 						<button onClick={buscarTarifa} className={`${twBase.actionBtnPrimary} h-11 sm:w-auto`}>Buscar</button>
 					</div>
 					{errorTarifa && <p className="mt-2 text-sm text-red-600">{errorTarifa}</p>}
@@ -223,11 +244,11 @@ export const CheckoutEnvioStep = ({ direccionInicial, onContinuar, onVolverCarri
 												{(!tieneDireccionGuardada || modoDireccion === "nueva") && (
 													<div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
 													<input className={twCheckout.checkoutInput} placeholder="Calle" value={direccion.calle} onChange={(e) => setDireccion((s) => ({ ...s, calle: e.target.value }))} />
-													<input className={twCheckout.checkoutInput} placeholder="Número" value={direccion.numero} onChange={(e) => setDireccion((s) => ({ ...s, numero: e.target.value }))} />
+													<input className={twCheckout.checkoutInput} placeholder="Número" value={direccion.numero} onChange={(e) => setDireccion((s) => ({ ...s, numero: e.target.value }))} inputMode="numeric" />
 													<input className={twCheckout.checkoutInput} placeholder="Piso/Depto (opcional)" value={direccion.pisoDepto} onChange={(e) => setDireccion((s) => ({ ...s, pisoDepto: e.target.value }))} />
 													<input className={twCheckout.checkoutInput} placeholder="Localidad" value={direccion.localidad} onChange={(e) => setDireccion((s) => ({ ...s, localidad: e.target.value }))} />
 													<input className={twCheckout.checkoutInput} placeholder="Provincia" value={direccion.provincia} onChange={(e) => setDireccion((s) => ({ ...s, provincia: e.target.value }))} />
-													<input className={twCheckout.checkoutInput} placeholder="Código postal" value={direccion.codigoPostal} onChange={(e) => setDireccion((s) => ({ ...s, codigoPostal: e.target.value }))} />
+													<input className={twCheckout.checkoutInput} placeholder="Código postal" value={direccion.codigoPostal} onChange={(e) => setDireccion((s) => ({ ...s, codigoPostal: e.target.value }))} inputMode="numeric" />
 												</div>
 											)}
 										</div>

@@ -102,7 +102,7 @@ export const DetalleInfoPrincipal = ({
 							<p className={twDetalleCelular.detailCartFeedbackTitle}>
 								Producto agregado al carrito.
 							</p>
-							<p>Ya actualizamos tu carrito con esta variante.</p>
+							<p>Actualizamos tu carrito.</p>
 							{onIrACarrito && (
 								<button
 									type="button"

@@ -14,6 +14,7 @@ const estadoInicial: ConfiguracionSistema = {
 	cbuTransferencia: "0000003100000000000000",
 	titularTransferencia: "Celumarket S.A.",
 	bancoTransferencia: "Banco Nación",
+	urlImagenHero: null,
 };
 
 export const AdminConfiguracionPanel = () => {
@@ -24,9 +25,12 @@ export const AdminConfiguracionPanel = () => {
 	const [cargando, setCargando] = useState(true);
 	const [cargandoDestacados, setCargandoDestacados] = useState(true);
 	const [guardando, setGuardando] = useState(false);
+	const [subiendoHero, setSubiendoHero] = useState(false);
 	const [guardandoDestacadoId, setGuardandoDestacadoId] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [ok, setOk] = useState<string | null>(null);
+	const [errorHero, setErrorHero] = useState<string | null>(null);
+	const [okHero, setOkHero] = useState<string | null>(null);
 	const [busquedaDestacados, setBusquedaDestacados] = useState("");
 
 	async function cargarDestacados() {
@@ -82,7 +86,18 @@ export const AdminConfiguracionPanel = () => {
 		setGuardando(true);
 		setError(null);
 		setOk(null);
+		setErrorHero(null);
 		try {
+			const urlImagenHero = form.urlImagenHero?.trim() || null;
+			if (urlImagenHero) {
+				try {
+					new URL(urlImagenHero);
+				} catch {
+					setErrorHero("La URL de la imagen del hero no es válida.");
+					return;
+				}
+			}
+
 			const actualizada = await configuracionService.actualizar({
 				descuentoTransferencia: Number(form.descuentoTransferencia),
 				umbralEnvioGratis: Number(form.umbralEnvioGratis),
@@ -91,6 +106,7 @@ export const AdminConfiguracionPanel = () => {
 				cbuTransferencia: form.cbuTransferencia,
 				titularTransferencia: form.titularTransferencia,
 				bancoTransferencia: form.bancoTransferencia,
+				urlImagenHero,
 			});
 			setForm(actualizada);
 			setOk("Configuración guardada.");
@@ -145,6 +161,22 @@ export const AdminConfiguracionPanel = () => {
 		await actualizarDestacado(celular, true);
 	};
 
+	const subirImagenHero = async (archivo: File | null) => {
+		if (!archivo) return;
+		setSubiendoHero(true);
+		setErrorHero(null);
+		setOkHero(null);
+		try {
+			const actualizada = await configuracionService.subirImagenHero(archivo);
+			setForm(actualizada);
+			setOkHero("Imagen del hero actualizada.");
+		} catch {
+			setErrorHero("No se pudo subir la imagen del hero.");
+		} finally {
+			setSubiendoHero(false);
+		}
+	};
+
 	const celularesFiltrados = celulares.filter((celular) => {
 		const termino = busquedaDestacados.trim().toLowerCase();
 		if (!termino) return true;
@@ -182,6 +214,69 @@ export const AdminConfiguracionPanel = () => {
 						className={twAdmin.adminConfigInput}
 					/>
 				</label>
+
+				<div className="md:col-span-2 rounded-lg border border-[#dbe4ef] bg-white p-3">
+					<div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+						<div>
+							<p className="text-sm font-semibold text-[#001830]">Imagen del hero</p>
+							<p className="mt-1 text-xs text-[#64748b]">
+								Si no hay imagen seleccionada, la landing usa el gradiente actual.
+							</p>
+						</div>
+						<label className="inline-flex h-9 w-fit cursor-pointer items-center rounded-md border border-[#015cb9] px-3 text-sm font-semibold text-[#015cb9] transition-colors hover:bg-[#eaf4ff]">
+							{subiendoHero ? "Subiendo..." : "Seleccionar imagen"}
+							<input
+								type="file"
+								accept="image/*"
+								disabled={subiendoHero}
+								onChange={(e) => {
+									const archivo = e.target.files?.[0] ?? null;
+									void subirImagenHero(archivo);
+									e.currentTarget.value = "";
+								}}
+								className="hidden"
+							/>
+						</label>
+					</div>
+
+					{form.urlImagenHero ? (
+						<div className="mt-3 grid gap-3 md:grid-cols-[220px_minmax(0,1fr)] md:items-center">
+							<div
+								className="h-28 rounded-lg bg-cover bg-center"
+								style={{ backgroundImage: `linear-gradient(rgba(0,24,48,0.28), rgba(0,24,48,0.28)), url(${form.urlImagenHero})` }}
+							/>
+							<div className="min-w-0">
+								<input
+									value={form.urlImagenHero}
+									onChange={(e) => {
+										setErrorHero(null);
+										setOkHero(null);
+										setForm((prev) => ({ ...prev, urlImagenHero: e.target.value }));
+									}}
+									className={`${twAdmin.adminConfigInput} w-full text-sm`}
+									placeholder="URL de imagen del hero"
+								/>
+								<button
+									type="button"
+									onClick={() => {
+										setErrorHero(null);
+										setOkHero(null);
+										setForm((prev) => ({ ...prev, urlImagenHero: null }));
+									}}
+									className="mt-2 h-8 rounded border border-[#94a3b8] bg-[#e5e7eb] px-3 text-xs font-semibold text-[#1f2937] hover:bg-[#d1d5db]"
+								>
+									Quitar imagen y usar gradiente
+								</button>
+							</div>
+						</div>
+					) : (
+						<div className="mt-3 rounded-lg bg-gradient-to-r from-[#001830] to-[#0a0a0a] px-4 py-6 text-sm font-semibold text-white">
+							Vista previa con gradiente actual
+						</div>
+					)}
+					{okHero && <p className="mt-3 text-sm font-semibold text-[#1E8E5A]">{okHero}</p>}
+					{errorHero && <p className="mt-3 text-sm font-semibold text-[#b91c1c]">{errorHero}</p>}
+				</div>
 
 				<label className="flex flex-col gap-1 text-sm text-[#334155]">
 					Umbral envío gratis
@@ -298,10 +393,10 @@ export const AdminConfiguracionPanel = () => {
 										aria-pressed={activo}
 										disabled={guardandoEste}
 										onClick={() => void actualizarDestacado(celular, !activo)}
-										className={`group relative aspect-square rounded-lg border bg-white p-2 transition-all disabled:opacity-60 ${
+										className={`group relative aspect-square p-2 transition-all disabled:opacity-60 ${twBase.productImageFrame} ${
 											activo
-												? "border-[#015cb9] shadow-[0_0_0_2px_rgba(1,92,185,0.14)]"
-												: "border-[#dbe4ef] hover:border-[#9fc5ef] hover:bg-[#f8fbff]"
+												? "!border-[#015cb9] shadow-[0_0_0_2px_rgba(1,92,185,0.14)]"
+												: "hover:!border-[#9fc5ef]"
 										}`}
 									>
 										<img
@@ -339,11 +434,13 @@ export const AdminConfiguracionPanel = () => {
 										return (
 											<div key={celular.id} className="min-w-0 rounded-lg border border-[#dbe4ef] bg-[#f8fafc] p-3">
 												<div className="flex items-center gap-3">
-													<img
-														src={celular.urlImagenPrincipal}
-														alt={`${celular.marca} ${celular.modelo}`}
-														className="h-12 w-12 shrink-0 rounded-md bg-[#edf2f7] object-contain"
-													/>
+													<div className={`h-12 w-12 shrink-0 p-1 ${twBase.productImageFrame}`}>
+														<img
+															src={celular.urlImagenPrincipal}
+															alt={`${celular.marca} ${celular.modelo}`}
+															className={twBase.productImageContain}
+														/>
+													</div>
 													<div className="min-w-0">
 														<p className="truncate text-sm font-semibold text-[#001830]">
 															{celular.marca} {celular.modelo}

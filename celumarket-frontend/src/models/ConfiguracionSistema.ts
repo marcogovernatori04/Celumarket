@@ -6,6 +6,7 @@ export interface ConfiguracionSistema {
 	cbuTransferencia: string;
 	titularTransferencia: string;
 	bancoTransferencia: string;
+	urlImagenHero?: string | null;
 }
 
 export interface ActualizarConfiguracionSistema {
@@ -16,5 +17,6 @@ export interface ActualizarConfiguracionSistema {
 	cbuTransferencia: string;
 	titularTransferencia: string;
 	bancoTransferencia: string;
+	urlImagenHero?: string | null;
 }
 

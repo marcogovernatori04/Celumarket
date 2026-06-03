@@ -26,6 +26,8 @@ export const twBase = {
 	searchPillInput: "h-10 w-full rounded-full border border-[#d9d9d9] bg-white pl-4 pr-10 text-sm text-[#1e1e1e] outline-none",
 	cardWhite: "rounded-xl bg-white",
 	primaryBtnMd: "h-10 rounded-md bg-[#015cb9] px-4 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[#017AF4] sm:h-[42px] sm:px-5 sm:text-[16px]",
+	productImageFrame: "overflow-hidden rounded-lg border border-[#e5ebf2] bg-white",
+	productImageContain: "h-full w-full object-contain",
 };
 
 export const twNav = {
@@ -101,7 +103,7 @@ export const twCompraConfirmada = {
 
 export const twCatalogo = {
 	productCard: "group mx-auto flex w-full max-w-[320px] cursor-pointer flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:max-w-none",
-	productImageWrap: "relative mb-3 flex aspect-square min-h-[190px] items-center justify-center overflow-hidden rounded-lg bg-[#f0f0f0] sm:min-h-[220px] lg:min-h-[240px]",
+	productImageWrap: "relative mb-3 flex aspect-square min-h-[190px] items-center justify-center overflow-hidden rounded-lg border border-[#e5ebf2] bg-white p-2 sm:min-h-[220px] lg:min-h-[240px]",
 	productPromoTag: "absolute left-2 top-2 z-10 rounded-full bg-[#dbe9ff] px-2 py-1 text-[11px] font-semibold text-[#0b3f75]",
 	productPrice: "text-[1.65rem] font-bold leading-none text-slate-900 sm:text-2xl",
 	productOldPrice: "ml-2 text-sm text-gray-400 line-through",
@@ -117,8 +119,8 @@ export const twCatalogo = {
 };
 
 export const twDetalleCelular = {
-	detailGalleryWrap: "relative flex aspect-square max-h-[420px] min-h-[260px] items-center justify-center overflow-hidden rounded-xl bg-[#f0f0f0] p-3 sm:min-h-[340px] sm:p-4 lg:min-h-[400px]",
-	detailGalleryImage: "h-[82%] max-w-full scale-[1.08] object-contain mix-blend-multiply animate-[fadeIn_260ms_ease-out] sm:scale-[1.16] lg:scale-[1.2]",
+	detailGalleryWrap: "relative flex aspect-square max-h-[420px] min-h-[260px] items-center justify-center overflow-hidden rounded-xl border border-[#e5ebf2] bg-white p-3 sm:min-h-[340px] sm:p-4 lg:min-h-[400px]",
+	detailGalleryImage: "h-[82%] max-w-full scale-[1.08] object-contain animate-[fadeIn_260ms_ease-out] sm:scale-[1.16] lg:scale-[1.2]",
 	detailGalleryArrow: "absolute top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-3 py-1 text-lg text-[#001830] shadow transition-all duration-200 hover:scale-110 hover:bg-white hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#015cb9]",
 	detailGalleryDot: "h-2.5 w-2.5 rounded-full",
 	variationLabel: "mb-2 text-sm font-medium text-[#1e1e1e]",
@@ -143,8 +145,8 @@ export const twDetalleCelular = {
 };
 
 export const twCheckout = {
-	checkoutShell: "min-h-[calc(100dvh-64px)] bg-[#f5f5f5] flex flex-col lg:h-[calc(100dvh-72px)] lg:overflow-hidden",
-	checkoutSection: "mx-auto w-full max-w-[1120px] flex-1 px-3 pb-[190px] pt-4 sm:px-6 sm:pb-[190px] sm:pt-5 lg:min-h-0 lg:overflow-hidden lg:py-3",
+	checkoutShell: "min-h-0 flex-1 bg-[#f5f5f5] flex flex-col lg:overflow-hidden",
+	checkoutSection: "mx-auto min-h-0 w-full max-w-[1120px] flex-1 overflow-y-auto px-3 pb-[190px] pt-4 sm:px-6 sm:pb-[190px] sm:pt-5 lg:overflow-hidden lg:pb-6 lg:pt-3",
 	checkoutTopCard: "mt-3 rounded-xl border border-[#dfe5eb] bg-white px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)]",
 	checkoutStepPillBase: "rounded-full px-2.5 py-0.5 font-semibold",
 	checkoutStepPillActive: "bg-[#015cb9] text-white",
