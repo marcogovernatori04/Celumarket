@@ -171,7 +171,7 @@ export const DetalleCelular = ({
 					</div>
 				</div>
 				<div className={`${twBase.cardWhite} p-4 sm:p-6`}>
-					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+					<div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.14fr)_minmax(330px,0.86fr)] lg:gap-8">
 						<DetalleGaleria
 							imagenesActivas={imagenesActivas}
 							imagenActiva={imagenActiva}
@@ -218,12 +218,12 @@ export const DetalleCelular = ({
 						<p className="mt-2 text-[14px] leading-relaxed text-[#4b5563]">
 							{detalle.descripcion}
 						</p>
-						<div className="mt-3 grid grid-cols-1 gap-2 text-[14px] text-[#5f6670] md:grid-cols-2">
+						<div className="mt-3 space-y-2 text-[14px] text-[#5f6670]">
 							{detalle.especificaciones.map((esp, idx) => (
-								<p key={idx}>
-									<span className="font-medium text-[#374151]">{esp.nombre}:</span>{" "}
-									{esp.valor}
-								</p>
+								<div key={idx} className="grid grid-cols-1 gap-0.5 sm:grid-cols-[130px_minmax(0,1fr)] sm:gap-3">
+									<span className="font-medium text-[#374151]">{esp.nombre}:</span>
+									<span>{esp.valor}</span>
+								</div>
 							))}
 						</div>
 					</div>

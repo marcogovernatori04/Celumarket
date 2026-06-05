@@ -11,8 +11,6 @@ export const DescripcionEditor = ({ celularId, descripcion, onGuardar }: Descrip
 	const [editandoCelularId, setEditandoCelularId] = useState<number | null>(null);
 	const [draftDescripcion, setDraftDescripcion] = useState("");
 	const [guardandoCelularId, setGuardandoCelularId] = useState<number | null>(null);
-	const [descripcionExpandida, setDescripcionExpandida] = useState(false);
-	const descripcionLarga = (descripcion ?? "").length > 180;
 
 	const comenzarEdicion = () => {
 		setEditandoCelularId(celularId);
@@ -65,18 +63,9 @@ export const DescripcionEditor = ({ celularId, descripcion, onGuardar }: Descrip
 			) : (
 				<div className="mt-1 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
 					<div className="min-w-0">
-						<p className={`text-sm leading-relaxed text-[#334155] ${!descripcionExpandida && descripcionLarga ? "line-clamp-4" : ""}`}>
+						<p className="text-sm leading-relaxed text-[#334155]">
 							{descripcion}
 						</p>
-						{descripcionLarga && (
-							<button
-								type="button"
-								onClick={() => setDescripcionExpandida((expandida) => !expandida)}
-								className="mt-1 text-xs font-semibold text-[#015cb9] hover:text-[#017AF4]"
-							>
-								{descripcionExpandida ? "Ver menos" : "Ver más"}
-							</button>
-						)}
 					</div>
 					<button
 						onClick={comenzarEdicion}

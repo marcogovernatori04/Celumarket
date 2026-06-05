@@ -49,7 +49,7 @@ export const TarjetaCelular = ({
 				<img
 					src={producto.imagen}
 					alt={producto.nombre}
-					className="h-full w-full object-contain drop-shadow-md transition-transform duration-300 scale-[1.24] group-hover:scale-[1.30] sm:scale-[1.34] sm:group-hover:scale-[1.40] lg:scale-[1.40] lg:group-hover:scale-[1.45]"
+					className="h-full w-full object-contain drop-shadow-md transition-transform duration-300 scale-[1.22] group-hover:scale-[1.26] sm:scale-[1.30] sm:group-hover:scale-[1.34] lg:scale-[1.34] lg:group-hover:scale-[1.38]"
 				/>
 			</div>
 

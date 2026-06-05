@@ -163,15 +163,19 @@ export const Landing = ({ onIrATienda, onVerDetalle }: LandingProps) => {
 								›
 							</button>
 						</div>
-						<div className="hidden grid-cols-2 gap-5 md:grid lg:grid-cols-4 lg:gap-6">
+						<div className="hidden flex-wrap justify-center gap-5 md:flex lg:gap-6">
 							{productos.map((producto) => (
-								<TarjetaCelular
+								<div
 									key={producto.id}
-									producto={producto}
-									umbralEnvioGratis={config.umbralEnvioGratis}
-									descuentoTransferencia={config.descuentoTransferencia}
-									onClick={() => onVerDetalle?.(producto.id)}
-								/>
+									className="w-full max-w-[320px] md:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-4.5rem)/4)]"
+								>
+									<TarjetaCelular
+										producto={producto}
+										umbralEnvioGratis={config.umbralEnvioGratis}
+										descuentoTransferencia={config.descuentoTransferencia}
+										onClick={() => onVerDetalle?.(producto.id)}
+									/>
+								</div>
 							))}
 						</div>
 					</div>

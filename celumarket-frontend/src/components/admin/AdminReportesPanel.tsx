@@ -19,11 +19,15 @@ import {
 import type { AdminSectionKey } from "./AdminSidebar";
 import { twAdmin, twBase } from "../../styles/tw";
 
-const formatearMonto = (monto: number) => `$${monto.toLocaleString("es-AR")}`;
+const formatearMonto = (monto: number) =>
+	`$${monto.toLocaleString("es-AR", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	})}`;
 const formatearMontoCorto = (monto: number) => {
 	if (monto >= 1_000_000) return `$${(monto / 1_000_000).toFixed(1)}M`;
 	if (monto >= 1_000) return `$${(monto / 1_000).toFixed(0)}k`;
-	return `$${monto.toLocaleString("es-AR")}`;
+	return formatearMonto(monto);
 };
 const formatearFecha = (raw: string) => {
 	const d = new Date(raw);

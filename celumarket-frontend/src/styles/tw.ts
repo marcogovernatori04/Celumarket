@@ -119,8 +119,8 @@ export const twCatalogo = {
 };
 
 export const twDetalleCelular = {
-	detailGalleryWrap: "relative flex aspect-square max-h-[420px] min-h-[260px] items-center justify-center overflow-hidden rounded-xl border border-[#e5ebf2] bg-white p-3 sm:min-h-[340px] sm:p-4 lg:min-h-[400px]",
-	detailGalleryImage: "h-[82%] max-w-full scale-[1.08] object-contain animate-[fadeIn_260ms_ease-out] sm:scale-[1.16] lg:scale-[1.2]",
+	detailGalleryWrap: "relative flex aspect-square max-h-[460px] min-h-[260px] items-center justify-center overflow-hidden rounded-xl border border-[#e5ebf2] bg-white p-3 sm:min-h-[340px] sm:p-4 lg:aspect-[1.18/1] lg:max-h-[460px] lg:min-h-[410px]",
+	detailGalleryImage: "h-[88%] max-w-full scale-[1.14] object-contain animate-[fadeIn_260ms_ease-out] sm:scale-[1.24] lg:scale-[1.32]",
 	detailGalleryArrow: "absolute top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-3 py-1 text-lg text-[#001830] shadow transition-all duration-200 hover:scale-110 hover:bg-white hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#015cb9]",
 	detailGalleryDot: "h-2.5 w-2.5 rounded-full",
 	variationLabel: "mb-2 text-sm font-medium text-[#1e1e1e]",

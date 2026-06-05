@@ -195,7 +195,8 @@ export const AdminConfiguracionPanel = () => {
 	}
 
 	return (
-		<div className={twBase.loadingBox}>
+		<div className={`${twBase.loadingBox} flex min-h-0 flex-col p-0 lg:h-full`}>
+			<div className="min-h-0 flex-1 overflow-y-auto p-5">
 			<p className="text-[18px] font-semibold text-[#001830]">
 				Configuración general
 			</p>
@@ -478,7 +479,9 @@ export const AdminConfiguracionPanel = () => {
 				)}
 			</div>
 
-			<div className="mt-5 flex flex-col gap-2 border-t border-[#dbe4ef] pt-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+			</div>
+
+			<div className="flex shrink-0 flex-col gap-2 border-t border-[#dbe4ef] bg-[#f6f9fc] px-5 py-3 shadow-[0_-8px_18px_rgba(15,23,42,0.06)] sm:flex-row sm:items-center sm:justify-end sm:gap-3">
 				{ok && <span className="text-sm text-[#1E8E5A]">{ok}</span>}
 				{error && <span className="text-sm text-[#b91c1c]">{error}</span>}
 				<button

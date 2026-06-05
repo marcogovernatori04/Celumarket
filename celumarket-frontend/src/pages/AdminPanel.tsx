@@ -60,7 +60,7 @@ export const AdminPanel = ({ rol }: AdminPanelProps) => {
 			<div className="grid min-h-0 grid-cols-1 gap-4 lg:h-full lg:grid-cols-[196px_minmax(0,1fr)]">
 				<AdminSidebar rol={rol} seccionActiva={seccionActiva} onSelect={setSeccionSegura} />
 				<section className={twLayout.adminContentCard}>
-					<div className={`min-h-0 lg:h-full ${seccionActiva === "configuracion" ? "lg:overflow-y-auto lg:overflow-x-hidden lg:pr-1" : "lg:overflow-hidden"}`}>
+					<div className="min-h-0 lg:h-full lg:overflow-hidden">
 						<Suspense fallback={<AdminPanelFallback />}>
 						{seccionActiva === "celulares" ? (
 							<AdminCelularesPanel />

@@ -374,7 +374,7 @@ export const AdminCelularesPanel = () => {
 				/>
 			</div>
 			{creando && (
-				<div className={`mt-4 ${twAdmin.adminCard}`}>
+				<div className={`mt-4 flex-1 overflow-y-auto ${twAdmin.adminCard}`}>
 					<p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#64748b]">Alta de celular</p>
 					<div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						<input placeholder="Marca" value={nuevoCelular.marca} onChange={(e) => setNuevoCelular((p) => ({ ...p, marca: e.target.value }))} className={twAdmin.adminInput} />
@@ -476,7 +476,7 @@ export const AdminCelularesPanel = () => {
 
 			{error && <p className="mt-6 text-red-600">{error}</p>}
 
-			{!error && (
+			{!creando && !error && (
 				<>
 				<div className="mt-4 space-y-3 lg:hidden">
 					{celularesFiltrados.map((c) => {
