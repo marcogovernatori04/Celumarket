@@ -48,6 +48,11 @@ namespace Celumarket.Infrastructure.Repositories
             await _context.Usuarios.AddAsync(usuario);
         }
 
+        public void Eliminar(Usuario usuario)
+        {
+            _context.Usuarios.Remove(usuario);
+        }
+
         public async Task GuardarAsync()
         {
             await _context.SaveChangesAsync();

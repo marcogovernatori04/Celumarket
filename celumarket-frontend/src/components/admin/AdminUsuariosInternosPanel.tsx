@@ -39,6 +39,8 @@ export const AdminUsuariosInternosPanel = () => {
 	const [cargando, setCargando] = useState(true);
 	const [creando, setCreando] = useState(false);
 	const [actualizandoRolId, setActualizandoRolId] = useState<number | null>(null);
+	const [eliminandoUsuarioId, setEliminandoUsuarioId] = useState<number | null>(null);
+	const [usuarioAEliminar, setUsuarioAEliminar] = useState<UsuarioInternoListado | null>(null);
 	const [feedbackRol, setFeedbackRol] = useState<{
 		tipo: "ok" | "error";
 		mensaje: string;
@@ -117,6 +119,24 @@ export const AdminUsuariosInternosPanel = () => {
 			setError(obtenerMensajeApi(err, "No se pudo crear el usuario interno."));
 		} finally {
 			setCreando(false);
+		}
+	};
+
+	const eliminarUsuario = async () => {
+		if (!usuarioAEliminar) return;
+		setEliminandoUsuarioId(usuarioAEliminar.id);
+		setError(null);
+		setOk(null);
+		setFeedbackRol(null);
+		try {
+			await clienteService.eliminarUsuarioInterno(usuarioAEliminar.id);
+			setUsuarios((prev) => prev.filter((usuario) => usuario.id !== usuarioAEliminar.id));
+			setOk("Usuario interno eliminado.");
+			setUsuarioAEliminar(null);
+		} catch (err) {
+			setError(obtenerMensajeApi(err, "No se pudo eliminar el usuario interno."));
+		} finally {
+			setEliminandoUsuarioId(null);
 		}
 	};
 
@@ -221,6 +241,15 @@ export const AdminUsuariosInternosPanel = () => {
 											disabled={actualizandoRolId === usuario.id}
 											onChange={(rol) => void actualizarRol(usuario, rol)}
 										/>
+										{usuario.rol !== "Admin" && (
+											<button
+												type="button"
+												onClick={() => setUsuarioAEliminar(usuario)}
+												className={twBase.actionBtnDanger}
+											>
+												Eliminar
+											</button>
+										)}
 									</div>
 								</div>
 							))
@@ -229,9 +258,10 @@ export const AdminUsuariosInternosPanel = () => {
 
 					<div className="mt-6 hidden overflow-auto rounded-xl border border-black/10 lg:block">
 						<div className="min-w-[560px]">
-							<div className={`grid grid-cols-[1fr_260px] items-center px-4 py-3 ${twBase.tableHead}`}>
+							<div className={`grid grid-cols-[1fr_220px_120px] items-center px-4 py-3 ${twBase.tableHead}`}>
 								<span>Email</span>
 								<span>Rol</span>
+								<span className="text-center">Acciones</span>
 							</div>
 							<div className="divide-y divide-black/10 bg-white">
 								{usuariosFiltrados.length === 0 ? (
@@ -240,7 +270,7 @@ export const AdminUsuariosInternosPanel = () => {
 									</div>
 								) : (
 									usuariosFiltrados.map((usuario) => (
-										<div key={usuario.id} className="grid grid-cols-[1fr_260px] items-center px-4 py-3">
+										<div key={usuario.id} className="grid grid-cols-[1fr_220px_120px] items-center px-4 py-3">
 											<p className="text-sm font-semibold text-[#001830]">{usuario.email}</p>
 											<div className="flex items-center gap-2">
 												<RolControl
@@ -248,6 +278,17 @@ export const AdminUsuariosInternosPanel = () => {
 													disabled={actualizandoRolId === usuario.id}
 													onChange={(rol) => void actualizarRol(usuario, rol)}
 												/>
+											</div>
+											<div className="flex justify-center">
+												{usuario.rol !== "Admin" && (
+													<button
+														type="button"
+														onClick={() => setUsuarioAEliminar(usuario)}
+														className={twBase.actionBtnDanger}
+													>
+														Eliminar
+													</button>
+												)}
 											</div>
 										</div>
 									))
@@ -257,6 +298,35 @@ export const AdminUsuariosInternosPanel = () => {
 					</div>
 					<FeedbackRol feedback={feedbackRol} />
 				</>
+			)}
+
+			{usuarioAEliminar && (
+				<div className={twAdmin.adminModalOverlay}>
+					<div className={twAdmin.adminModalCard}>
+						<h3 className={twAdmin.adminModalTitle}>Eliminar usuario interno</h3>
+						<p className={twAdmin.adminModalText}>
+							Se eliminará el acceso de {usuarioAEliminar.email}. Esta acción no se puede deshacer.
+						</p>
+						<div className={twAdmin.adminModalActions}>
+							<button
+								type="button"
+								disabled={eliminandoUsuarioId !== null}
+								onClick={() => setUsuarioAEliminar(null)}
+								className={twBase.actionBtnCancel}
+							>
+								Cancelar
+							</button>
+							<button
+								type="button"
+								disabled={eliminandoUsuarioId !== null}
+								onClick={() => void eliminarUsuario()}
+								className="h-9 rounded bg-[#b42318] px-3 text-sm font-semibold text-white hover:bg-[#991b1b] disabled:opacity-60"
+							>
+								{eliminandoUsuarioId !== null ? "Eliminando..." : "Eliminar"}
+							</button>
+						</div>
+					</div>
+				</div>
 			)}
 		</div>
 	);

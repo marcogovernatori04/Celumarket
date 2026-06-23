@@ -215,6 +215,20 @@ namespace Celumarket.Application.Services
             usuario.CambiarRol(rol.Id);
             await _unitOfWork.GuardarAsync();
         }
+
+        public async Task EliminarUsuarioInternoAsync(int usuarioId)
+        {
+            var usuario = await _usuarioRepo.ObtenerPorIdAsync(usuarioId);
+            if (usuario == null)
+                throw new Exception("Usuario no encontrado.");
+            if (usuario.Rol?.Nombre == "Cliente")
+                throw new Exception("No se puede eliminar un cliente desde usuarios internos.");
+            if (usuario.Rol?.Nombre == "Admin")
+                throw new Exception("No se puede eliminar el rol Admin desde este panel.");
+
+            _usuarioRepo.Eliminar(usuario);
+            await _unitOfWork.GuardarAsync();
+        }
     }
 }
 

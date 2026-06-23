@@ -9,6 +9,7 @@ namespace Celumarket.Application.Interfaces.Repositories
         Task<Usuario> ObtenerPorIdAsync(int id);
         Task<IEnumerable<ClienteDTOs.UsuarioInternoListadoDTO>> ObtenerInternosAsync();
         Task AgregarAsync(Usuario usuario);
+        void Eliminar(Usuario usuario);
         Task GuardarAsync();
     }
 }

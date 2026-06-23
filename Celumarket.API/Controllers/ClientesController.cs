@@ -136,5 +136,13 @@ namespace Celumarket.API.Controllers
             await _gestorCliente.ActualizarRolUsuarioInternoAsync(usuarioId, dto);
             return Ok(new { Mensaje = "Rol de usuario interno actualizado." });
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("usuarios-internos/{usuarioId}")]
+        public async Task<IActionResult> EliminarUsuarioInterno(int usuarioId)
+        {
+            await _gestorCliente.EliminarUsuarioInternoAsync(usuarioId);
+            return Ok(new { Mensaje = "Usuario interno eliminado." });
+        }
     }
 }

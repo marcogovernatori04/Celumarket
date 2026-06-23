@@ -100,4 +100,8 @@ export const clienteService = {
 	async actualizarRolUsuarioInterno(usuarioId: number, rol: RolUsuarioInterno): Promise<void> {
 		await api.put(`/Clientes/usuarios-internos/${usuarioId}/rol`, { rol });
 	},
+
+	async eliminarUsuarioInterno(usuarioId: number): Promise<void> {
+		await api.delete(`/Clientes/usuarios-internos/${usuarioId}`);
+	},
 };

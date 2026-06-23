@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-dotnet-home/
+.dotnet-home/
 .tmp_*

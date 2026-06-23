@@ -20,5 +20,6 @@ namespace Celumarket.Application.Interfaces.Services
         Task<int> RegistrarUsuarioInternoAsync(ClienteDTOs.RegistrarUsuarioInternoDTO dto);
         Task<IEnumerable<ClienteDTOs.UsuarioInternoListadoDTO>> ListarUsuariosInternosAsync();
         Task ActualizarRolUsuarioInternoAsync(int usuarioId, ClienteDTOs.ActualizarRolUsuarioInternoDTO dto);
+        Task EliminarUsuarioInternoAsync(int usuarioId);
     }
 }
