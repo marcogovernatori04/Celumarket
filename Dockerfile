@@ -21,8 +21,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Render asigna el puerto via variable de entorno PORT
-ENV ASPNETCORE_URLS=http://+:8080
+# Render inyecta la variable de entorno PORT en runtime (normalmente 10000).
+# Usamos shell form en el ENTRYPOINT para resolverla recién al arrancar el contenedor.
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "Celumarket.API.dll"]
+ENTRYPOINT ASPNETCORE_URLS=http://+:${PORT:-8080} dotnet Celumarket.API.dll
